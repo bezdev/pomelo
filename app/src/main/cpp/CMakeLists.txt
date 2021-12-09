@@ -6,11 +6,31 @@ add_library(native_app_glue
     STATIC
     ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
 )
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -Wall")
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -Wall")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
+
+file(GLOB SOURCES CONFIGURE_DEPENDS "\\.cpp")
+
+message("sources: " ${SOURCES})
 add_library(fame-native
     SHARED
     main.cpp
+    app.cpp
+    renderer.cpp
+    shader.cpp
+    timer.cpp
+    mesh.cpp
+    scene.cpp
+    model.cpp
+    material.cpp
+    renderobject.cpp
+    renderobjectcollection.cpp
+)
+
+target_include_directories(fame-native
+    PRIVATE
+    ${ANDROID_NDK}/sources/android/native_app_glue
 )
 
 find_library(
@@ -18,15 +38,10 @@ find_library(
     log
 )
 
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
-
-target_include_directories(fame-native
-    PRIVATE
-    ${ANDROID_NDK}/sources/android/native_app_glue
-)
-
 target_link_libraries(
     fame-native
+    GLESv2
+    EGL
     android
     native_app_glue
     ${log-lib}
