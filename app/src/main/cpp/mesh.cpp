@@ -9,4 +9,7 @@ Mesh::Mesh(std::vector<float> &vertices, std::vector<short> &indices, PrimitiveT
     m_PrimitiveType(primitiveType),
     m_Type(meshType)
 {
+    m_VertexBuffer = new VertexBuffer(&vertices[0], vertices.size() * sizeof(GLfloat), 3 * sizeof(GLfloat));
+    // TODO: remove reinterpret_cast
+    m_IndexBuffer = new IndexBuffer(reinterpret_cast<GLushort *>(&indices[0]), indices.size() * sizeof(GLushort));
 }

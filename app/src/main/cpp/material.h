@@ -11,17 +11,18 @@ enum MaterialType
 
 class Material {
 public:
-    Material(MaterialType type, unsigned int shaderID, const glm::vec4& color);
+    Material(MaterialType type, Shader* shader, const glm::vec4& color);
     ~Material();
 
     MaterialType GetType() { return m_Type; }
-    unsigned int GetShaderID() { return m_ShaderID; }
+    Shader* GetShader() { return m_Shader; }
+    glm::vec4& GetColor()  { return m_Color; }
 
     static Material* CreateSolidColorMaterial(const glm::vec4& color) {
         return new Material(MaterialType::SolidColor, Shader::SOLID_COLOR_SHADER, color);
     }
 private:
     MaterialType m_Type;
-    unsigned int m_ShaderID;
+    Shader* m_Shader;
     glm::vec4 m_Color;
 };

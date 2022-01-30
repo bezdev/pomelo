@@ -1,8 +1,8 @@
 #include "material.h"
 
-Material::Material(MaterialType type, unsigned int shaderID, const glm::vec4& color):
+Material::Material(MaterialType type, Shader* shader, const glm::vec4& color):
     m_Type(type),
-    m_ShaderID(shaderID),
+    m_Shader(shader),
     m_Color(color)
 {
 }

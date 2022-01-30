@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "buffers.h"
 
 enum class PrimitiveType {
     Triangle,
@@ -22,6 +23,8 @@ public:
 
     MeshType GetType() const { return m_Type; }
     PrimitiveType GetPrimitiveType() const { return m_PrimitiveType; }
+    VertexBuffer* GetVertexBuffer() const { return m_VertexBuffer; }
+    IndexBuffer* GetIndexBuffer() const { return m_IndexBuffer; }
 
     static void CreateBoxMesh(float width, float height, float depth) {
         float x2 = 0.5f * width;
@@ -68,4 +71,7 @@ private:
     std::vector<short> m_Indices;
     PrimitiveType m_PrimitiveType;
     MeshType m_Type;
+    // TODO: manage lifetime
+    VertexBuffer* m_VertexBuffer;
+    IndexBuffer* m_IndexBuffer;
 };

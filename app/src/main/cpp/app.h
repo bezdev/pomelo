@@ -32,11 +32,13 @@ public:
     App();
     ~App();
 
-    void Run();
-    void Initialize(android_app*);
     bool IsReady();
 
-    std::vector<char> ReadFile(const char* filename);
+    void Initialize(android_app*);
+    void Run();
+    void OnAppCommand(android_app*, int32_t);
+
+    std::vector<char> ReadFile(const char*);
 private:
     void CalculateFrameStats() {
         static int frameCount = 0;
@@ -71,6 +73,7 @@ private:
     android_app* m_App;
     Renderer* m_Renderer;
     Timer* m_GlobalTimer;
+    bool m_HasFocus;
     bool m_IsReady;
     static void OnAppCmd(struct android_app*, int32_t);
     static int32_t OnInputEvent(android_app*, AInputEvent*);

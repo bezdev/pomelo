@@ -2,20 +2,32 @@
 
 App::App() :
     m_GlobalTimer(new Timer()),
+    m_HasFocus(false),
     m_IsReady(false)
     { }
+
+bool App::IsReady() {
+    return m_HasFocus;
+}
+
+void App::Initialize(android_app* androidApp) {
+    m_App = androidApp;
+    m_App->userData = this;
+    m_App->onAppCmd = App::OnAppCmd;
+    m_App->onInputEvent = App::OnInputEvent;
+
+    m_Renderer = Renderer::GetInstance();
+}
 
 void App::Run() {
     bool isReady = false;
     bool isFirstFrame = true;
 
     while (1) {
-        if (!isReady) isReady = IsReady();
-
         int id;
         int events;
         android_poll_source* source;
-        while ((id = ALooper_pollAll(/*isReady ? 0 : -1*/ 0, NULL, &events, (void**)&source)) >= 0) {
+        while ((id = ALooper_pollAll((isReady = IsReady()) ? 0 : -1, NULL, &events, (void**)&source)) >= 0) {
             if (source != NULL) source->process(m_App, source);
 
             if (m_App->destroyRequested != 0) {
@@ -26,6 +38,7 @@ void App::Run() {
         if (!isReady) continue;
 
         if (isFirstFrame) {
+            m_Renderer->Initialize(m_App);
             m_GlobalTimer->Reset();
             isFirstFrame = false;
         } else {
@@ -38,28 +51,20 @@ void App::Run() {
     }
 }
 
-void App::Initialize(android_app* androidApp) {
-    m_App = androidApp;
-    m_App->userData = this;
-    m_App->onAppCmd = App::OnAppCmd;
-    m_App->onInputEvent = App::OnInputEvent;
-
-    m_Renderer = Renderer::GetInstance();
-}
-
-bool App::IsReady() {
-    return m_Renderer->IsInitialized();
-}
-
-void App::OnAppCmd(struct android_app* androidApp, int32_t cmd) {
+void App::OnAppCmd(struct android_app* androidApp, int32_t command) {
     App* app = (App*)androidApp->userData;
-    switch (cmd) {
+    app->OnAppCommand(androidApp, command);
+}
+
+void App::OnAppCommand(android_app* androidApp, int32_t command) {
+    switch (command) {
         case APP_CMD_SAVE_STATE:
             LOGI("APP_CMD_SAVE_STATE");
             break;
         case APP_CMD_INIT_WINDOW:
             LOGI("APP_CMD_INIT_WINDOW");
-            Renderer::GetInstance()->Initialize(androidApp);
+            m_HasFocus = true;
+            //Renderer::GetInstance()->Initialize(androidApp);
             //app->Initialize(androidApp);
             break;
         case APP_CMD_TERM_WINDOW:
@@ -70,12 +75,31 @@ void App::OnAppCmd(struct android_app* androidApp, int32_t cmd) {
             break;
         case APP_CMD_GAINED_FOCUS:
             LOGI("APP_CMD_GAINED_FOCUS");
+            m_HasFocus = true;
             break;
         case APP_CMD_LOST_FOCUS:
             LOGI("APP_CMD_LOST_FOCUS");
+            m_HasFocus = false;
             break;
         case APP_CMD_LOW_MEMORY:
             LOGI("APP_CMD_LOW_MEMORY");
+            break;
+        case APP_CMD_PAUSE:
+            LOGI("APP_CMD_PAUSE");
+            break;
+        case APP_CMD_RESUME:
+            LOGI("APP_CMD_RESUME");
+            break;
+    case APP_CMD_START:
+            LOGI("APP_CMD_START");
+            //mIsVisible = true;
+            break;
+        case APP_CMD_WINDOW_RESIZED:
+        case APP_CMD_CONFIG_CHANGED:
+            LOGI("APP_CMD_WINDOW_RESIZED");
+            break;
+        default:
+            LOGI("OnAppCommand: (unknown command)");
             break;
     }
 }

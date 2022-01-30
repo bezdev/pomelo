@@ -20,8 +20,10 @@ Renderer::~Renderer()
     Cleanup();
 }
 
-int Renderer::Initialize(android_app* app) {
-    if (!m_IsInitialized) {
+int Renderer::Initialize(android_app* app)
+{
+    if (!m_IsInitialized)
+    {
         _Initialize(app->window);
         LoadShaders();
 
@@ -30,21 +32,27 @@ int Renderer::Initialize(android_app* app) {
         Scene::CreateCubeScene();
 
         m_IsInitialized = true;
-    } else if(app->window != m_Window) {
+    }
+    else if(app->window != m_Window)
+    {
         THROW("not implemented");
-    } else {
+    }
+    else
+    {
         THROW("not implemented");
     }
 
     return 0;
 }
 
-int Renderer::_Initialize(ANativeWindow* window) {
+int Renderer::_Initialize(ANativeWindow* window)
+{
     m_Window = window;
     m_Display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     eglInitialize(m_Display, 0, 0);
 
-    const EGLint attributes[] = {
+    const EGLint attributes[] =
+    {
         EGL_RENDERABLE_TYPE,
         EGL_OPENGL_ES3_BIT,
         EGL_SURFACE_TYPE,
@@ -69,7 +77,8 @@ int Renderer::_Initialize(ANativeWindow* window) {
     //eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &m_ScreenWidth);
     //eglQuerySurface(m_Display, m_Surface, EGL_HEIGHT, &m_ScreenHeight);
 
-    const EGLint contextAttributes[] = {
+    const EGLint contextAttributes[] =
+    {
         EGL_CONTEXT_CLIENT_VERSION,
         3,
         EGL_NONE
@@ -82,9 +91,19 @@ int Renderer::_Initialize(ANativeWindow* window) {
 }
 
 void Renderer::LoadShaders() {
-    Shader::SOLID_COLOR_SHADER = Shader::LinkShader(
+    std::vector<ShaderVariable> variables
+    {
+        { ShaderVariableType::ATTRIBUTE, "vPosition" },
+        { ShaderVariableType::UNIFORM, "vColor" },
+        { ShaderVariableType::UNIFORM, "modelMatrix" },
+        { ShaderVariableType::UNIFORM, "viewMatrix" },
+        { ShaderVariableType::UNIFORM, "projectionMatrix" },
+    };
+
+    Shader::SOLID_COLOR_SHADER = new Shader(Shader::LinkShader(
         Shader::CompileShader(App::GetInstance()->ReadFile("shaders/SolidColor.vs"), GL_VERTEX_SHADER),
-        Shader::CompileShader(App::GetInstance()->ReadFile("shaders/SolidColor.fs"), GL_FRAGMENT_SHADER));
+        Shader::CompileShader(App::GetInstance()->ReadFile("shaders/SolidColor.fs"), GL_FRAGMENT_SHADER)),
+        variables);
 
     return;
 }
@@ -127,11 +146,69 @@ void Renderer::Render() {
         glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
     }
 
+    auto viewMatrix = glm::lookAt(glm::vec3(0, 0, -30), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+    auto ratio = 1.f * m_ScreenWidth / m_ScreenHeight;
+    auto projectionMatrix = glm::frustum(-ratio, ratio, -1.f, 1.f, 3.f, 500.f);
+    //auto projectionMatrix = glm::perspective(45, ratio, 3, 500);
+
+    static Shader* currentShader = nullptr;
+    static Material* currentMaterial = nullptr;
+    static Mesh* currentMesh = nullptr;
+    static GLuint currentPositionHandle = 0;
+    static GLuint currentColorHandle = 0;
+    static GLuint currentModelMatrixHandle = 0;
+    static GLuint currentViewMatrixHandle = 0;
+    static GLuint currentProjectionMatrixHandle = 0;
     for (auto itByMaterialType = m_RenderObjectCollection.GetRenderObjects()->begin(); itByMaterialType != m_RenderObjectCollection.GetRenderObjects()->end(); itByMaterialType++) {
         for (auto itByMeshType = itByMaterialType->second.begin(); itByMeshType != itByMaterialType->second.end(); itByMeshType++) {
             for (auto itModels = itByMeshType->second.begin(); itModels != itByMeshType->second.end(); itModels++) {
                 Model* model = *itModels;
+                Material* material = model->GetMaterial();
+                Shader* shader = material->GetShader();
+                Mesh* mesh = model->GetMesh();
+                if (shader != currentShader) {
+                    glUseProgram(shader->GetProgram());
+                    currentShader = shader;
 
+                    // TODO: support more shaders
+                    auto variables = currentShader->GetVariables();
+                    currentPositionHandle = variables[0];
+                    currentColorHandle = variables[1];
+                    currentModelMatrixHandle = variables[2];
+                    currentViewMatrixHandle = variables[3];
+                    currentProjectionMatrixHandle = variables[4];
+
+                    glUniformMatrix4fv(currentViewMatrixHandle, 1, false, glm::value_ptr(viewMatrix));
+                    glUniformMatrix4fv(currentProjectionMatrixHandle, 1, false, glm::value_ptr(projectionMatrix));
+                }
+
+                if (mesh != currentMesh) {
+                    // TODO: make this better
+                    glBindBuffer(GL_ARRAY_BUFFER, 0);
+                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+                    currentMesh = mesh;
+                    if (currentMesh == Mesh::PRIMITIVE_BOX_TRIANGLE) {
+                        currentMesh->GetVertexBuffer()->BindBuffer();
+                        currentMesh->GetIndexBuffer()->BindBuffer();
+                        glVertexAttribPointer(currentPositionHandle, 3, GL_FLOAT, false, 3 * 4, 0);
+                        glEnableVertexAttribArray(currentPositionHandle);
+                    }
+                }
+
+                glUniformMatrix4fv(currentModelMatrixHandle, 1, false, glm::value_ptr(glm::mat4(1.f)));
+
+                // Per object properties
+                if (currentMaterial != material) {
+                    currentMaterial = material;
+
+                    if (currentMaterial->GetType() == MaterialType::SolidColor) {
+                        // TODO: replace with actual color from material
+                        glUniform4f(currentColorHandle, 0.2f, 0.709803922f, 0.898039216f, 1.0f);
+                    }
+                }
+
+                glDrawElements(GL_TRIANGLES, currentMesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_SHORT, 0);
             }
         }
     }

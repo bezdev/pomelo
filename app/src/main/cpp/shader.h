@@ -1,15 +1,35 @@
 #pragma once
 
+#include <vector>
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 
 #include "util.h"
 
-class Shader {
-public:
-    static GLuint SOLID_COLOR_SHADER;
+enum ShaderVariableType
+{
+    ATTRIBUTE,
+    UNIFORM
+};
 
-    static GLuint CompileShader(std::vector<char> source, GLenum shaderType) {
+struct ShaderVariable {
+    ShaderVariableType Type;
+    const GLchar* Name;
+};
+
+class Shader
+{
+public:
+    static Shader* SOLID_COLOR_SHADER;
+
+    Shader(GLuint program, std::vector<ShaderVariable>& variables);
+    ~Shader();
+
+    GLuint GetProgram() const { return m_Program; }
+    const std::vector<GLuint>& GetVariables() const { return m_Variables; }
+
+    static GLuint CompileShader(const std::vector<char>& source, GLenum shaderType)
+    {
         GLuint shaderId = glCreateShader(shaderType);
         const GLchar* rawSource = (GLchar*)&source[0];
         int32_t size = source.size();
@@ -19,7 +39,8 @@ public:
 #ifdef DEBUG
         GLint logLength;
         glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logLength);
-        if (logLength > 0) {
+        if (logLength > 0)
+        {
             GLchar* log = (GLchar*)malloc(logLength);
             glGetShaderInfoLog(shaderId, logLength, &logLength, log);
             LOGE("Shader compile failed:\n%s", log);
@@ -30,7 +51,8 @@ public:
         return shaderId;
     }
 
-    static GLuint LinkShader(GLuint vs, GLuint fs) {
+    static GLuint LinkShader(GLuint vs, GLuint fs)
+    {
         GLuint program = glCreateProgram();
         glAttachShader(program, vs);
         glAttachShader(program, fs);
@@ -39,7 +61,8 @@ public:
 #ifdef DEBUG
         GLint logLength;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-        if (logLength > 0) {
+        if (logLength > 0)
+        {
             GLchar* log = (GLchar*)malloc(logLength);
             glGetProgramInfoLog(program, logLength, &logLength, log);
             LOGE("Program link failed:\n%s", log);
@@ -50,7 +73,8 @@ public:
 
         GLint status;
         glGetProgramiv(program, GL_LINK_STATUS, &status);
-        if (status == 0) {
+        if (status == 0)
+        {
             glDeleteShader(vs);
             glDeleteShader(fs);
             glDeleteProgram(program);
@@ -60,4 +84,9 @@ public:
 
         return program;
     }
+private:
+    Shader();
+
+    GLuint m_Program;
+    std::vector<GLuint> m_Variables;
 };

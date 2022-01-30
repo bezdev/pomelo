@@ -10,6 +10,10 @@
 #include "scene.h"
 #include "util.h"
 
+// TODO: move to other file
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 class App;
 
 class Renderer {

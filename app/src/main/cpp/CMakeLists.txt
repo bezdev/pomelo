@@ -19,6 +19,7 @@ add_library(fame-native
     app.cpp
     renderer.cpp
     shader.cpp
+    buffers.cpp
     timer.cpp
     mesh.cpp
     scene.cpp
