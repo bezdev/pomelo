@@ -13,7 +13,7 @@
 #include "timer.h"
 #include "util.h"
 
-#define NATIVEACTIVITY_CLASS_NAME "android/app/NativeActivity"
+#define NATIVE_ACTIVITY_CLASS_NAME "android/app/NativeActivity"
 
 #define DEBUG 1
 
@@ -21,18 +21,19 @@ class Renderer;
 
 class App {
 public:
-    static App* GetInstance() {
-        static App* s_App = nullptr;
-        if (s_App == nullptr) {
-            s_App = new App();
-        }
-        return s_App;
+    static App* GetInstance()
+    {
+        static App* instance = new App();
+        if (instance == nullptr) LOGD("YEP TRUE");
+        else LOGD("YEP FALSE");
+        return instance;
     };
 
     App();
     ~App();
 
     bool IsReady();
+    android_app* GetApp() { return m_App; }
 
     void Initialize(android_app*);
     void Run();
@@ -40,22 +41,7 @@ public:
 
     std::vector<char> ReadFile(const char*);
 private:
-    void CalculateFrameStats() {
-        static int frameCount = 0;
-        static float timeElapsed = 0.0f;
-
-        frameCount++;
-        timeElapsed += m_GlobalTimer->GetDelta();
-
-        if (timeElapsed >= 1000.0f)
-        {
-            float fps = frameCount * 1000.f / timeElapsed;
-            LOGI("FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTime(), frameCount);
-
-            frameCount = 0;
-            timeElapsed -= 1000.0f;
-        }
-    }
+    void CalculateFrameStats();
 
     static void DetachCurrentThreadDtor(void* p) {
         LOGI("detached current thread");
@@ -74,6 +60,8 @@ private:
     Renderer* m_Renderer;
     Timer* m_GlobalTimer;
     bool m_HasFocus;
+    bool m_IsVisible;
+    bool m_HasWindow;
     bool m_IsReady;
     static void OnAppCmd(struct android_app*, int32_t);
     static int32_t OnInputEvent(android_app*, AInputEvent*);

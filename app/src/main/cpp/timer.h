@@ -1,15 +1,27 @@
 #pragma once
 
 #include <time.h>
+
 #include "util.h"
 
-class Timer
+class ITimer {
+    virtual float GetTotalTime() const = 0;
+    virtual float GetDelta() const = 0;
+    virtual long long GetTime() const = 0;
+    virtual void Update() = 0;
+    virtual void Reset() = 0;
+    virtual void Start() = 0;
+    virtual void Pause() = 0;
+};
+
+class Timer : ITimer
 {
 public:
     Timer();
 
-    float GetTime() const;
+    float GetTotalTime() const;
     float GetDelta() const;
+    long long GetTime() const;
 
     void Update();
 
@@ -17,28 +29,14 @@ public:
     void Start();
     void Pause();
 private:
-    timespec m_pauseTime;
-    timespec m_prevTime;
-    timespec m_startTime;
-    timespec m_currentTime;
-    float m_stoppedTime;
-
-    float m_delta;
-
-    bool m_isPaused;
-
-    timespec GetCurrentTime();
-
-    static float Diff(timespec start, timespec end) {
-        timespec ts;
-        if ((end.tv_nsec-start.tv_nsec) < 0 ) {
-            ts.tv_sec = end.tv_sec-start.tv_sec-1;
-            ts.tv_nsec = 1000000000 + end.tv_nsec-start.tv_nsec;
-        } else {
-            ts.tv_sec = end.tv_sec-start.tv_sec;
-            ts.tv_nsec = end.tv_nsec-start.tv_nsec;
-        }
-
-        return static_cast<float>(ts.tv_sec * 1000 + ts.tv_nsec * 1.f / 1e6);
-    }
+    void UpdateTotalTime();
+    void UpdateDelta(long long delta);
+    long long m_StartTime;
+    long long m_PrevTime;
+    long long m_CurrentTime;
+    long long m_PauseTime;
+    long long m_StoppedTime;
+    float m_TotalTime;
+    float m_Delta;
+    bool m_IsPaused;
 };

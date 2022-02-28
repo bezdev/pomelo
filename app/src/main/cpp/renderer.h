@@ -18,12 +18,11 @@ class App;
 
 class Renderer {
 public:
-    static Renderer* GetInstance() {
-        static Renderer* s_Renderer = nullptr;
-        if (s_Renderer == nullptr) {
-            s_Renderer = new Renderer();
-        }
-        return s_Renderer;
+    static Renderer* GetInstance()
+    {
+        static Renderer* instance = new Renderer();
+        LOGD("Renderer::GetInstance()");
+        return instance;
     };
 
     Renderer();
@@ -37,7 +36,6 @@ public:
 
     void Render();
 private:
-    App* m_App;
     bool m_IsInitialized;
     ANativeWindow* m_Window;
     EGLDisplay m_Display;
@@ -48,7 +46,8 @@ private:
     int32_t m_ScreenWidth;
     int32_t m_ScreenHeight;
 
-    RenderObjectCollection m_RenderObjectCollection;
+    //RenderObjectCollection m_RenderObjectCollection;
+    std::vector<Model*> m_RenderObjects;
 
     int _Initialize(ANativeWindow* app);
 

@@ -6,16 +6,19 @@ import android.app.NativeActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class MainActivity extends NativeActivity {
-
-    // Used to load the 'native-lib' library on application startup.
-    static {
+public class MainActivity extends NativeActivity
+{
+    static
+    {
         System.loadLibrary("fame-native");
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
+        new JNIUtil().IsAppReady();
         //setContentView(R.layout.activity_main);
 
         // Example of a call to a native method
@@ -28,4 +31,10 @@ public class MainActivity extends NativeActivity {
      * which is packaged with this application.
      */
     //public native String stringFromJNI();
+
+    public static void Log(String text)
+    {
+        System.out.println(text);
+        return;
+    }
 }

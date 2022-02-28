@@ -16,7 +16,7 @@ public:
     ~RenderObjectCollection();
 
     void Add(Model* model);
-    RenderObjects* GetRenderObjects() { return &m_RenderObjects; };
+    RenderObjects& GetRenderObjects() { return m_RenderObjects; };
 private:
     RenderObjects m_RenderObjects;
 };

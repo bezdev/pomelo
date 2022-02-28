@@ -27,6 +27,7 @@ add_library(fame-native
     material.cpp
     renderobject.cpp
     renderobjectcollection.cpp
+    jniutil.cpp
 )
 
 target_include_directories(fame-native

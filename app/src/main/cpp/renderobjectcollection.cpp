@@ -9,7 +9,8 @@ RenderObjectCollection::RenderObjectCollection()
 // TODO: cleanup
 RenderObjectCollection::~RenderObjectCollection()
 {
-
+    LOGD("RenderObjectCollection::~RenderObjectCollection %d", m_RenderObjects.size());
+    m_RenderObjects.clear();
 }
 
 void RenderObjectCollection::Add(Model* model)

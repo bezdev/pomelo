@@ -2,9 +2,9 @@
 
 #include "renderer.h"
 #include "shader.h"
+#include "jniutil.h"
 
 Renderer::Renderer():
-    m_App(App::GetInstance()),
     m_IsInitialized(false),
     m_Window(nullptr),
     m_Display(EGL_NO_DISPLAY),
@@ -17,6 +17,7 @@ Renderer::Renderer():
 
 Renderer::~Renderer()
 {
+    LOGD("Renderer::~Renderer");
     Cleanup();
 }
 
@@ -25,21 +26,19 @@ int Renderer::Initialize(android_app* app)
     if (!m_IsInitialized)
     {
         _Initialize(app->window);
-        LoadShaders();
+        //JNIUtil::GetInstance()->Initialize(app->activity, m_App); TODO NOT NEEDED?
 
-        // TODO: Scene creation should happen somewhere else
-        Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
-        Scene::CreateCubeScene();
+        LoadShaders();
 
         m_IsInitialized = true;
     }
     else if(app->window != m_Window)
     {
-        THROW("not implemented");
+        THROW("not implemented 1");
     }
     else
     {
-        THROW("not implemented");
+        THROW("not implemented 2");
     }
 
     return 0;
@@ -125,11 +124,12 @@ void Renderer::Cleanup() {
 }
 
 void Renderer::AddRenderObject(Model* model) {
-    m_RenderObjectCollection.Add(model);
+    //m_RenderObjectCollection.Add(model);
+    m_RenderObjects.push_back(model);
 }
 
 void Renderer::Render() {
-    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_CULL_FACE);
@@ -146,7 +146,7 @@ void Renderer::Render() {
         glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
     }
 
-    auto viewMatrix = glm::lookAt(glm::vec3(0, 0, -30), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+    auto viewMatrix = glm::lookAt(glm::vec3(10, 10, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     auto ratio = 1.f * m_ScreenWidth / m_ScreenHeight;
     auto projectionMatrix = glm::frustum(-ratio, ratio, -1.f, 1.f, 3.f, 500.f);
     //auto projectionMatrix = glm::perspective(45, ratio, 3, 500);
@@ -159,9 +159,11 @@ void Renderer::Render() {
     static GLuint currentModelMatrixHandle = 0;
     static GLuint currentViewMatrixHandle = 0;
     static GLuint currentProjectionMatrixHandle = 0;
-    for (auto itByMaterialType = m_RenderObjectCollection.GetRenderObjects()->begin(); itByMaterialType != m_RenderObjectCollection.GetRenderObjects()->end(); itByMaterialType++) {
-        for (auto itByMeshType = itByMaterialType->second.begin(); itByMeshType != itByMaterialType->second.end(); itByMeshType++) {
-            for (auto itModels = itByMeshType->second.begin(); itModels != itByMeshType->second.end(); itModels++) {
+    int objectCount = 0;
+    //for (auto itByMaterialType = m_RenderObjectCollection.GetRenderObjects().begin(); itByMaterialType != m_RenderObjectCollection.GetRenderObjects().end(); itByMaterialType++) {
+    //    for (auto itByMeshType = itByMaterialType->second.begin(); itByMeshType != itByMaterialType->second.end(); itByMeshType++) {
+    //        for (auto itModels = itByMeshType->second.begin(); itModels != itByMeshType->second.end(); itModels++) {
+    for (auto itModels = m_RenderObjects.begin(); itModels != m_RenderObjects.end(); itModels++) {
                 Model* model = *itModels;
                 Material* material = model->GetMaterial();
                 Shader* shader = material->GetShader();
@@ -210,8 +212,8 @@ void Renderer::Render() {
 
                 glDrawElements(GL_TRIANGLES, currentMesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_SHORT, 0);
             }
-        }
-    }
+   //     }
+   // }
 
     eglSwapBuffers(m_Display, m_Surface);
 }

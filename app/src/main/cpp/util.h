@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <cstdio>
 
 #include <android/log.h>
 

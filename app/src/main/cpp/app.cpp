@@ -1,13 +1,27 @@
 #include "app.h"
+#include "jniutil.h"
 
 App::App() :
-    m_GlobalTimer(new Timer()),
     m_HasFocus(false),
-    m_IsReady(false)
-    { }
+    m_IsReady(false),
+    m_HasWindow(false),
+    m_IsVisible(false)
+    { 
+        LOGD("App::App");
+        LOGD("Timer: %p", m_GlobalTimer);
+    }
+
+
+App::~App() {
+    LOGD("App::~App");
+
+    delete Renderer::GetInstance();
+    delete JNIUtil::GetInstance();
+    delete m_GlobalTimer;
+}
 
 bool App::IsReady() {
-    return m_HasFocus;
+    return m_HasFocus && m_HasWindow && m_IsVisible;
 }
 
 void App::Initialize(android_app* androidApp) {
@@ -16,29 +30,45 @@ void App::Initialize(android_app* androidApp) {
     m_App->onAppCmd = App::OnAppCmd;
     m_App->onInputEvent = App::OnInputEvent;
 
+    m_GlobalTimer = new Timer();
     m_Renderer = Renderer::GetInstance();
+    //JNIUtil::GetInstance()->Initialize(androidApp->activity, this);
+    JNIUtil::GetInstance()->Initialize(this);
 }
 
 void App::Run() {
-    bool isReady = false;
+    bool isReady;
     bool isFirstFrame = true;
 
-    while (1) {
+    while (true) {
         int id;
         int events;
         android_poll_source* source;
+        bool shouldDestroy = false;
         while ((id = ALooper_pollAll((isReady = IsReady()) ? 0 : -1, NULL, &events, (void**)&source)) >= 0) {
+            if (shouldDestroy) continue;
+
+            LOGD("BEZDEBUG m_App %p", &m_App);
             if (source != NULL) source->process(m_App, source);
 
             if (m_App->destroyRequested != 0) {
+                shouldDestroy = true;
                 return;
             }
         }
 
+        if (shouldDestroy) return;
+
         if (!isReady) continue;
 
         if (isFirstFrame) {
+            LOGD("first frame");
             m_Renderer->Initialize(m_App);
+
+            // TODO: Scene creation should happen somewhere else
+            Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
+            Scene::CreateCubeScene();
+
             m_GlobalTimer->Reset();
             isFirstFrame = false;
         } else {
@@ -63,15 +93,14 @@ void App::OnAppCommand(android_app* androidApp, int32_t command) {
             break;
         case APP_CMD_INIT_WINDOW:
             LOGI("APP_CMD_INIT_WINDOW");
-            m_HasFocus = true;
+            //m_HasFocus = true; // TODO: maybe add abck
+            m_HasWindow = true;
             //Renderer::GetInstance()->Initialize(androidApp);
             //app->Initialize(androidApp);
             break;
         case APP_CMD_TERM_WINDOW:
             LOGI("APP_CMD_TERM_WINDOW");
-            break;
-        case APP_CMD_STOP:
-            LOGI("APP_CMD_STOP");
+            m_HasWindow = false;
             break;
         case APP_CMD_GAINED_FOCUS:
             LOGI("APP_CMD_GAINED_FOCUS");
@@ -84,15 +113,19 @@ void App::OnAppCommand(android_app* androidApp, int32_t command) {
         case APP_CMD_LOW_MEMORY:
             LOGI("APP_CMD_LOW_MEMORY");
             break;
+        case APP_CMD_STOP:
+            LOGI("APP_CMD_STOP");
+            m_IsVisible = false;
+            break;
         case APP_CMD_PAUSE:
             LOGI("APP_CMD_PAUSE");
             break;
         case APP_CMD_RESUME:
             LOGI("APP_CMD_RESUME");
             break;
-    case APP_CMD_START:
+        case APP_CMD_START:
             LOGI("APP_CMD_START");
-            //mIsVisible = true;
+            m_IsVisible = true;
             break;
         case APP_CMD_WINDOW_RESIZED:
         case APP_CMD_CONFIG_CHANGED:
@@ -232,7 +265,7 @@ jstring App::GetExternalFilesDirectory(JNIEnv* env) {
     jstring path = nullptr;
     
     // Invoking getExternalFilesDir() java API
-    jclass activityClass = env->FindClass(NATIVEACTIVITY_CLASS_NAME);
+    jclass activityClass = env->FindClass(NATIVE_ACTIVITY_CLASS_NAME);
     jmethodID mID = env->GetMethodID(activityClass, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
     jobject fileObject = env->CallObjectMethod(m_App->activity->clazz, mID, NULL);
     if (fileObject) {
@@ -242,4 +275,26 @@ jstring App::GetExternalFilesDirectory(JNIEnv* env) {
     }
 
     return path;
+}
+
+void App::CalculateFrameStats() {
+    static int frameCount = 0;
+    static float timeElapsed = 0.0f;
+
+    frameCount++;
+    timeElapsed += m_GlobalTimer->GetDelta();
+
+    if (timeElapsed >= 1000.0f)
+    {
+        float fps = frameCount * 1000.f / timeElapsed;
+
+        // Log
+        static char buffer[100];
+        sprintf(buffer, "FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
+        JNIUtil::GetInstance()->LogTrigger(buffer);
+        LOGI("FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
+
+        frameCount = 0;
+        timeElapsed -= 1000.0f;
+    }
 }
