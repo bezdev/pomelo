@@ -21,6 +21,9 @@ class Renderer;
 
 class App {
 public:
+    App();
+    ~App();
+
     static App* GetInstance()
     {
         static App* instance = new App();
@@ -28,9 +31,6 @@ public:
         else LOGD("YEP FALSE");
         return instance;
     };
-
-    App();
-    ~App();
 
     bool IsReady();
     android_app* GetApp() { return m_App; }

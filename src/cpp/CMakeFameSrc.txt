@@ -1,0 +1,18 @@
+if(DEFINED BUILD_ANDROID)
+    set(SOURCES_BASE_PATH ${CMAKE_CURRENT_LIST_DIR})
+endif()
+
+set(SOURCE_FILES
+    ${SOURCES_BASE_PATH}/app.cpp
+    ${SOURCES_BASE_PATH}/renderer.cpp
+    ${SOURCES_BASE_PATH}/shader.cpp
+    ${SOURCES_BASE_PATH}/buffers.cpp
+    ${SOURCES_BASE_PATH}/timer.cpp
+    ${SOURCES_BASE_PATH}/mesh.cpp
+    ${SOURCES_BASE_PATH}/scene.cpp
+    ${SOURCES_BASE_PATH}/model.cpp
+    ${SOURCES_BASE_PATH}/material.cpp
+    ${SOURCES_BASE_PATH}/renderobject.cpp
+    ${SOURCES_BASE_PATH}/renderobjectcollection.cpp
+    ${SOURCES_BASE_PATH}/jniutil.cpp
+)
