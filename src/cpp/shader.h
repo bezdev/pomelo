@@ -1,14 +1,21 @@
 #pragma once
 
-#include <vector>
+#ifdef BUILD_ANDROID
 #include <EGL/egl.h>
-#include <GLES2/gl2.h>
+#include <GLES3/gl3.h>
+#endif
+
+#ifdef BUILD_DESKTOP
+#include <glad/glad.h>
+#endif
+
+#include <vector>
 
 #include "util.h"
 
 enum ShaderVariableType
 {
-    ATTRIBUTE,
+    ATTRIBUTE = 0,
     UNIFORM
 };
 
@@ -28,7 +35,7 @@ public:
     GLuint GetProgram() const { return m_Program; }
     const std::vector<GLuint>& GetVariables() const { return m_Variables; }
 
-    static GLuint CompileShader(const std::vector<char>& source, GLenum shaderType)
+    static GLuint CompileShader(const char* name, const std::vector<char>& source, GLenum shaderType)
     {
         GLuint shaderId = glCreateShader(shaderType);
         const GLchar* rawSource = (GLchar*)&source[0];
@@ -43,7 +50,7 @@ public:
         {
             GLchar* log = (GLchar*)malloc(logLength);
             glGetShaderInfoLog(shaderId, logLength, &logLength, log);
-            LOGE("Shader compile failed:\n%s", log);
+            LOGE("Shader compile failed: %s\n%s", name, log);
             free(log);
             THROW("Shader compile failed");
         }

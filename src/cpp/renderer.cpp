@@ -1,4 +1,6 @@
+#ifdef BUILD_ANDROID
 #include <EGL/egl.h>
+#endif
 
 #include "renderer.h"
 #include "shader.h"
@@ -21,18 +23,26 @@ Renderer::~Renderer()
     Cleanup();
 }
 
-int Renderer::Initialize(android_app* app)
+int Renderer::Initialize()
 {
     if (!m_IsInitialized)
     {
-        _Initialize(app->window);
-        //JNIUtil::GetInstance()->Initialize(app->activity, m_App); TODO NOT NEEDED?
+#ifdef BUILD_ANDROID
+        _Initialize(App::GetInstance()->GetApp()->window);
+#endif
+        GLint majorVersion;
+        glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+        GLint minorVersion;
+        glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+        LOGI("OpenGL Version: %d.%d", majorVersion, minorVersion);
 
+        // TODO: figure out better way to init shader
         LoadShaders();
 
         m_IsInitialized = true;
     }
-    else if(app->window != m_Window)
+#ifdef BUILD_ANDROID
+    else if(App::GetInstance()->GetApp()->window != m_Window)
     {
         THROW("not implemented 1");
     }
@@ -40,12 +50,14 @@ int Renderer::Initialize(android_app* app)
     {
         THROW("not implemented 2");
     }
+#endif
 
     return 0;
 }
 
 int Renderer::_Initialize(ANativeWindow* window)
 {
+#ifdef BUILD_ANDROID
     m_Window = window;
     m_Display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     eglInitialize(m_Display, 0, 0);
@@ -85,6 +97,7 @@ int Renderer::_Initialize(ANativeWindow* window)
     m_Context = eglCreateContext(m_Display, m_Config, NULL, contextAttributes);
 
     THROW_IF_FALSE(eglMakeCurrent(m_Display, m_Surface, m_Surface, m_Context), "eglMakeCurrent failed");
+#endif
 
     return 0;
 }
@@ -100,14 +113,15 @@ void Renderer::LoadShaders() {
     };
 
     Shader::SOLID_COLOR_SHADER = new Shader(Shader::LinkShader(
-        Shader::CompileShader(App::GetInstance()->ReadFile("shaders/SolidColor.vs"), GL_VERTEX_SHADER),
-        Shader::CompileShader(App::GetInstance()->ReadFile("shaders/SolidColor.fs"), GL_FRAGMENT_SHADER)),
+        Shader::CompileShader("shaders/SolidColor.vs", Util::ReadFile("shaders/SolidColor.vs"), GL_VERTEX_SHADER),
+        Shader::CompileShader("shaders/SolidColor.fs", Util::ReadFile("shaders/SolidColor.fs"), GL_FRAGMENT_SHADER)),
         variables);
 
     return;
 }
 
 void Renderer::Cleanup() {
+#ifdef BUILD_ANDROID
     if (m_Display != EGL_NO_DISPLAY) {
         eglMakeCurrent(m_Display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
@@ -121,11 +135,19 @@ void Renderer::Cleanup() {
 
         eglTerminate(m_Display);
     }
+#endif
 }
 
 void Renderer::AddRenderObject(Model* model) {
     //m_RenderObjectCollection.Add(model);
     m_RenderObjects.push_back(model);
+}
+
+void Renderer::UpdateWindowSize(int width, int height) {
+    m_ScreenWidth = width;
+    m_ScreenHeight = height;
+
+    glViewport(0, 0, width, height);
 }
 
 void Renderer::Render() {
@@ -135,6 +157,7 @@ void Renderer::Render() {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+#ifdef BUILD_ANDROID
     int32_t width, height;
     eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &width);
     eglQuerySurface(m_Display, m_Surface, EGL_HEIGHT, &height);
@@ -145,6 +168,8 @@ void Renderer::Render() {
         m_ScreenHeight = height;
         glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
     }
+#endif
+    glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 
     auto viewMatrix = glm::lookAt(glm::vec3(10, 10, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     auto ratio = 1.f * m_ScreenWidth / m_ScreenHeight;
@@ -180,8 +205,8 @@ void Renderer::Render() {
                     currentViewMatrixHandle = variables[3];
                     currentProjectionMatrixHandle = variables[4];
 
-                    glUniformMatrix4fv(currentViewMatrixHandle, 1, false, glm::value_ptr(viewMatrix));
-                    glUniformMatrix4fv(currentProjectionMatrixHandle, 1, false, glm::value_ptr(projectionMatrix));
+                    glUniformMatrix4fv(currentViewMatrixHandle, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+                    glUniformMatrix4fv(currentProjectionMatrixHandle, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
                 }
 
                 if (mesh != currentMesh) {
@@ -191,14 +216,14 @@ void Renderer::Render() {
 
                     currentMesh = mesh;
                     if (currentMesh == Mesh::PRIMITIVE_BOX_TRIANGLE) {
-                        currentMesh->GetVertexBuffer()->BindBuffer();
-                        currentMesh->GetIndexBuffer()->BindBuffer();
-                        glVertexAttribPointer(currentPositionHandle, 3, GL_FLOAT, false, 3 * 4, 0);
-                        glEnableVertexAttribArray(currentPositionHandle);
+                        currentMesh->GetVertexArray()->Bind();
+                        currentMesh->GetIndexBuffer()->Bind();
+                        //glVertexAttribPointer(currentPositionHandle, 3, GL_FLOAT, GL_FALSE, 3 * 4, 0);
+                        //glEnableVertexAttribArray(currentPositionHandle);
                     }
                 }
 
-                glUniformMatrix4fv(currentModelMatrixHandle, 1, false, glm::value_ptr(glm::mat4(1.f)));
+                glUniformMatrix4fv(currentModelMatrixHandle, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
 
                 // Per object properties
                 if (currentMaterial != material) {
@@ -215,5 +240,7 @@ void Renderer::Render() {
    //     }
    // }
 
+#ifdef BUILD_ANDROID
     eglSwapBuffers(m_Display, m_Surface);
+#endif
 }

@@ -23,7 +23,7 @@ public:
 
     MeshType GetType() const { return m_Type; }
     PrimitiveType GetPrimitiveType() const { return m_PrimitiveType; }
-    VertexBuffer* GetVertexBuffer() const { return m_VertexBuffer; }
+    VertexArray* GetVertexArray() const { return m_VertexArray; }
     IndexBuffer* GetIndexBuffer() const { return m_IndexBuffer; }
 
     static void CreateBoxMesh(float width, float height, float depth) {
@@ -72,6 +72,6 @@ private:
     PrimitiveType m_PrimitiveType;
     MeshType m_Type;
     // TODO: manage lifetime
-    VertexBuffer* m_VertexBuffer;
+    VertexArray* m_VertexArray;
     IndexBuffer* m_IndexBuffer;
 };

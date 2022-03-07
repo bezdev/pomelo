@@ -1,51 +1,128 @@
 #include "app.h"
+
+#ifdef BUILD_ANDROID
 #include "jniutil.h"
+#endif
+#ifdef BUILD_DESKTOP
+#endif
 
 App::App() :
+#ifdef BUILD_ANDROID
     m_HasFocus(false),
-    m_IsReady(false),
     m_HasWindow(false),
     m_IsVisible(false)
-    { 
-        LOGD("App::App");
-        LOGD("Timer: %p", m_GlobalTimer);
-    }
+#endif
+#ifdef BUILD_DESKTOP
+    m_ScreenWidth(800),
+    m_ScreenHeight(600)
+#endif
+{ }
 
-
-App::~App() {
+App::~App()
+{
     LOGD("App::~App");
 
+#ifdef BUILD_DESKTOP
+    glfwTerminate();
+#endif
+
     delete Renderer::GetInstance();
+
+#ifdef BUILD_ANDROID
     delete JNIUtil::GetInstance();
+#endif
+
     delete m_GlobalTimer;
 }
 
-bool App::IsReady() {
+#ifdef BUILD_ANDROID
+bool App::IsReady()
+{
     return m_HasFocus && m_HasWindow && m_IsVisible;
 }
+#endif
 
-void App::Initialize(android_app* androidApp) {
+#ifdef BUILD_DESKTOP
+void glfwOnError(int error, const char* description)
+{
+    // print message in Windows popup dialog box
+    MessageBox(NULL, description, "GLFW error", MB_OK);
+}
+#endif
+
+#ifdef BUILD_ANDROID
+int App::Initialize(android_app* androidApp)
+#endif
+#ifdef BUILD_DESKTOP
+int App::Initialize()
+#endif
+{
+#ifdef BUILD_ANDROID
     m_App = androidApp;
     m_App->userData = this;
     m_App->onAppCmd = App::OnAppCmd;
     m_App->onInputEvent = App::OnInputEvent;
+#endif
+#ifdef BUILD_DESKTOP
+    glfwSetErrorCallback(glfwOnError);
+
+    GLenum err = glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    m_Window = glfwCreateWindow(m_ScreenWidth, m_ScreenHeight, "fame", NULL, NULL);
+    if (m_Window == NULL)
+    {
+        // std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(m_Window);
+    glfwSetFramebufferSizeCallback(m_Window, SetFramebufferSizeCallback);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        LOGE("Failed to initialize GLAD");
+        return -1;
+    }
+#endif
 
     m_GlobalTimer = new Timer();
     m_Renderer = Renderer::GetInstance();
-    //JNIUtil::GetInstance()->Initialize(androidApp->activity, this);
+
+#ifdef BUILD_ANDROID
     JNIUtil::GetInstance()->Initialize(this);
+#endif
+#ifdef BUILD_DESKTOP
+    UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
+#endif
+
+    return 0;
 }
 
 void App::Run() {
     bool isReady;
     bool isFirstFrame = true;
 
-    while (true) {
+#ifdef BUILD_ANDROID
+    while (true)
+#endif
+#ifdef BUILD_DESKTOP
+    while (!glfwWindowShouldClose(m_Window))
+#endif
+    {
+#ifdef BUILD_ANDROID
         int id;
         int events;
-        android_poll_source* source;
+        android_poll_source *source;
         bool shouldDestroy = false;
-        while ((id = ALooper_pollAll((isReady = IsReady()) ? 0 : -1, NULL, &events, (void**)&source)) >= 0) {
+        while ((id = ALooper_pollAll((isReady = IsReady()) ? 0 : -1, NULL, &events,
+                                     (void **) &source)) >= 0) {
             if (shouldDestroy) continue;
 
             LOGD("BEZDEBUG m_App %p", &m_App);
@@ -60,10 +137,13 @@ void App::Run() {
         if (shouldDestroy) return;
 
         if (!isReady) continue;
-
+#endif
+#ifdef BUILD_DESKTOP
+        processInput(m_Window);
+#endif
         if (isFirstFrame) {
             LOGD("first frame");
-            m_Renderer->Initialize(m_App);
+            m_Renderer->Initialize();
 
             // TODO: Scene creation should happen somewhere else
             Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
@@ -78,9 +158,15 @@ void App::Run() {
         m_Renderer->Render();
 
         CalculateFrameStats();
+
+#ifdef BUILD_DESKTOP
+        glfwSwapBuffers(m_Window);
+        glfwPollEvents();
+#endif
     }
 }
 
+#ifdef BUILD_ANDROID
 void App::OnAppCmd(struct android_app* androidApp, int32_t command) {
     App* app = (App*)androidApp->userData;
     app->OnAppCommand(androidApp, command);
@@ -192,89 +278,27 @@ return 1;
 */
     return 1;
 }
-
-std::vector<char> App::ReadFile(const char* filename) {
-    std::vector<char> data;
-
-#if 0
-    if (m_App->activity == nullptr) {
-        THROW("Activity is null");
-    }
-
-    std::lock_guard<std::mutex> lock(m_ActivityMutex);
-
-    JNIEnv* env = AttachCurrentThread();
-    jstring jPath = GetExternalFilesDirectory(env);
-
-    std::string s;
-    if (jPath) {
-        const char* path = env->GetStringUTFChars(jPath, NULL);
-        s = std::string(path);
-        if (filename[0] != '/') {
-            s.append("/");
-        }
-        s.append(filename);
-        env->ReleaseStringUTFChars(jPath, path);
-        env->DeleteLocalRef(jPath);
-    }
-
-    LOGD("PATH: %s", s.c_str());
-    DetachCurrentThread();
 #endif
-    AAssetManager* assetManager = m_App->activity->assetManager;
-    AAsset* assetFile = AAssetManager_open(assetManager, filename, AASSET_MODE_BUFFER);
-    if (!assetFile) {
-        LOGE("file does not exist: %s", filename);
-        THROW_FILE_NOT_FOUND();
-    }
 
-    char* rawData = (char*)AAsset_getBuffer(assetFile);
-    int32_t size = AAsset_getLength(assetFile);
-    if (rawData == NULL) {
-        AAsset_close(assetFile);
-        LOGE("error reading file: %s", filename);
-    }
-
-    data.reserve(size);
-    data.assign(rawData, rawData + size);
-
-    AAsset_close(assetFile);
-
-    return data;
+#ifdef BUILD_DESKTOP
+void App::processInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
 }
 
-JNIEnv* App::AttachCurrentThread() {
-    JNIEnv* env;
-    if (m_App->activity->vm->GetEnv((void**)&env, JNI_VERSION_1_4) == JNI_OK)
-        return env;
-    m_App->activity->vm->AttachCurrentThread(&env, NULL);
-    /*
-    pthread_key_t key;
-    if (pthread_key_create(&key, DetachCurrentThreadDtor) == 0) {
-        pthread_setspecific(key, (void *)m_App->activity);
-    }
-    */
-    return env;
+void App::SetFramebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+    App* app = App::GetInstance();
+    app->UpdateWindowSize(width, height);
 }
+#endif
 
-void App::DetachCurrentThread() {
-    m_App->activity->vm->DetachCurrentThread();
-}
-
-jstring App::GetExternalFilesDirectory(JNIEnv* env) {
-    jstring path = nullptr;
-    
-    // Invoking getExternalFilesDir() java API
-    jclass activityClass = env->FindClass(NATIVE_ACTIVITY_CLASS_NAME);
-    jmethodID mID = env->GetMethodID(activityClass, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
-    jobject fileObject = env->CallObjectMethod(m_App->activity->clazz, mID, NULL);
-    if (fileObject) {
-        jclass fileClass = env->FindClass("java/io/File");
-        mID = env->GetMethodID(fileClass, "getPath", "()Ljava/lang/String;");
-        path = (jstring)env->CallObjectMethod(fileObject, mID);
-    }
-
-    return path;
+void App::UpdateWindowSize(int width, int height)
+{
+    m_ScreenWidth = width;
+    m_ScreenHeight = height;
+    m_Renderer->UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
 }
 
 void App::CalculateFrameStats() {
@@ -291,7 +315,9 @@ void App::CalculateFrameStats() {
         // Log
         static char buffer[100];
         sprintf(buffer, "FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
+#ifdef BUILD_ANDROID
         JNIUtil::GetInstance()->LogTrigger(buffer);
+#endif
         LOGI("FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
 
         frameCount = 0;

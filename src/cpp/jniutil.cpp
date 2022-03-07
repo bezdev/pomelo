@@ -1,5 +1,6 @@
 #include "jniutil.h"
 
+#ifdef BUILD_ANDROID
 JNIUtil::JNIUtil()
 {
 }
@@ -81,3 +82,4 @@ extern "C" JNIEXPORT void JNICALL Java_com_bezdev_fame_JNIUtil_SetAppScene(JNIEn
 {
     LOGI("==================Java_com_bezdev_fame_JNIUtil_SetScene: %d", sceneId);
 }
+#endif

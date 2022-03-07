@@ -1,19 +1,27 @@
 #pragma once
 
+#ifdef BUILD_ANDROID
+#include <EGL/egl.h>
+#include <GLES/gl.h>
 #include <jni.h>
+#include <android_native_app_glue.h>
+#include <android/native_window_jni.h>
+
 #include <errno.h>
 #include <vector>
 #include <mutex>
-#include <EGL/egl.h>
-#include <GLES/gl.h>
-#include <android_native_app_glue.h>
-#include <android/native_window_jni.h>
+
+#define NATIVE_ACTIVITY_CLASS_NAME "android/app/NativeActivity"
+#endif
+#ifdef BUILD_DESKTOP
+#include <windows.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#endif
 
 #include "renderer.h"
 #include "timer.h"
 #include "util.h"
-
-#define NATIVE_ACTIVITY_CLASS_NAME "android/app/NativeActivity"
 
 #define DEBUG 1
 
@@ -27,42 +35,45 @@ public:
     static App* GetInstance()
     {
         static App* instance = new App();
-        if (instance == nullptr) LOGD("YEP TRUE");
-        else LOGD("YEP FALSE");
+        if (instance == nullptr) { LOGD("YEP TRUE"); }
+        else { LOGD("YEP FALSE"); }
         return instance;
     };
 
+#ifdef BUILD_ANDROID
     bool IsReady();
     android_app* GetApp() { return m_App; }
 
-    void Initialize(android_app*);
-    void Run();
+    int Initialize(android_app*);
     void OnAppCommand(android_app*, int32_t);
+#endif
 
-    std::vector<char> ReadFile(const char*);
+#ifdef BUILD_DESKTOP
+    int Initialize();
+    static void SetFramebufferSizeCallback(GLFWwindow* window, int width, int height);
+    static void processInput(GLFWwindow* window);
+#endif
+
+    void UpdateWindowSize(int width, int height);
+    void Run();
 private:
     void CalculateFrameStats();
-
-    static void DetachCurrentThreadDtor(void* p) {
-        LOGI("detached current thread");
-        if (p != nullptr) {
-            ANativeActivity *activity = (ANativeActivity *) p;
-            activity->vm->DetachCurrentThread();
-        }
-    }
-
-    JNIEnv* AttachCurrentThread();
-    void DetachCurrentThread();
-    jstring GetExternalFilesDirectory(JNIEnv*);
-    mutable std::mutex m_ActivityMutex;
 
     android_app* m_App;
     Renderer* m_Renderer;
     Timer* m_GlobalTimer;
+
+    int m_ScreenWidth;
+    int m_ScreenHeight;
+
+#ifdef BUILD_ANDROID
     bool m_HasFocus;
     bool m_IsVisible;
     bool m_HasWindow;
-    bool m_IsReady;
     static void OnAppCmd(struct android_app*, int32_t);
     static int32_t OnInputEvent(android_app*, AInputEvent*);
+#endif
+#ifdef BUILD_DESKTOP
+    GLFWwindow* m_Window;
+#endif
 };

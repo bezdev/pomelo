@@ -1,8 +1,23 @@
 #pragma once
 
+#ifdef BUILD_ANDROID
 #include <android_native_app_glue.h>
 #include <EGL/egl.h>
-#include <GLES2/gl2.h>
+#include <GLES3/gl3.h>
+#endif
+
+#ifdef BUILD_DESKTOP
+#define EGL_NO_DISPLAY 0
+#define EGL_NO_SURFACE 0
+#define EGL_NO_CONTEXT 0
+
+typedef int EGLDisplay;
+typedef int EGLConfig;
+typedef int EGLSurface;
+typedef int EGLContext;
+typedef int ANativeWindow;
+typedef int android_app;
+#endif
 
 #include "app.h"
 #include "model.h"
@@ -21,19 +36,19 @@ public:
     static Renderer* GetInstance()
     {
         static Renderer* instance = new Renderer();
-        LOGD("Renderer::GetInstance()");
+        //LOGD("Renderer::GetInstance()");
         return instance;
     };
 
     Renderer();
     ~Renderer();
 
-    int Initialize(android_app* app);
+    int Initialize();
     void LoadShaders();
 
-    void AddRenderObject(Model* model);
     bool IsInitialized() { return m_IsInitialized; };
-
+    void AddRenderObject(Model* model);
+    void UpdateWindowSize(int width, int height);
     void Render();
 private:
     bool m_IsInitialized;

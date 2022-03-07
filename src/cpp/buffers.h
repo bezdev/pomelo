@@ -1,24 +1,25 @@
 #pragma once
 
+#ifdef BUILD_ANDROID
 #include <EGL/egl.h>
-#include <GLES2/gl2.h>
+#include <GLES3/gl3.h>
+#endif
+
+#ifdef BUILD_DESKTOP
+#include <glad/glad.h>
+#endif
+
+#include <memory>
+
 #include "util.h"
 
 class VertexBuffer {
-private:
-    GLuint mVbo;
-    GLenum mPrimitive;
-    int mStride;
-    int mColorsOffset;
-    int mTexCoordsOffset;
-    int mCount;
-
 public:
-    VertexBuffer(GLfloat *geomData, int dataSize, int stride);
+    VertexBuffer(GLfloat *data, int dataSize, int stride);
     ~VertexBuffer();
 
-    void BindBuffer();
-    void UnbindBuffer();
+    void Bind();
+    void Unbind();
 
     int GetStride() { return mStride; }
     int GetCount() { return mCount; }
@@ -34,19 +35,43 @@ public:
 
     GLenum GetPrimitive() { return mPrimitive; }
     void SetPrimitive(GLenum primitive) { mPrimitive = primitive; }
+
+private:
+    GLuint m_VBO;
+    GLenum mPrimitive;
+    int mStride;
+    int mColorsOffset;
+    int mTexCoordsOffset;
+    int mCount;
 };
 
 class IndexBuffer
 {
-    public:
-        IndexBuffer(GLushort *data, int size);
-        ~IndexBuffer();
+public:
+    IndexBuffer(GLushort *data, int size);
+    ~IndexBuffer();
 
-        void BindBuffer();
-        void UnbindBuffer();
-        int GetCount() { return mCount; }
+    void Bind();
+    void Unbind();
+    int GetCount() { return m_Count; }
 
-    private:
-        GLuint mIbo;
-        int mCount;
+private:
+    GLuint m_IBO;
+    int m_Count;
 };
+
+class VertexArray
+{
+public:
+    VertexArray();
+    ~VertexArray();
+
+    void AddVertexBuffer(VertexBuffer* vertexBuffer);
+    void Bind();
+    void Unbind();
+
+private:
+    std::vector<VertexBuffer*> m_VertexBuffers;
+    GLuint m_VAO;
+};
+

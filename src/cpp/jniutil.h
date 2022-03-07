@@ -2,6 +2,7 @@
 
 #include <thread>
 
+#ifdef BUILD_ANDROID
 #include <android_native_app_glue.h>
 #include <jni.h>
 
@@ -35,3 +36,4 @@ private:
     ANativeActivity* m_Activity;
     std::thread m_JNILogThread;
 };
+#endif
