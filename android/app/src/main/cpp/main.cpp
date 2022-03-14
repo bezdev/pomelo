@@ -22,6 +22,7 @@ void android_main(struct android_app* android_app) {
     //std::unique_ptr<App> app(App::GetInstance());
     App* app = App::GetInstance();
     app->Initialize(android_app);
+    app->SetStartScene(SCENE_CUBE);
     app->Run();
     delete app;
     app = nullptr;

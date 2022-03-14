@@ -8,6 +8,10 @@ if(DEFINED BUILD_DESKTOP)
     set(SOURCES_BASE_PATH ${CMAKE_CURRENT_LIST_DIR})
 endif()
 
+if(DEFINED BUILD_TEST)
+    add_definitions(-DBUILD_TEST)
+endif()
+
 set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/app.cpp
     ${SOURCES_BASE_PATH}/renderer.cpp

@@ -6,7 +6,6 @@
 #include <android_native_app_glue.h>
 #include <jni.h>
 
-#include "config.h"
 #include "app.h"
 #include "timer.h"
 

@@ -7,6 +7,7 @@
 #endif
 
 App::App() :
+    m_ShouldExit(false),
 #ifdef BUILD_ANDROID
     m_HasFocus(false),
     m_HasWindow(false),
@@ -141,13 +142,16 @@ void App::Run() {
 #ifdef BUILD_DESKTOP
         processInput(m_Window);
 #endif
+        if (m_ShouldExit) return;
+
         if (isFirstFrame) {
             LOGD("first frame");
             m_Renderer->Initialize();
 
-            // TODO: Scene creation should happen somewhere else
+            // TODO: creation of meshes should happen dynamically
             Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
-            Scene::CreateCubeScene();
+
+            SceneManager::LoadScene(m_StartSceneId);
 
             m_GlobalTimer->Reset();
             isFirstFrame = false;

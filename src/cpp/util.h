@@ -4,6 +4,11 @@
 #include <vector>
 #include <cstdio>
 #include <iostream>
+#include <assert.h>
+
+#ifdef BUILD_TEST
+#include "Test.h"
+#endif
 
 #ifdef BUILD_ANDROID
 #include <android/log.h>
@@ -16,8 +21,11 @@
 #endif
 
 #ifdef BUILD_DESKTOP
+#ifndef BUILD_TEST
 #define LOG(...) do { char buffer[1000]; snprintf(buffer, sizeof(buffer), __VA_ARGS__); std::cout << buffer << std::endl; } while (0);
-
+#else
+#define LOG(...) do { char buffer[1000]; snprintf(buffer, sizeof(buffer), __VA_ARGS__); std::cout << buffer << std::endl; TestSuite::GetInstance().AddLog(std::string(buffer)); } while (0);
+#endif
 #define LOGD(...) LOG(__VA_ARGS__)
 #define LOGI(...) LOG(__VA_ARGS__)
 #define LOGE(...) LOG(__VA_ARGS__)
@@ -48,4 +56,6 @@ class Util
 {
 public:
     static std::vector<char> ReadFile(const char* filename);
+    static std::vector<std::string> StringSplit(std::string string, std::string delimiter);
+    static std::vector<std::string> StringSplit(const char* string, const char* delimiter);
 };
