@@ -13,7 +13,7 @@
 #ifdef BUILD_ANDROID
 #include <android/log.h>
 
-#define LIB_NAME "fame-native"
+#define LIB_NAME "pomelo-native"
 
 #define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG, LIB_NAME, __VA_ARGS__))
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, LIB_NAME, __VA_ARGS__))

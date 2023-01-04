@@ -1,4 +1,4 @@
-package com.bezdev.fame;
+package com.bezdev.pomelo;
 
 import android.content.Context;
 import android.util.Log;
@@ -67,7 +67,7 @@ public class PerformanceTest
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         LinkedList<String> log = Logger.GetLog();
         assertTrue(JNIUtil.IsReady());
-        assertEquals("com.bezdev.fame", appContext.getPackageName());
+        assertEquals("com.bezdev.pomelo", appContext.getPackageName());
     }
 
 
@@ -93,7 +93,7 @@ public class PerformanceTest
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         LinkedList<String> log = Logger.GetLog();
         assertTrue(JNIUtil.IsReady());
-        assertEquals("com.bezdev.fame", appContext.getPackageName());
+        assertEquals("com.bezdev.pomelo", appContext.getPackageName());
     }
 
     public void Sleep(int ms)

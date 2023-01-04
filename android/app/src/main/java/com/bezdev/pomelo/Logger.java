@@ -1,4 +1,4 @@
-package com.bezdev.fame;
+package com.bezdev.pomelo;
 
 import android.util.Log;
 

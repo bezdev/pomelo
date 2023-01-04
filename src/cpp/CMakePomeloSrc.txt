@@ -28,8 +28,8 @@ set(SOURCE_FILES
 )
 
 if(DEFINED BUILD_ANDROID)
-set(SOURCE_FILES
-    ${SOURCE_FILES}
-    ${SOURCES_BASE_PATH}/jniutil.cpp
-)
+    set(SOURCE_FILES
+        ${SOURCE_FILES}
+        ${SOURCES_BASE_PATH}/jniutil.cpp
+    )
 endif()

@@ -59,7 +59,7 @@ void JNIUtil::Log(const char* message)
 //    jobject cls = env->CallObjectMethod(nativeActivity, getClassLoader);
 //    jclass classLoader = env->FindClass("java/lang/ClassLoader");
 //    jmethodID findClass = env->GetMethodID(classLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
-//    jstring className = env->NewStringUTF("com.bezdev.fame.JNIUtil");
+//    jstring className = env->NewStringUTF("com.bezdev.pomelo.JNIUtil");
 //    jclass jniUtilClass = (jclass)(env->CallObjectMethod(cls, findClass, className));
 //    jmethodID method = env->GetStaticMethodID(jniUtilClass, "Log", "(Ljava/lang/String;)V");
 //    jstring jMessage = env->NewStringUTF(message);
@@ -73,13 +73,13 @@ void JNIUtil::Log(const char* message)
 //    DetachCurrentThread();
 }
 
-extern "C" JNIEXPORT bool JNICALL Java_com_bezdev_fame_JNIUtil_IsAppReady(JNIEnv* env, jobject)
+extern "C" JNIEXPORT bool JNICALL Java_com_bezdev_pomelo_JNIUtil_IsAppReady(JNIEnv* env, jobject)
 {
     return App::GetInstance()->IsReady();
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_bezdev_fame_JNIUtil_SetAppScene(JNIEnv* env, jobject, jint sceneId)
+extern "C" JNIEXPORT void JNICALL Java_com_bezdev_pomelo_JNIUtil_SetAppScene(JNIEnv* env, jobject, jint sceneId)
 {
-    LOGI("==================Java_com_bezdev_fame_JNIUtil_SetScene: %d", sceneId);
+    LOGI("==================Java_com_bezdev_pomelo_JNIUtil_SetScene: %d", sceneId);
 }
 #endif

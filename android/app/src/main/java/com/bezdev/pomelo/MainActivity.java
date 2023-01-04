@@ -1,4 +1,4 @@
-package com.bezdev.fame;
+package com.bezdev.pomelo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,7 +10,7 @@ public class MainActivity extends NativeActivity
 {
     static
     {
-        System.loadLibrary("fame-native");
+        System.loadLibrary("pomelo-native");
     }
 
     @Override

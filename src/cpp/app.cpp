@@ -76,7 +76,7 @@ int App::Initialize()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    m_Window = glfwCreateWindow(m_ScreenWidth, m_ScreenHeight, "fame", NULL, NULL);
+    m_Window = glfwCreateWindow(m_ScreenWidth, m_ScreenHeight, "pomelo", NULL, NULL);
     if (m_Window == NULL)
     {
         // std::cout << "Failed to create GLFW window" << std::endl;

@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.10.2)
 
-project("fame")
+project("pomelo")
 
 set(BUILD_ANDROID 1)
-include(${CMAKE_CURRENT_LIST_DIR}/../../../../../src/cpp/CMakeFameSrc.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/../../../../../src/cpp/CMakepomeloSrc.txt)
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../src/cpp)
 
@@ -17,13 +17,13 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_o
 
 file(GLOB SOURCES CONFIGURE_DEPENDS "\\.cpp")
 
-add_library(fame-native
+add_library(pomelo-native
     SHARED
     main.cpp
     ${SOURCE_FILES}
 )
 
-target_include_directories(fame-native
+target_include_directories(pomelo-native
     PRIVATE
     ${ANDROID_NDK}/sources/android/native_app_glue
 )
@@ -32,7 +32,7 @@ find_library(log-lib log)
 find_library(gl-v3 GLESv3)
 
 target_link_libraries(
-    fame-native
+    pomelo-native
     EGL
     ${gl-v3}
     android
