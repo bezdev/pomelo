@@ -46,8 +46,10 @@ bool App::IsReady()
 #ifdef BUILD_DESKTOP
 void glfwOnError(int error, const char* description)
 {
+#ifdef WIN32
     // print message in Windows popup dialog box
     MessageBox(NULL, description, "GLFW error", MB_OK);
+#endif
 }
 #endif
 

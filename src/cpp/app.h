@@ -14,7 +14,7 @@
 #define NATIVE_ACTIVITY_CLASS_NAME "android/app/NativeActivity"
 #endif
 #ifdef BUILD_DESKTOP
-#include <windows.h>
+//#include <windows.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #endif
