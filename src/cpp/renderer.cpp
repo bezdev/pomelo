@@ -147,7 +147,7 @@ void Renderer::UpdateWindowSize(int width, int height) {
     m_ScreenWidth = width;
     m_ScreenHeight = height;
 
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 }
 
 void Renderer::Render() {
@@ -169,7 +169,7 @@ void Renderer::Render() {
         glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
     }
 #endif
-    glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
+    //glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 
     auto viewMatrix = glm::lookAt(glm::vec3(10, 10, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     auto ratio = 1.f * m_ScreenWidth / m_ScreenHeight;

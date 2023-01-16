@@ -24,6 +24,7 @@ set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/material.cpp
     ${SOURCES_BASE_PATH}/renderobject.cpp
     ${SOURCES_BASE_PATH}/renderobjectcollection.cpp
+    ${SOURCES_BASE_PATH}/logger.cpp
     ${SOURCES_BASE_PATH}/util.cpp
 )
 

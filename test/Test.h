@@ -5,9 +5,12 @@
 #include <chrono>
 #include <thread>
 #include <string>
+#include <cmath>
 
 #define ASSERT_TRUE(condition) do { if (!(condition)) { printf("FAILED [%s] %s:%d\n  %s\n", GetName().c_str(), __FILE__, __LINE__, #condition); throw 1; } } while(0);
 #define ASSERT_ARE_EQUAL(a, b) ASSERT_TRUE(a == b)
+#define ASSERT_ARE_EQUAL_DELTA(a, b, delta) ASSERT_TRUE(std::abs(a - b) < delta)
+#define SLEEP(ms) do { std::this_thread::sleep_for(std::chrono::milliseconds(ms)); } while(0);
 
 class ITest
 {
@@ -49,8 +52,3 @@ void Test##_##name::Run()
 
 #define TEST(name) TEST_BASE(name, false)
 #define DISABLED_TEST(name) TEST_BASE(name, true)
-
-inline void SLEEP(int ms)
-{
-    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-}

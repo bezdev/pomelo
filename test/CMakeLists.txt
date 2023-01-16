@@ -7,6 +7,8 @@ add_executable(pomelotest
     ${TEST_FOLDER}/Test.cpp
     ${TEST_FOLDER}/PerformanceTest.cpp
     ${TEST_FOLDER}/UtilTest.cpp
+    ${TEST_FOLDER}/TimerTest.cpp
+    ${TEST_FOLDER}/LoggerTest.cpp
     ${TEST_FOLDER}/main.cpp
 )
 

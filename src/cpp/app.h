@@ -35,10 +35,6 @@ public:
     static App* GetInstance()
     {
         static App* instance = new App();
-        if (instance == nullptr) { LOGD("YEP TRUE"); }
-        else {
-            LOGD("YEP FALSE");
-        }
         return instance;
     };
 

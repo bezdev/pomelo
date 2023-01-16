@@ -1,19 +1,6 @@
 #include "timer.h"
 
-#ifdef _WIN32
-#include <Windows.h>
-#include <sysinfoapi.h>
 
-#define CLOCK_MONOTONIC 0
-
-int clock_gettime(int, struct timespec* spec) {
-    __int64 wintime; GetSystemTimeAsFileTime((FILETIME*)&wintime);
-    wintime -= 116444736000000000i64;
-    spec->tv_sec = wintime / 10000000i64;           // seconds
-    spec->tv_nsec = wintime % 10000000i64 * 100;    // nano-seconds
-    return 0;
-}
-#endif
 
 
 Timer::Timer() {
@@ -110,4 +97,31 @@ void Timer::UpdateTotalTime() {
 
 void Timer::UpdateDelta(long long delta) {
     m_Delta = static_cast<float>(delta / 1e6);
+}
+
+BasicTimer::BasicTimer()
+{
+}
+
+void BasicTimer::Start()
+{
+    clock_gettime(CLOCK_MONOTONIC, &m_StartTime);
+}
+
+float BasicTimer::GetTotalTime()
+{
+    clock_gettime(CLOCK_MONOTONIC, &m_CurrentTime);
+    return (m_CurrentTime.tv_sec - m_StartTime.tv_sec) + (m_CurrentTime.tv_nsec - m_StartTime.tv_nsec) / 1e9f;
+}
+
+ScopeTimer::ScopeTimer():
+    m_Timer(BasicTimer())
+{
+    LOGD("ScopeTimerStart");
+    m_Timer.Start();
+}
+
+ScopeTimer::~ScopeTimer()
+{
+    LOGD("ScopeTimerEnd: %f", m_Timer.GetTotalTime());
 }

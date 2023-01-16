@@ -73,11 +73,9 @@ int App::Initialize()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-
     m_Window = glfwCreateWindow(m_ScreenWidth, m_ScreenHeight, "pomelo", NULL, NULL);
     if (m_Window == NULL)
     {
@@ -87,6 +85,7 @@ int App::Initialize()
     }
     glfwMakeContextCurrent(m_Window);
     glfwSetFramebufferSizeCallback(m_Window, SetFramebufferSizeCallback);
+    glfwSwapInterval(0);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -101,6 +100,7 @@ int App::Initialize()
 #ifdef BUILD_ANDROID
     JNIUtil::GetInstance()->Initialize(this);
 #endif
+
 #ifdef BUILD_DESKTOP
     UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
 #endif
@@ -295,6 +295,7 @@ void App::processInput(GLFWwindow* window)
 
 void App::SetFramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
+    LOGD("App::SetFramebufferSizeCallback");
     App* app = App::GetInstance();
     app->UpdateWindowSize(width, height);
 }
@@ -302,6 +303,7 @@ void App::SetFramebufferSizeCallback(GLFWwindow* window, int width, int height)
 
 void App::UpdateWindowSize(int width, int height)
 {
+    LOGD("App::UpdateWindowSize");
     m_ScreenWidth = width;
     m_ScreenHeight = height;
     m_Renderer->UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);

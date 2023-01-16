@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug with GDB",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/desktop/game",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}/desktop",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "miDebuggerPath": "/usr/local/bin/gdb"
+      }
+    ]
+  }

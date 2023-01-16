@@ -4,6 +4,40 @@
 
 #include "util.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#include <sysinfoapi.h>
+
+#define CLOCK_MONOTONIC 0
+
+int clock_gettime(int, struct timespec* spec) {
+    __int64 wintime; GetSystemTimeAsFileTime((FILETIME*)&wintime);
+    wintime -= 116444736000000000i64;
+    spec->tv_sec = wintime / 10000000i64;           // seconds
+    spec->tv_nsec = wintime % 10000000i64 * 100;    // nano-seconds
+    return 0;
+}
+#endif
+
+class BasicTimer {
+public:
+    BasicTimer();
+    void Start();
+    float GetTotalTime();
+
+private:
+    timespec m_StartTime;
+    timespec m_CurrentTime;
+};
+
+class ScopeTimer {
+public:
+    ScopeTimer();
+    ~ScopeTimer();
+private:
+    BasicTimer m_Timer;
+};
+
 class ITimer {
     virtual float GetTotalTime() const = 0;
     virtual float GetDelta() const = 0;

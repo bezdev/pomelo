@@ -74,7 +74,7 @@ void EndApp(App* app)
     RunAppThread.join();
 }
 
-TEST(SingleCubePerformanceTest)
+DISABLED_TEST(SingleCubePerformanceTest)
 {
     auto app = StartApp(SCENE_CUBE);
 

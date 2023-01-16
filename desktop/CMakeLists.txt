@@ -8,7 +8,8 @@ if (APPLE)
 endif()
 
 set(BUILD_DESKTOP 1)
-# set(BUILD_TEST 1)
+set(BUILD_TEST 1)
+# set(CMAKE_BUILD_TYPE Debug)
 
 set(TEST_FOLDER ${CMAKE_CURRENT_LIST_DIR}/../test)
 
