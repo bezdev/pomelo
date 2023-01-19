@@ -81,7 +81,7 @@ void VertexArray::AddVertexBuffer(VertexBuffer* vertexBuffer)
 void VertexArray::Bind()
 {
     glBindVertexArray(m_VAO);
-    for (int i = 0; i < m_VertexBuffers.size(); i++)
+    for (std::size_t i = 0; i < m_VertexBuffers.size(); i++)
     {
         glEnableVertexAttribArray(i);
     }
@@ -89,7 +89,7 @@ void VertexArray::Bind()
 
 void VertexArray::Unbind()
 {
-    for (int i = 0; i < m_VertexBuffers.size(); i++)
+    for (std::size_t i = 0; i < m_VertexBuffers.size(); i++)
     {
         glDisableVertexAttribArray(i);
     }

@@ -9,7 +9,10 @@ endif()
 
 set(BUILD_DESKTOP 1)
 set(BUILD_TEST 1)
-# set(CMAKE_BUILD_TYPE Debug)
+
+set(CMAKE_BUILD_TYPE Debug)
+add_compile_options(-Wall)
+# add_compile_options(-Wextra)
 
 set(TEST_FOLDER ${CMAKE_CURRENT_LIST_DIR}/../test)
 

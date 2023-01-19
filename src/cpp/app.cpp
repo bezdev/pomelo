@@ -14,8 +14,8 @@ App::App() :
     m_IsVisible(false)
 #endif
 #ifdef BUILD_DESKTOP
-    m_ScreenWidth(800),
-    m_ScreenHeight(600)
+    m_ScreenWidth(1600),
+    m_ScreenHeight(900)
 #endif
 { }
 
@@ -69,7 +69,7 @@ int App::Initialize()
 #ifdef BUILD_DESKTOP
     glfwSetErrorCallback(glfwOnError);
 
-    GLenum err = glfwInit();
+    /*GLenum err = */glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -101,15 +101,10 @@ int App::Initialize()
     JNIUtil::GetInstance()->Initialize(this);
 #endif
 
-#ifdef BUILD_DESKTOP
-    UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
-#endif
-
     return 0;
 }
 
 void App::Run() {
-    bool isReady;
     bool isFirstFrame = true;
 
 #ifdef BUILD_ANDROID
@@ -124,6 +119,7 @@ void App::Run() {
         int events;
         android_poll_source *source;
         bool shouldDestroy = false;
+        bool isReady;
         while ((id = ALooper_pollAll((isReady = IsReady()) ? 0 : -1, NULL, &events,
                                      (void **) &source)) >= 0) {
             if (shouldDestroy) continue;
@@ -150,6 +146,9 @@ void App::Run() {
             LOGD("first frame");
             m_Renderer->Initialize();
 
+            glfwGetFramebufferSize(m_Window, &m_ScreenWidth, &m_ScreenHeight);
+            UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
+
             // TODO: creation of meshes should happen dynamically
             Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
 
@@ -163,7 +162,7 @@ void App::Run() {
 
         m_Renderer->Render();
 
-        CalculateFrameStats();
+        LogFPS();
 
 #ifdef BUILD_DESKTOP
         glfwSwapBuffers(m_Window);
@@ -303,13 +302,13 @@ void App::SetFramebufferSizeCallback(GLFWwindow* window, int width, int height)
 
 void App::UpdateWindowSize(int width, int height)
 {
-    LOGD("App::UpdateWindowSize");
+    LOGD("App::UpdateWindowSize %dx%d ", width, height);
     m_ScreenWidth = width;
     m_ScreenHeight = height;
     m_Renderer->UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
 }
 
-void App::CalculateFrameStats() {
+void App::LogFPS() {
     static int frameCount = 0;
     static float timeElapsed = 0.0f;
 
@@ -321,12 +320,12 @@ void App::CalculateFrameStats() {
         float fps = frameCount * 1000.f / timeElapsed;
 
         // Log
+        LOGI("FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
+#ifdef BUILD_ANDROID
         static char buffer[100];
         sprintf(buffer, "FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
-#ifdef BUILD_ANDROID
         JNIUtil::GetInstance()->LogTrigger(buffer);
 #endif
-        LOGI("FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
 
         frameCount = 0;
         timeElapsed -= 1000.0f;

@@ -8,8 +8,8 @@
 #include <cmath>
 
 #define ASSERT_TRUE(condition) do { if (!(condition)) { printf("FAILED [%s] %s:%d\n  %s\n", GetName().c_str(), __FILE__, __LINE__, #condition); throw 1; } } while(0);
-#define ASSERT_ARE_EQUAL(a, b) ASSERT_TRUE(a == b)
-#define ASSERT_ARE_EQUAL_DELTA(a, b, delta) ASSERT_TRUE(std::abs(a - b) < delta)
+#define ASSERT_ARE_EQUAL(a, b) do { ASSERT_TRUE(a == b) } while(0);
+#define ASSERT_ARE_EQUAL_DELTA(a, b, delta) do { ASSERT_TRUE(std::abs(a - b) < delta) } while(0);
 #define SLEEP(ms) do { std::this_thread::sleep_for(std::chrono::milliseconds(ms)); } while(0);
 
 class ITest
@@ -31,12 +31,8 @@ public:
 
     void Run();
     void AddTest(std::function<ITest*()> function);
-    void AddLog(std::string message) { m_Log.push_back(message); }
-
-    std::vector<std::string>& GetLog() { return m_Log; }
 private:
     std::vector<std::function<ITest*()>> m_Tests;
-    std::vector<std::string> m_Log;
 };
 
 #define TEST_BASE(name, isDisabled)                                                                      \

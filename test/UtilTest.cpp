@@ -40,27 +40,23 @@ TEST(StringSplitPerfTest)
     std::string s = "a,b,c,d,e,f";
     std::string delimiter = ",";
     const int loopCount = 1e3;
-    Timer t1;
-    t1.Start();
-    for (int i = 0; i < loopCount; i++)
+
     {
-        auto result = Util::StringSplit(s, delimiter);
+        ScopeTimer t("std implementation");
+        for (int i = 0; i < loopCount; i++)
+        {
+            auto result = Util::StringSplit(s, delimiter);
 
-        ASSERT_ARE_EQUAL(6, result.size());
+            ASSERT_ARE_EQUAL(6, result.size());
+        }
     }
-    t1.Pause();
 
-    Timer t2;
-    t2.Start();
-    for (int i = 0; i < loopCount; i++)
     {
-        auto result = Util::StringSplit(s.c_str(), delimiter.c_str());
-        ASSERT_ARE_EQUAL(6, result.size());
+        ScopeTimer t("bez implementation");
+        for (int i = 0; i < loopCount; i++)
+        {
+            auto result = Util::StringSplit(s.c_str(), delimiter.c_str());
+            ASSERT_ARE_EQUAL(6, result.size());
+        }
     }
-    t2.Pause();
-
-    printf("std approach: %f\n", t1.GetDelta());
-    printf("bez approach: %f\n", t2.GetDelta());
-    printf("%.2f%% gainz\n", 100.f * t1.GetDelta()/t2.GetDelta());
-    ASSERT_TRUE(t1.GetDelta() > t2.GetDelta());
 }

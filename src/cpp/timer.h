@@ -32,23 +32,15 @@ private:
 
 class ScopeTimer {
 public:
-    ScopeTimer();
+    ScopeTimer(const char* name);
     ~ScopeTimer();
 private:
+    ScopeTimer();
     BasicTimer m_Timer;
+    const char* m_Name;
 };
 
-class ITimer {
-    virtual float GetTotalTime() const = 0;
-    virtual float GetDelta() const = 0;
-    virtual long long GetTime() const = 0;
-    virtual void Update() = 0;
-    virtual void Reset() = 0;
-    virtual void Start() = 0;
-    virtual void Pause() = 0;
-};
-
-class Timer : ITimer
+class Timer
 {
 public:
     Timer();

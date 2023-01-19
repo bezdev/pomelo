@@ -1,6 +1,9 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #ifdef BUILD_ANDROID
 #include <android/log.h>
@@ -16,6 +19,7 @@ class Logger {
 public:
     enum class Level {
         Verbose,
+        Test,
         Debug,
         Info,
         Error
@@ -23,22 +27,38 @@ public:
 
     static Logger* GetInstance()
     {
-        static Logger* instance = new Logger(Logger::Level::Verbose);
+        static Logger* instance = new Logger(Logger::Level::Verbose, "[BEZLOG]");
         return instance;
     };
 
-    Logger(Level level);
+    Logger(Level level, const char* name);
 
     template<typename... Args>
     void Log(Level level, const char* string, Args&&... args)
     {
+        if (level < m_Level) return;
+
         char buffer[1024];
         snprintf(buffer, sizeof(buffer), string, std::forward<Args>(args)...);
-        std::cout << buffer << std::endl;
+
+        std::basic_stringstream<char> ss;
+        ss << m_Name << GetTag(level) << buffer << std::endl;
+
+        std::string logString = ss.str();
+        std::cout << logString;
+
+#ifdef BUILD_TEST
+        m_Log.push_back(logString);
+#endif
     };
 
+    std::vector<std::string> GetLog() { return m_Log; };
+
 private:
+    const char* GetTag(Level level);
     Level m_Level;
+    const char* m_Name;
+    std::vector<std::string> m_Log;
 };
 
 #ifdef BUILD_DESKTOP
@@ -48,6 +68,7 @@ private:
 // #define LOG(...) do { char buffer[1000]; snprintf(buffer, sizeof(buffer), __VA_ARGS__); std::cout << buffer << std::endl; /* TestSuite::GetInstance().AddLog(std::string(buffer)); */ } while (0);
 #define LOG(...) do { Logger::GetInstance()->Log(__VA_ARGS__); } while(0);
 #endif
+#define LOGT(...) LOG(Logger::Level::Test, __VA_ARGS__)
 #define LOGD(...) LOG(Logger::Level::Debug, __VA_ARGS__)
 #define LOGI(...) LOG(Logger::Level::Info, __VA_ARGS__)
 #define LOGE(...) LOG(Logger::Level::Error, __VA_ARGS__)

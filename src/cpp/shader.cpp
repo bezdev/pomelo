@@ -7,7 +7,7 @@ Shader::Shader(GLuint program, std::vector<ShaderVariable>& variables):
     m_Variables(variables.size())
 {
     LOGI("Shader::Shader");
-    for (int i = 0; i < variables.size(); i++)
+    for (std::size_t i = 0; i < variables.size(); i++)
     {
         if (variables[i].Type == ShaderVariableType::ATTRIBUTE) m_Variables[i] = glGetAttribLocation(m_Program, variables[i].Name);
         else if (variables[i].Type == ShaderVariableType::UNIFORM) m_Variables[i] = glGetUniformLocation(m_Program, variables[i].Name);

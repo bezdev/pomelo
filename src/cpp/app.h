@@ -57,16 +57,16 @@ public:
     void SetStartScene(int sceneId) { m_StartSceneId = sceneId; }
     void Exit() { m_ShouldExit = true; }
 private:
-    void CalculateFrameStats();
+    void LogFPS();
 
     android_app* m_App;
     Renderer* m_Renderer;
     Timer* m_GlobalTimer;
 
+    bool m_ShouldExit;
     int m_ScreenWidth;
     int m_ScreenHeight;
     int m_StartSceneId;
-    bool m_ShouldExit;
 
 #ifdef BUILD_ANDROID
     bool m_HasFocus;

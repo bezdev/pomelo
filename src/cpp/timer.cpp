@@ -114,14 +114,15 @@ float BasicTimer::GetTotalTime()
     return (m_CurrentTime.tv_sec - m_StartTime.tv_sec) + (m_CurrentTime.tv_nsec - m_StartTime.tv_nsec) / 1e9f;
 }
 
-ScopeTimer::ScopeTimer():
-    m_Timer(BasicTimer())
+ScopeTimer::ScopeTimer(const char* name):
+    m_Timer(BasicTimer()),
+    m_Name(name)
 {
-    LOGD("ScopeTimerStart");
+    LOGD("ScopeTimerStart [%s]", m_Name);
     m_Timer.Start();
 }
 
 ScopeTimer::~ScopeTimer()
 {
-    LOGD("ScopeTimerEnd: %f", m_Timer.GetTotalTime());
+    LOGD("ScopeTimerEnd   [%s]: %f", m_Name, m_Timer.GetTotalTime());
 }

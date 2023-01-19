@@ -11,21 +11,26 @@
 
 #include "app.h"
 #include "config.h"
+#include "logger.h"
 
 #define PERF_RESULTS_OUTPUT_PATH PERF_RESULTS_PATH "PerformanceResults.csv"
 
-std::thread RunAppThread;
-
+// TODO: must do this on a main thread
 App* StartApp(int sceneId)
 {
     App* app = App::GetInstance();
-    
-    RunAppThread = std::thread([app, sceneId]
+    app->SetStartScene(sceneId);
+    app->Initialize();
+
+    std::thread t = std::thread([app, sceneId]
     { 
-        app->SetStartScene(sceneId);
-        app->Initialize();
-        app->Run(); 
+        SLEEP(5000);
+        app->Exit();
     });
+
+    app->Run(); 
+
+    t.join();
 
     return app;
 }
@@ -37,18 +42,24 @@ void LogToFile(std::string testName, std::vector<std::string> log)
 
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
+    std::string resolution;
 
     for (auto message : log)
     {
         auto split = Util::StringSplit(message, std::string(" "));
-        if (split[0].compare(std::string("FPS:")) == 0)
+        LOGT("size: %d", split.size());
+        if (split.size() > 1 && split[1].compare(std::string("FPS:")) == 0)
         {
             count++;
 
-            float current = std::stof(split[1]);
+            float current = std::stof(split[2]);
             total += current;
             if (current < min) min = current;
             if (current > max) max = current;
+        }
+        else if (split.size() > 2 && split[1].compare(std::string("App::UpdateWindowSize")) == 0)
+        {
+            resolution = std::string(split[2]);
         }
     }
 
@@ -61,29 +72,28 @@ void LogToFile(std::string testName, std::vector<std::string> log)
     file.open(PERF_RESULTS_OUTPUT_PATH, std::ofstream::out | std::ofstream::app);
     if (!fileExists)
     {
-        file << "time,name,average,min,max" << std::endl;
+        file << "time,OS,resolution,name,average,min,max" << std::endl;
     }
 
-    file << std::put_time(&tm, "%Y-%m-%d %H-%M-%S") << "," << testName << "," << avg << "," << min << "," << max << std::endl;    
+    #ifdef WIN32
+            std::string os("windows");
+    #else
+            std::string os("macOS");
+    #endif
+
+    int width = 1600;
+    int height = 900;
+    file << std::put_time(&tm, "%Y-%m-%d %H-%M-%S") << "," << os << "," << resolution << "," << testName << "," << avg << "," << min << "," << max << std::endl;    
     file.close();
 }
 
-void EndApp(App* app)
+TEST(SingleCubePerformanceTest)
 {
-    app->Exit();
-    RunAppThread.join();
-}
+    StartApp(SCENE_CUBE);
 
-DISABLED_TEST(SingleCubePerformanceTest)
-{
-    auto app = StartApp(SCENE_CUBE);
-
-    SLEEP(5000);
-
-    EndApp(app);
-
-    auto log = TestSuite::GetInstance().GetLog();
-    assert(log.size() > 0);
+    // LOGT("app ended");
+    auto log = Logger::GetInstance()->GetLog(); //TestSuite::GetInstance().GetLog();
+    ASSERT_TRUE(log.size() > 0);
 
     LogToFile(GetName(), log);
 }

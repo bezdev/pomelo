@@ -10,14 +10,13 @@ void TestSuite::Run()
     std::string currentTestName;
     bool isFail = false;
 
-    std::cout << "Running tests..." << std::endl;
-
-    for (int i = 0; i < m_Tests.size(); i++)
+    for (std::size_t i = 0; i < m_Tests.size(); i++)
     {
         try
         {
             auto test = m_Tests[i]();
             currentTestName = test->GetName();
+            printf("----- STARTED   [%s] -----\n", currentTestName.c_str());
             test->Run();
             isFail = false;
         }
@@ -29,7 +28,7 @@ void TestSuite::Run()
 
         if (!isFail)
         {
-            printf("SUCCEEDED [%s]\n", currentTestName.c_str());
+            printf("----- SUCCEEDED [%s] -----\n", currentTestName.c_str());
         }
     }
 
