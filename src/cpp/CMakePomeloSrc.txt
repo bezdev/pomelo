@@ -1,16 +1,16 @@
 if(DEFINED BUILD_ANDROID)
     add_definitions(-DBUILD_ANDROID)
-    set(SOURCES_BASE_PATH ${CMAKE_CURRENT_LIST_DIR})
 endif()
 
 if(DEFINED BUILD_DESKTOP)
     add_definitions(-DBUILD_DESKTOP)
-    set(SOURCES_BASE_PATH ${CMAKE_CURRENT_LIST_DIR})
 endif()
 
 if(DEFINED BUILD_TEST)
     add_definitions(-DBUILD_TEST)
 endif()
+
+set(SOURCES_BASE_PATH ${CMAKE_CURRENT_LIST_DIR})
 
 set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/app.cpp
@@ -31,6 +31,7 @@ set(SOURCE_FILES
 if(DEFINED BUILD_ANDROID)
     set(SOURCE_FILES
         ${SOURCE_FILES}
+        ${SOURCES_BASE_PATH}/AndroidApp.cpp
         ${SOURCES_BASE_PATH}/jniutil.cpp
     )
 endif()

@@ -75,7 +75,7 @@ void JNIUtil::Log(const char* message)
 
 extern "C" JNIEXPORT bool JNICALL Java_com_bezdev_pomelo_JNIUtil_IsAppReady(JNIEnv* env, jobject)
 {
-    return App::GetInstance()->IsReady();
+    return false; // App::GetInstance()->IsReady();
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_bezdev_pomelo_JNIUtil_SetAppScene(JNIEnv* env, jobject, jint sceneId)

@@ -1,32 +1,16 @@
-#include <jni.h>
-#include <errno.h>
-
-#include <memory>
-#include <string>
-#include <vector>
-#include <EGL/egl.h>
-#include <GLES/gl.h>
-
-#include <android/sensor.h>
-#include <android/log.h>
-#include <android_native_app_glue.h>
-#include <android/native_window_jni.h>
-
-#include "app.h"
+#include "AndroidApp.h"
 #include "scene.h"
 
 struct android_app;
 
-void android_main(struct android_app* android_app) {
-    LOGD("android_app %d", android_app->window);
+void android_main(android_app* android_app) {
+    LOGD("android_main start: %ld", android_app->window);
     //std::unique_ptr<App> app(App::GetInstance());
-    App* app = App::GetInstance();
-    app->Initialize(android_app);
-    app->SetStartScene(SCENE_CUBE);
-    app->Run();
-    delete app;
-    app = nullptr;
-    LOGD("end main");
+    AndroidApp aa(android_app);
+    aa.Run();
+//    aa.SetStartScene(SCENE_CUBE);
+//    aa.Run();
+    LOGD("android_main end");
 }
 
 // TODO:

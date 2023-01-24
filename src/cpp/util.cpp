@@ -3,12 +3,16 @@
 #include "util.h"
 #include "app.h"
 
+#ifdef BUILD_ANDROID
+#include "AndroidApp.h"
+#endif
+
 std::vector<char> Util::ReadFile(const char* filename)
 {
 #ifdef BUILD_ANDROID
     std::vector<char> data;
 
-    AAssetManager* assetManager = App::GetInstance()->GetApp()->activity->assetManager;
+    AAssetManager* assetManager = AndroidApp::Instance->GetAndroidApp()->activity->assetManager;
     AAsset* assetFile = AAssetManager_open(assetManager, filename, AASSET_MODE_BUFFER);
     if (!assetFile)
     {

@@ -1,17 +1,9 @@
-#ifdef BUILD_ANDROID
-#include <EGL/egl.h>
-#endif
-
 #include "renderer.h"
 #include "shader.h"
 #include "jniutil.h"
 
 Renderer::Renderer():
     m_IsInitialized(false),
-    m_Window(nullptr),
-    m_Display(EGL_NO_DISPLAY),
-    m_Surface(EGL_NO_SURFACE),
-    m_Context(EGL_NO_CONTEXT),
     m_ScreenWidth(0),
     m_ScreenHeight(0)
 {
@@ -27,9 +19,6 @@ int Renderer::Initialize()
 {
     if (!m_IsInitialized)
     {
-#ifdef BUILD_ANDROID
-        _Initialize(App::GetInstance()->GetApp()->window);
-#endif
         GLint majorVersion;
         glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
         GLint minorVersion;
@@ -41,63 +30,6 @@ int Renderer::Initialize()
 
         m_IsInitialized = true;
     }
-#ifdef BUILD_ANDROID
-    else if(App::GetInstance()->GetApp()->window != m_Window)
-    {
-        THROW("not implemented 1");
-    }
-    else
-    {
-        THROW("not implemented 2");
-    }
-#endif
-
-    return 0;
-}
-
-int Renderer::_Initialize(ANativeWindow* window)
-{
-#ifdef BUILD_ANDROID
-    m_Window = window;
-    m_Display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    eglInitialize(m_Display, 0, 0);
-
-    const EGLint attributes[] =
-    {
-        EGL_RENDERABLE_TYPE,
-        EGL_OPENGL_ES3_BIT,
-        EGL_SURFACE_TYPE,
-        EGL_WINDOW_BIT,
-        EGL_BLUE_SIZE,
-        8,
-        EGL_GREEN_SIZE,
-        8,
-        EGL_RED_SIZE,
-        8,
-        EGL_DEPTH_SIZE,
-        24,
-        EGL_NONE
-    };
-
-    EGLint configCount;
-    eglChooseConfig(m_Display, attributes, &m_Config, 1, &configCount);
-
-    THROW_IF_FALSE(configCount, "eglChooseConfig failed");
-
-    m_Surface = eglCreateWindowSurface(m_Display, m_Config, m_Window, NULL);
-    //eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &m_ScreenWidth);
-    //eglQuerySurface(m_Display, m_Surface, EGL_HEIGHT, &m_ScreenHeight);
-
-    const EGLint contextAttributes[] =
-    {
-        EGL_CONTEXT_CLIENT_VERSION,
-        3,
-        EGL_NONE
-    };
-    m_Context = eglCreateContext(m_Display, m_Config, NULL, contextAttributes);
-
-    THROW_IF_FALSE(eglMakeCurrent(m_Display, m_Surface, m_Surface, m_Context), "eglMakeCurrent failed");
-#endif
 
     return 0;
 }
@@ -121,21 +53,7 @@ void Renderer::LoadShaders() {
 }
 
 void Renderer::Cleanup() {
-#ifdef BUILD_ANDROID
-    if (m_Display != EGL_NO_DISPLAY) {
-        eglMakeCurrent(m_Display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
-        if (m_Surface != EGL_NO_SURFACE) {
-            eglDestroySurface(m_Display, m_Surface);
-        }
-
-        if (m_Context != EGL_NO_CONTEXT) {
-            eglDestroyContext(m_Display, m_Context);
-        }
-
-        eglTerminate(m_Display);
-    }
-#endif
 }
 
 void Renderer::AddRenderObject(Model* model) {
@@ -156,19 +74,6 @@ void Renderer::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-
-#ifdef BUILD_ANDROID
-    int32_t width, height;
-    eglQuerySurface(m_Display, m_Surface, EGL_WIDTH, &width);
-    eglQuerySurface(m_Display, m_Surface, EGL_HEIGHT, &height);
-
-    // TODO: make this a method
-    if (width != m_ScreenWidth || height != m_ScreenHeight) {
-        m_ScreenWidth = width;
-        m_ScreenHeight = height;
-        glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
-    }
-#endif
 
     auto viewMatrix = glm::lookAt(glm::vec3(10, 10, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     auto ratio = 1.f * m_ScreenWidth / m_ScreenHeight;
@@ -239,7 +144,4 @@ void Renderer::Render() {
    //     }
    // }
 
-#ifdef BUILD_ANDROID
-    eglSwapBuffers(m_Display, m_Surface);
-#endif
 }

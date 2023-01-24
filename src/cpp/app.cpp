@@ -1,19 +1,14 @@
 #include "app.h"
 
-#ifdef BUILD_ANDROID
+#if 0
 #include "jniutil.h"
 #endif
 #ifdef BUILD_DESKTOP
 #endif
 
-App::App() :
-    m_ShouldExit(false),
-#ifdef BUILD_ANDROID
-    m_HasFocus(false),
-    m_HasWindow(false),
-    m_IsVisible(false)
-#endif
+App::App()
 #ifdef BUILD_DESKTOP
+    :
     m_ScreenWidth(1600),
     m_ScreenHeight(900)
 #endif
@@ -29,19 +24,12 @@ App::~App()
 
     delete Renderer::GetInstance();
 
-#ifdef BUILD_ANDROID
+#if 0
     delete JNIUtil::GetInstance();
 #endif
 
     delete m_GlobalTimer;
 }
-
-#ifdef BUILD_ANDROID
-bool App::IsReady()
-{
-    return m_HasFocus && m_HasWindow && m_IsVisible;
-}
-#endif
 
 #ifdef BUILD_DESKTOP
 void glfwOnError(int error, const char* description)
@@ -53,19 +41,8 @@ void glfwOnError(int error, const char* description)
 }
 #endif
 
-#ifdef BUILD_ANDROID
-int App::Initialize(android_app* androidApp)
-#endif
-#ifdef BUILD_DESKTOP
 int App::Initialize()
-#endif
 {
-#ifdef BUILD_ANDROID
-    m_App = androidApp;
-    m_App->userData = this;
-    m_App->onAppCmd = App::OnAppCmd;
-    m_App->onInputEvent = App::OnInputEvent;
-#endif
 #ifdef BUILD_DESKTOP
     glfwSetErrorCallback(glfwOnError);
 
@@ -96,8 +73,9 @@ int App::Initialize()
 
     m_GlobalTimer = new Timer();
     m_Renderer = Renderer::GetInstance();
+    m_Renderer->Initialize();
 
-#ifdef BUILD_ANDROID
+#if 0
     JNIUtil::GetInstance()->Initialize(this);
 #endif
 
@@ -105,50 +83,25 @@ int App::Initialize()
 }
 
 void App::Run() {
-    bool isFirstFrame = true;
+    static bool isFirstFrame = true;
 
-#ifdef BUILD_ANDROID
-    while (true)
-#endif
 #ifdef BUILD_DESKTOP
     while (!glfwWindowShouldClose(m_Window))
 #endif
     {
-#ifdef BUILD_ANDROID
-        int id;
-        int events;
-        android_poll_source *source;
-        bool shouldDestroy = false;
-        bool isReady;
-        while ((id = ALooper_pollAll((isReady = IsReady()) ? 0 : -1, NULL, &events,
-                                     (void **) &source)) >= 0) {
-            if (shouldDestroy) continue;
-
-            LOGD("BEZDEBUG m_App %p", &m_App);
-            if (source != NULL) source->process(m_App, source);
-
-            if (m_App->destroyRequested != 0) {
-                shouldDestroy = true;
-                return;
-            }
-        }
-
-        if (shouldDestroy) return;
-
-        if (!isReady) continue;
-#endif
 #ifdef BUILD_DESKTOP
         processInput(m_Window);
 #endif
-        if (m_ShouldExit) return;
-
         if (isFirstFrame) {
             LOGD("first frame");
+
+#ifdef BUILD_DESKTOP
             m_Renderer->Initialize();
 
             glfwGetFramebufferSize(m_Window, &m_ScreenWidth, &m_ScreenHeight);
             UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
 
+#endif
             // TODO: creation of meshes should happen dynamically
             Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
 
@@ -163,127 +116,12 @@ void App::Run() {
         m_Renderer->Render();
 
         LogFPS();
-
 #ifdef BUILD_DESKTOP
         glfwSwapBuffers(m_Window);
         glfwPollEvents();
 #endif
     }
 }
-
-#ifdef BUILD_ANDROID
-void App::OnAppCmd(struct android_app* androidApp, int32_t command) {
-    App* app = (App*)androidApp->userData;
-    app->OnAppCommand(androidApp, command);
-}
-
-void App::OnAppCommand(android_app* androidApp, int32_t command) {
-    switch (command) {
-        case APP_CMD_SAVE_STATE:
-            LOGI("APP_CMD_SAVE_STATE");
-            break;
-        case APP_CMD_INIT_WINDOW:
-            LOGI("APP_CMD_INIT_WINDOW");
-            //m_HasFocus = true; // TODO: maybe add abck
-            m_HasWindow = true;
-            //Renderer::GetInstance()->Initialize(androidApp);
-            //app->Initialize(androidApp);
-            break;
-        case APP_CMD_TERM_WINDOW:
-            LOGI("APP_CMD_TERM_WINDOW");
-            m_HasWindow = false;
-            break;
-        case APP_CMD_GAINED_FOCUS:
-            LOGI("APP_CMD_GAINED_FOCUS");
-            m_HasFocus = true;
-            break;
-        case APP_CMD_LOST_FOCUS:
-            LOGI("APP_CMD_LOST_FOCUS");
-            m_HasFocus = false;
-            break;
-        case APP_CMD_LOW_MEMORY:
-            LOGI("APP_CMD_LOW_MEMORY");
-            break;
-        case APP_CMD_STOP:
-            LOGI("APP_CMD_STOP");
-            m_IsVisible = false;
-            break;
-        case APP_CMD_PAUSE:
-            LOGI("APP_CMD_PAUSE");
-            break;
-        case APP_CMD_RESUME:
-            LOGI("APP_CMD_RESUME");
-            break;
-        case APP_CMD_START:
-            LOGI("APP_CMD_START");
-            m_IsVisible = true;
-            break;
-        case APP_CMD_WINDOW_RESIZED:
-        case APP_CMD_CONFIG_CHANGED:
-            LOGI("APP_CMD_WINDOW_RESIZED");
-            break;
-        default:
-            LOGI("OnAppCommand: (unknown command)");
-            break;
-    }
-}
-
-int32_t App::OnInputEvent(android_app* androidApp, AInputEvent* event) {
-/*
-Engine* eng = (Engine*)app->userData;
-if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-ndk_helper::GESTURE_STATE doubleTapState =
-eng->doubletap_detector_.Detect(event);
-ndk_helper::GESTURE_STATE dragState = eng->drag_detector_.Detect(event);
-ndk_helper::GESTURE_STATE pinchState = eng->pinch_detector_.Detect(event);
-
-// Double tap detector has a priority over other detectors
-if (doubleTapState == ndk_helper::GESTURE_STATE_ACTION) {
-// Detect double tap
-eng->tap_camera_.Reset(true);
-} else {
-// Handle drag state
-if (dragState & ndk_helper::GESTURE_STATE_START) {
-// Otherwise, start dragging
-ndk_helper::Vec2 v;
-eng->drag_detector_.GetPointer(v);
-eng->TransformPosition(v);
-eng->tap_camera_.BeginDrag(v);
-} else if (dragState & ndk_helper::GESTURE_STATE_MOVE) {
-ndk_helper::Vec2 v;
-eng->drag_detector_.GetPointer(v);
-eng->TransformPosition(v);
-eng->tap_camera_.Drag(v);
-} else if (dragState & ndk_helper::GESTURE_STATE_END) {
-eng->tap_camera_.EndDrag();
-}
-
-// Handle pinch state
-if (pinchState & ndk_helper::GESTURE_STATE_START) {
-// Start new pinch
-ndk_helper::Vec2 v1;
-ndk_helper::Vec2 v2;
-eng->pinch_detector_.GetPointers(v1, v2);
-eng->TransformPosition(v1);
-eng->TransformPosition(v2);
-eng->tap_camera_.BeginPinch(v1, v2);
-} else if (pinchState & ndk_helper::GESTURE_STATE_MOVE) {
-// Multi touch
-// Start new pinch
-ndk_helper::Vec2 v1;
-ndk_helper::Vec2 v2;
-eng->pinch_detector_.GetPointers(v1, v2);
-eng->TransformPosition(v1);
-eng->TransformPosition(v2);
-eng->tap_camera_.Pinch(v1, v2);
-}
-}
-return 1;
-}
-*/
-    return 1;
-}
-#endif
 
 #ifdef BUILD_DESKTOP
 void App::processInput(GLFWwindow* window)
@@ -321,7 +159,7 @@ void App::LogFPS() {
 
         // Log
         LOGI("FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
-#ifdef BUILD_ANDROID
+#if 0
         static char buffer[100];
         sprintf(buffer, "FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
         JNIUtil::GetInstance()->LogTrigger(buffer);

@@ -13,7 +13,7 @@
 #include "config.h"
 #include "logger.h"
 
-#define PERF_RESULTS_OUTPUT_PATH PERF_RESULTS_PATH "PerformanceResults.csv"
+#define PERF_RESULTS_OUTPUT_PATH "PerformanceResults.csv"
 
 // TODO: must do this on a main thread
 App* StartApp(int sceneId)
@@ -47,7 +47,6 @@ void LogToFile(std::string testName, std::vector<std::string> log)
     for (auto message : log)
     {
         auto split = Util::StringSplit(message, std::string(" "));
-        LOGT("size: %d", split.size());
         if (split.size() > 1 && split[1].compare(std::string("FPS:")) == 0)
         {
             count++;
@@ -91,8 +90,7 @@ TEST(SingleCubePerformanceTest)
 {
     StartApp(SCENE_CUBE);
 
-    // LOGT("app ended");
-    auto log = Logger::GetInstance()->GetLog(); //TestSuite::GetInstance().GetLog();
+    auto log = Logger::GetInstance()->GetLog();
     ASSERT_TRUE(log.size() > 0);
 
     LogToFile(GetName(), log);

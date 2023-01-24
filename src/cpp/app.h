@@ -27,6 +27,12 @@
 
 class Renderer;
 
+class GameApp {
+public:
+    virtual void Initialize() = 0;
+    virtual void Run() = 0;
+};
+
 class App {
 public:
     App();
@@ -38,16 +44,9 @@ public:
         return instance;
     };
 
-#ifdef BUILD_ANDROID
-    bool IsReady();
-    android_app* GetApp() { return m_App; }
-
-    int Initialize(android_app*);
-    void OnAppCommand(android_app*, int32_t);
-#endif
+    int Initialize();
 
 #ifdef BUILD_DESKTOP
-    int Initialize();
     static void SetFramebufferSizeCallback(GLFWwindow* window, int width, int height);
     static void processInput(GLFWwindow* window);
 #endif
@@ -59,7 +58,6 @@ public:
 private:
     void LogFPS();
 
-    android_app* m_App;
     Renderer* m_Renderer;
     Timer* m_GlobalTimer;
 
@@ -68,13 +66,6 @@ private:
     int m_ScreenHeight;
     int m_StartSceneId;
 
-#ifdef BUILD_ANDROID
-    bool m_HasFocus;
-    bool m_IsVisible;
-    bool m_HasWindow;
-    static void OnAppCmd(struct android_app*, int32_t);
-    static int32_t OnInputEvent(android_app*, AInputEvent*);
-#endif
 #ifdef BUILD_DESKTOP
     GLFWwindow* m_Window;
 #endif
