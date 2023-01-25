@@ -9,17 +9,15 @@
 
 #include "Test.h"
 
-#include "app.h"
+#include "GLFWApp.h"
 #include "config.h"
 #include "logger.h"
 
 #define PERF_RESULTS_OUTPUT_PATH "PerformanceResults.csv"
 
-// TODO: must do this on a main thread
-App* StartApp(int sceneId)
+void StartApp(int sceneId)
 {
-    App* app = App::GetInstance();
-    app->SetStartScene(sceneId);
+    GLFWApp* app = GLFWApp::GetInstance();
     app->Initialize();
 
     std::thread t = std::thread([app, sceneId]
@@ -32,7 +30,7 @@ App* StartApp(int sceneId)
 
     t.join();
 
-    return app;
+    delete app;
 }
 
 void LogToFile(std::string testName, std::vector<std::string> log)

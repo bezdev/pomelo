@@ -12,7 +12,7 @@ std::vector<char> Util::ReadFile(const char* filename)
 #ifdef BUILD_ANDROID
     std::vector<char> data;
 
-    AAssetManager* assetManager = AndroidApp::Instance->GetAndroidApp()->activity->assetManager;
+    AAssetManager* assetManager = AndroidApp::GetInstance()->GetAndroidApp()->activity->assetManager;
     AAsset* assetFile = AAssetManager_open(assetManager, filename, AASSET_MODE_BUFFER);
     if (!assetFile)
     {

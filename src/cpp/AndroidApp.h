@@ -7,17 +7,24 @@
 #include "app.h"
 #include "util.h"
 
+#define NATIVE_ACTIVITY_CLASS_NAME "android/app/NativeActivity"
+
 class AndroidApp
 {
 public:
-    static AndroidApp* Instance;
+    static AndroidApp* GetInstance()
+    {
+        static AndroidApp* instance = new AndroidApp();
+        return instance;
+    };
 
     static void OnAppCmd(struct android_app*, int32_t);
     static int32_t OnInputEvent(android_app*, AInputEvent*);
 
-    AndroidApp(android_app* androidApp);
+    AndroidApp();
     ~AndroidApp();
 
+    void Initialize(android_app* androidApp);
     void InitializeWindow(ANativeWindow* window);
     void OnAppCommand(android_app*, int32_t);
 

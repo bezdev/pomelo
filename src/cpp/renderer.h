@@ -34,8 +34,8 @@ public:
 private:
     bool m_IsInitialized;
 
-    int32_t m_ScreenWidth;
-    int32_t m_ScreenHeight;
+    int m_ScreenWidth;
+    int m_ScreenHeight;
 
     //RenderObjectCollection m_RenderObjectCollection;
     std::vector<Model*> m_RenderObjects;

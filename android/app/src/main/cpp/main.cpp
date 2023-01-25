@@ -5,11 +5,10 @@ struct android_app;
 
 void android_main(android_app* android_app) {
     LOGD("android_main start: %ld", android_app->window);
-    //std::unique_ptr<App> app(App::GetInstance());
-    AndroidApp aa(android_app);
-    aa.Run();
-//    aa.SetStartScene(SCENE_CUBE);
-//    aa.Run();
+    AndroidApp* aa = AndroidApp::GetInstance();
+    aa->Initialize(android_app);
+    aa->Run();
+    delete aa;
     LOGD("android_main end");
 }
 

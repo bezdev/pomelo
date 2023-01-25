@@ -1,18 +1,8 @@
 #include "AndroidApp.h"
 
-AndroidApp* AndroidApp::Instance = nullptr;
-
-AndroidApp::AndroidApp(android_app *androidApp):
-    m_AndroidApp(androidApp),
+AndroidApp::AndroidApp():
     m_HasFocus(false)
 {
-    m_AndroidApp->userData = this;
-    m_AndroidApp->onAppCmd = AndroidApp::OnAppCmd;
-    m_AndroidApp->onInputEvent = AndroidApp::OnInputEvent;
-
-    m_App.SetStartScene(SCENE_CUBE);
-
-    Instance = this;
 }
 
 AndroidApp::~AndroidApp()
@@ -30,6 +20,17 @@ AndroidApp::~AndroidApp()
 
         eglTerminate(m_Display);
     }
+}
+
+void AndroidApp::Initialize(android_app *androidApp)
+{   
+    m_AndroidApp = androidApp;
+
+    m_AndroidApp->userData = this;
+    m_AndroidApp->onAppCmd = AndroidApp::OnAppCmd;
+    m_AndroidApp->onInputEvent = AndroidApp::OnInputEvent;
+
+    m_App.SetStartScene(SCENE_CUBE);
 }
 
 void AndroidApp::InitializeWindow(ANativeWindow *window)
@@ -198,7 +199,8 @@ return 1;
 
 void AndroidApp::Run()
 {
-    while(true) {
+    while(true)
+    {
         int id;
         int events;
         android_poll_source *source;
