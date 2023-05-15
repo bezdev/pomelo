@@ -1,5 +1,7 @@
 #!/bin/sh
 
 cmake .
-make
+if ! make; then
+    exit
+fi
 ./pomelotest
