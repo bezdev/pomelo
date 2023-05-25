@@ -66,6 +66,10 @@ void Renderer::UpdateWindowSize(int width, int height) {
     m_ScreenHeight = height;
 
     glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
+
+    auto ratio = 1.f * m_ScreenWidth / m_ScreenHeight;
+    // m_ProjectionMatrix = glm::frustum(-ratio, ratio, -1.f, 1.f, 3.f, 500.f);  
+    m_ProjectionMatrix = glm::perspective(glm::radians<float>(45.0f), ratio, 3.f, 500.f);
 }
 
 void Renderer::Render() {
@@ -76,9 +80,6 @@ void Renderer::Render() {
     glCullFace(GL_BACK);
 
     auto viewMatrix = glm::lookAt(glm::vec3(10, 10, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-    auto ratio = 1.f * m_ScreenWidth / m_ScreenHeight;
-    auto projectionMatrix = glm::frustum(-ratio, ratio, -1.f, 1.f, 3.f, 500.f);
-    //auto projectionMatrix = glm::perspective(45, ratio, 3, 500);
 
     static Shader* currentShader = nullptr;
     static Material* currentMaterial = nullptr;
@@ -93,54 +94,54 @@ void Renderer::Render() {
     //    for (auto itByMeshType = itByMaterialType->second.begin(); itByMeshType != itByMaterialType->second.end(); itByMeshType++) {
     //        for (auto itModels = itByMeshType->second.begin(); itModels != itByMeshType->second.end(); itModels++) {
     for (auto itModels = m_RenderObjects.begin(); itModels != m_RenderObjects.end(); itModels++) {
-                Model* model = *itModels;
-                Material* material = model->GetMaterial();
-                Shader* shader = material->GetShader();
-                Mesh* mesh = model->GetMesh();
-                if (shader != currentShader) {
-                    glUseProgram(shader->GetProgram());
-                    currentShader = shader;
+        Model* model = *itModels;
+        Material* material = model->GetMaterial();
+        Shader* shader = material->GetShader();
+        Mesh* mesh = model->GetMesh();
+        if (shader != currentShader) {
+            glUseProgram(shader->GetProgram());
+            currentShader = shader;
 
-                    // TODO: support more shaders
-                    auto variables = currentShader->GetVariables();
-                    currentPositionHandle = variables[0];
-                    currentColorHandle = variables[1];
-                    currentModelMatrixHandle = variables[2];
-                    currentViewMatrixHandle = variables[3];
-                    currentProjectionMatrixHandle = variables[4];
+            // TODO: support more shaders
+            auto variables = currentShader->GetVariables();
+            currentPositionHandle = variables[0];
+            currentColorHandle = variables[1];
+            currentModelMatrixHandle = variables[2];
+            currentViewMatrixHandle = variables[3];
+            currentProjectionMatrixHandle = variables[4];
 
-                    glUniformMatrix4fv(currentViewMatrixHandle, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-                    glUniformMatrix4fv(currentProjectionMatrixHandle, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-                }
+            glUniformMatrix4fv(currentViewMatrixHandle, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+            glUniformMatrix4fv(currentProjectionMatrixHandle, 1, GL_FALSE, glm::value_ptr(m_ProjectionMatrix));
+        }
 
-                if (mesh != currentMesh) {
-                    // TODO: make this better
-                    glBindBuffer(GL_ARRAY_BUFFER, 0);
-                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        if (mesh != currentMesh) {
+            // TODO: make this better
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-                    currentMesh = mesh;
-                    if (currentMesh == Mesh::PRIMITIVE_BOX_TRIANGLE) {
-                        currentMesh->GetVertexArray()->Bind();
-                        currentMesh->GetIndexBuffer()->Bind();
-                        //glVertexAttribPointer(currentPositionHandle, 3, GL_FLOAT, GL_FALSE, 3 * 4, 0);
-                        //glEnableVertexAttribArray(currentPositionHandle);
-                    }
-                }
-
-                glUniformMatrix4fv(currentModelMatrixHandle, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
-
-                // Per object properties
-                if (currentMaterial != material) {
-                    currentMaterial = material;
-
-                    if (currentMaterial->GetType() == MaterialType::SolidColor) {
-                        // TODO: replace with actual color from material
-                        glUniform4f(currentColorHandle, 0.2f, 0.709803922f, 0.898039216f, 1.0f);
-                    }
-                }
-
-                glDrawElements(GL_TRIANGLES, currentMesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_SHORT, 0);
+            currentMesh = mesh;
+            if (currentMesh == Mesh::PRIMITIVE_BOX_TRIANGLE) {
+                currentMesh->GetVertexArray()->Bind();
+                currentMesh->GetIndexBuffer()->Bind();
+                //glVertexAttribPointer(currentPositionHandle, 3, GL_FLOAT, GL_FALSE, 3 * 4, 0);
+                //glEnableVertexAttribArray(currentPositionHandle);
             }
+        }
+
+        glUniformMatrix4fv(currentModelMatrixHandle, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
+
+        // Per object properties
+        if (currentMaterial != material) {
+            currentMaterial = material;
+
+            if (currentMaterial->GetType() == MaterialType::SolidColor) {
+                // TODO: replace with actual color from material
+                glUniform4f(currentColorHandle, 0.2f, 0.709803922f, 0.898039216f, 1.0f);
+            }
+        }
+
+        glDrawElements(GL_TRIANGLES, currentMesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_SHORT, 0);
+    }
    //     }
    // }
 

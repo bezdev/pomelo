@@ -6,6 +6,7 @@
 
 #include "app.h"
 #include "util.h"
+#include "timer.h"
 
 #define NATIVE_ACTIVITY_CLASS_NAME "android/app/NativeActivity"
 

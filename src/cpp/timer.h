@@ -66,3 +66,11 @@ private:
     float m_Delta;
     bool m_IsPaused;
 };
+
+#define ENABLE_TIME_FUNC 0
+
+#if ENABLE_TIME_FUNC
+#define TIME_FUNC(line) do { { ScopeTimer SCOPE_TIMER_FUNCTION(#line); line; } } while(0);
+#else
+#define TIME_FUNC(line) line
+#endif

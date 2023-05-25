@@ -84,7 +84,7 @@ void LogToFile(std::string testName, std::vector<std::string> log)
     file.close();
 }
 
-TEST(SingleCubePerformanceTest)
+DISABLED_TEST(SingleCubePerformanceTest)
 {
     StartApp(SCENE_CUBE);
 

@@ -6,10 +6,13 @@
 #include <thread>
 #include <string>
 #include <cmath>
+#include <cassert>
 
 #define ASSERT_TRUE(condition) do { if (!(condition)) { printf("FAILED [%s] %s:%d\n  %s\n", GetName().c_str(), __FILE__, __LINE__, #condition); throw 1; } } while(0);
 #define ASSERT_ARE_EQUAL(a, b) do { ASSERT_TRUE(a == b) } while(0);
 #define ASSERT_ARE_EQUAL_DELTA(a, b, delta) do { ASSERT_TRUE(std::abs(a - b) < delta) } while(0);
+#define ASSERT_THROWS(expression) try { expression; assert(false); } catch (...) { assert(true); }
+
 #define SLEEP(ms) do { std::this_thread::sleep_for(std::chrono::milliseconds(ms)); } while(0);
 
 class ITest

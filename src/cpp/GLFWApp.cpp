@@ -10,8 +10,8 @@ void glfwOnError(int error, const char* description)
 }
 
 GLFWApp::GLFWApp():
-    m_ScreenWidth(1600),
-    m_ScreenHeight(900)
+    m_ScreenWidth(800),
+    m_ScreenHeight(450)
 {
 }
 
@@ -73,12 +73,10 @@ void GLFWApp::Run()
 {
     while (!glfwWindowShouldClose(m_Window))
     {
-        ProcessInput();
-
-        m_App.Run();
-
-        glfwSwapBuffers(m_Window);
-        glfwPollEvents();
+        TIME_FUNC(ProcessInput());
+        TIME_FUNC(m_App.Run());
+        TIME_FUNC(glfwSwapBuffers(m_Window));
+        TIME_FUNC(glfwPollEvents());
     }
 }
 

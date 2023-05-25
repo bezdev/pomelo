@@ -18,7 +18,7 @@
 class Logger {
 public:
     enum class Level {
-        Verbose,
+        Verbose, 
         Test,
         Debug,
         Info,

@@ -37,6 +37,8 @@ private:
     int m_ScreenWidth;
     int m_ScreenHeight;
 
+    glm::mat4 m_ProjectionMatrix;
+
     //RenderObjectCollection m_RenderObjectCollection;
     std::vector<Model*> m_RenderObjects;
 
