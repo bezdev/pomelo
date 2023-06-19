@@ -12,3 +12,4 @@ time,OS,resolution,name,average,min,max
 2023-01-26 23-17-44,macOS,1600x900,SingleCubePerformanceTest,1562.61,1399.43,1605.88
 2023-06-18 23-26-09,windows,800x450,SingleCubePerformanceTest,4308.16,4078.77,4614.31
 2023-06-18 23-53-13,windows,1600x900,SingleCubePerformanceTest,4721.92,4248.49,5027.48
+2023-06-18 23-59-18,windows,1600x900,SingleCubePerformanceTest,2045.66,0.9124,4090.94
