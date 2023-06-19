@@ -10,7 +10,7 @@
 
 #define CLOCK_MONOTONIC 0
 
-int clock_gettime(int, struct timespec* spec) {
+static inline int clock_gettime(int, struct timespec* spec) {
     __int64 wintime; GetSystemTimeAsFileTime((FILETIME*)&wintime);
     wintime -= 116444736000000000i64;
     spec->tv_sec = wintime / 10000000i64;           // seconds

@@ -1,8 +1,5 @@
 #include "timer.h"
 
-
-
-
 Timer::Timer() {
     LOGD("Timer::Timer");
     Reset();

@@ -1,5 +1,13 @@
 #include "GLFWApp.h"
 
+#ifdef WIN32
+#define SCREEN_WIDTH 1600
+#define SCREEN_HEIGHT 900
+#else
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 450
+#endif
+
 void glfwOnError(int error, const char* description)
 {
     LOGE("glfwOnError: %d, %s", error, description);
@@ -10,8 +18,8 @@ void glfwOnError(int error, const char* description)
 }
 
 GLFWApp::GLFWApp():
-    m_ScreenWidth(800),
-    m_ScreenHeight(450)
+    m_ScreenWidth(SCREEN_WIDTH),
+    m_ScreenHeight(SCREEN_HEIGHT)
 {
 }
 

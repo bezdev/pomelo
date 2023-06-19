@@ -13,7 +13,11 @@
 #include "config.h"
 #include "logger.h"
 
+#ifdef WIN32
+#define PERF_RESULTS_OUTPUT_PATH "..\\..\\..\\PerformanceResults.csv"
+#else
 #define PERF_RESULTS_OUTPUT_PATH "PerformanceResults.csv"
+#endif
 
 void StartApp(int sceneId)
 {
@@ -26,7 +30,7 @@ void StartApp(int sceneId)
         app->Exit();
     });
 
-    app->Run(); 
+    app->Run();
 
     t.join();
 
@@ -78,13 +82,11 @@ void LogToFile(std::string testName, std::vector<std::string> log)
             std::string os("macOS");
     #endif
 
-    int width = 1600;
-    int height = 900;
-    file << std::put_time(&tm, "%Y-%m-%d %H-%M-%S") << "," << os << "," << resolution << "," << testName << "," << avg << "," << min << "," << max << std::endl;    
+    file << std::put_time(&tm, "%Y-%m-%d %H-%M-%S") << "," << os << "," << resolution << "," << testName << "," << avg << "," << min << "," << max << std::endl;
     file.close();
 }
 
-DISABLED_TEST(SingleCubePerformanceTest)
+TEST(SingleCubePerformanceTest)
 {
     StartApp(SCENE_CUBE);
 
