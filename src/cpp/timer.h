@@ -6,15 +6,38 @@
 
 #ifdef _WIN32
 #include <Windows.h>
-#include <sysinfoapi.h>
 
 #define CLOCK_MONOTONIC 0
 
+class HighResolutionTimer {
+public:
+    HighResolutionTimer() {
+        QueryPerformanceFrequency(&Frequency);
+        QueryPerformanceCounter(&Start);
+    }
+
+    double Tick() {
+        LARGE_INTEGER end;
+        QueryPerformanceCounter(&end);
+        LARGE_INTEGER interval;
+        interval.QuadPart = end.QuadPart - Start.QuadPart;
+        return static_cast<double>(interval.QuadPart) / Frequency.QuadPart;
+    }
+
+    LARGE_INTEGER Frequency;
+    LARGE_INTEGER Start;
+};
+
 static inline int clock_gettime(int, struct timespec* spec) {
-    __int64 wintime; GetSystemTimeAsFileTime((FILETIME*)&wintime);
-    wintime -= 116444736000000000i64;
-    spec->tv_sec = wintime / 10000000i64;           // seconds
-    spec->tv_nsec = wintime % 10000000i64 * 100;    // nano-seconds
+    static HighResolutionTimer instance;
+    auto time = instance.Tick();
+    // LARGE_INTEGER now;
+    // QueryPerformanceCounter(&now);
+    // LARGE_INTEGER interval;
+    // interval.QuadPart = now.QuadPart - instance.Start.QuadPart;
+    // auto time = static_cast<double>(interval.QuadPart) / instance.Frequency.QuadPart;
+    spec->tv_sec = static_cast<time_t>(time);
+    spec->tv_nsec = static_cast<long>((time - spec->tv_sec) * 1e9);
     return 0;
 }
 #endif
