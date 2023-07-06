@@ -1,14 +1,13 @@
 #include "buffers.h"
 
-VertexBuffer::VertexBuffer(GLfloat *data, int size, int stride)
+VertexBuffer::VertexBuffer(GLfloat *data, int size, int stride, GLenum primitive)
 {
     ASSERT(size % stride == 0);
 
-    mPrimitive = GL_TRIANGLES;
+    m_Primitive = primitive;
     m_VBO = 0;
-    mStride = stride;
-    mColorsOffset = mTexCoordsOffset = 0;
-    mCount = size / stride;
+    m_Stride = stride;
+    m_Count = size / stride;
 
     glGenBuffers(1, &m_VBO);
     Bind();
@@ -18,15 +17,11 @@ VertexBuffer::VertexBuffer(GLfloat *data, int size, int stride)
 
 void VertexBuffer::Bind()
 {
-    // glBindVertexArray(m_VAO);
-    // glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 }
 
 void VertexBuffer::Unbind()
 {
-    // glBindVertexArray(0);
-    // glDisableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

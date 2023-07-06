@@ -37,9 +37,6 @@ void App::Run() {
     if (m_IsFirstFrame) {
         LOGD("first frame");
 
-        // TODO: creation of meshes should happen dynamically
-        Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
-
         SceneManager::LoadScene(m_StartSceneId);
 
         m_GlobalTimer->Reset();

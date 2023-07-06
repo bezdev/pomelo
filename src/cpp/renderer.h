@@ -2,6 +2,7 @@
 
 #include <map>
 #include <vector>
+#include <unordered_map>
 
 #ifdef BUILD_ANDROID
 #include <EGL/egl.h>
@@ -14,69 +15,18 @@
 
 #include "app.h"
 #include "model.h"
-#include "renderobjectcollection.h"
 #include "ECS.h"
 #include "shader.h"
 #include "scene.h"
 #include "util.h"
 
-// TODO: move to other file
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-class RenderBuffer
+struct RenderBuffer
 {
-public:
-    RenderBuffer();
-
-    //void RenderBuffer::Create(std::vector<float> &vertices, std::vector<short> &indices, PrimitiveType primitiveType, MeshType meshType);
-
-    // void RenderBuffer::AddVertexBuffer(
-    //     const std::vector<float>& vertices)
-    //     // unsigned int attributeIndex,
-    //     // unsigned int numComponents,
-    //     // unsigned int offset,
-    //     // unsigned int stride
-    // {
-    //     // glBindVertexArray(m_VAO);
-    //     // glBindBuffer(GL_ARRAY_BUFFER, m_VBOs[attributeIndex]);
-    //     // glVertexAttribPointer(attributeIndex, numComponents, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
-    //     // glEnableVertexAttribArray(attributeIndex);
-    //     // glBindBuffer(GL_ARRAY_BUFFER, 0);
-    //     // glBindVertexArray(0);
-    //     glGenVertexArrays(1, &m_VAO);
-    //     glBindVertexArray(m_VAO);
-
-    //     GLuint vbo;
-    //     glGenBuffers(1, &vbo);
-    //     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    //     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-    //     m_VBOs.push_back(vbo);
-
-    //     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    //     glBindVertexArray(0);
-    // }
-
-    // void RenderBuffer::AddIndexBuffer(const std::vector<unsigned int>& indices)
-    // {
-    //     glGenBuffers(1, &m_IBO);
-    //     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
-    //     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-    //     m_IndexCount = static_cast<GLsizei>(indices.size());
-    // }
-    // void Mesh::Draw() const {
-    //     glBindVertexArray(m_VAO);
-    //     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
-    //     glDrawElements(GL_TRIANGLES, m_IndexCount, GL_UNSIGNED_INT, nullptr);
-    //     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    //     glBindVertexArray(0);
-    // }
-// private:
-//     GLuint m_VAO = 0;
-//     GLuint m_IBO = 0;
-//     GLsizei m_IndexCount = 0;
-//     std::vector<GLuint> m_VBOs;
+    VertexArray* VAO;
+    IndexBuffer* IBO;
 };
 
 struct RenderObject {
@@ -94,13 +44,13 @@ public:
     {
         if (!s_Instance) s_Instance = new Renderer();
         return s_Instance;
-    };
+    }
 
     static void DestoryInstance()
     {
         delete s_Instance;
         s_Instance = nullptr;
-    };
+    }
 
     Renderer();
     ~Renderer();
@@ -114,6 +64,23 @@ public:
     void UpdateWindowSize(int width, int height);
     void Render();
 private:
+    static RenderBuffer* CreateRenderBuffer(std::vector<float>& vertices, std::vector<short>& indices, GLenum primitive)
+    {
+        RenderBuffer* rb = new RenderBuffer();
+        rb->VAO = new VertexArray();
+        VertexBuffer* vb = new VertexBuffer(&vertices[0], vertices.size() * sizeof(GLfloat), 3 * sizeof(GLfloat), GL_TRIANGLES);
+        rb->VAO->AddVertexBuffer(vb);
+        // TODO: remove reinterpret_cast
+        rb->IBO = new IndexBuffer(reinterpret_cast<GLushort *>(&indices[0]), indices.size() * sizeof(GLushort));
+        rb->VAO->Bind();
+        vb->Bind();
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * 4, 0);
+        vb->Unbind();
+        rb->VAO->Unbind();
+
+        return rb;
+    }
+
     static Renderer* s_Instance;
 
     bool m_IsInitialized;
@@ -125,6 +92,7 @@ private:
 
     std::vector<Model*> m_RenderObjects;
     std::vector<RenderObject> m_RenderQueue;
+    std::unordered_map<int, RenderBuffer*> m_RenderBuffers;
 
     static void CheckGlError(const char* op) {
         for (GLint error = glGetError(); error; error = glGetError()) {

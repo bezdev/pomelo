@@ -15,34 +15,32 @@
 
 class VertexBuffer {
 public:
-    VertexBuffer(GLfloat *data, int dataSize, int stride);
+    VertexBuffer(GLfloat *data, int dataSize, int stride, GLenum primitive);
     ~VertexBuffer();
 
     void Bind();
     void Unbind();
 
-    int GetStride() { return mStride; }
-    int GetCount() { return mCount; }
-    int GetPositionsOffset() { return 0; }
+    // int GetStride() { return m_Stride; }
+    // int GetCount() { return m_Count; }
+    // int GetPositionsOffset() { return 0; }
 
-    bool HasColors() { return mColorsOffset > 0; }
-    int GetColorsOffset() { return mColorsOffset; }
-    void SetColorsOffset(int offset) { mColorsOffset = offset; }
+    // bool HasColors() { return mColorsOffset > 0; }
+    // int GetColorsOffset() { return mColorsOffset; }
+    // void SetColorsOffset(int offset) { mColorsOffset = offset; }
 
-    bool HasTexCoords() { return mTexCoordsOffset > 0; }
-    void SetTexCoordsOffset(int offset) { mTexCoordsOffset = offset; }
-    int GetTexCoordsOffset() { return mTexCoordsOffset; }
+    // bool HasTexCoords() { return mTexCoordsOffset > 0; }
+    // void SetTexCoordsOffset(int offset) { mTexCoordsOffset = offset; }
+    // int GetTexCoordsOffset() { return mTexCoordsOffset; }
 
-    GLenum GetPrimitive() { return mPrimitive; }
-    void SetPrimitive(GLenum primitive) { mPrimitive = primitive; }
+    // GLenum GetPrimitive() { return m_Primitive; }
+    // void SetPrimitive(GLenum primitive) { m_Primitive = primitive; }
 
 private:
     GLuint m_VBO;
-    GLenum mPrimitive;
-    int mStride;
-    int mColorsOffset;
-    int mTexCoordsOffset;
-    int mCount;
+    GLenum m_Primitive;
+    int m_Stride;
+    int m_Count;
 };
 
 class IndexBuffer
@@ -74,4 +72,3 @@ private:
     std::vector<VertexBuffer*> m_VertexBuffers;
     GLuint m_VAO;
 };
-

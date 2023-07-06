@@ -27,9 +27,11 @@ int Renderer::Initialize()
         glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
         LOGI("OpenGL Version: %d.%d", majorVersion, minorVersion);
 
-        // TODO: figure out better way to init shader
+        // TODO: do this dynamically
         LoadShaders();
-
+        Meshes::Box b(1.f, 1.f, 1.f);
+        m_RenderBuffers[static_cast<int>(Components::MeshType::BOX)] = CreateRenderBuffer(b.Vertices, b.Indices, GL_TRIANGLES);
+        // Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
 
         m_IsInitialized = true;
     }
@@ -140,7 +142,7 @@ void Renderer::Render() {
 
     static Shader* currentShader = nullptr;
     static Material* currentMaterial = nullptr;
-    static Mesh* currentMesh = nullptr;
+    // static Mesh* currentMesh = nullptr;
     static GLuint currentPositionHandle = 0;
     static GLuint currentColorHandle = 0;
     static GLuint currentModelMatrixHandle = 0;
@@ -155,7 +157,7 @@ void Renderer::Render() {
         Model* model = *itModels;
         Material* material = model->GetMaterial();
         Shader* shader = material->GetShader();
-        Mesh* mesh = model->GetMesh();
+        // Mesh* mesh = model->GetMesh();
         if (shader != currentShader) {
             glUseProgram(shader->GetProgram());
             currentShader = shader;
@@ -172,19 +174,24 @@ void Renderer::Render() {
             glUniformMatrix4fv(currentProjectionMatrixHandle, 1, GL_FALSE, glm::value_ptr(m_ProjectionMatrix));
         }
 
-        if (mesh != currentMesh) {
-            // TODO: make this better
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        auto rb = m_RenderBuffers[static_cast<int>(Components::MeshType::BOX)];
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        rb->VAO->Bind();
+        rb->IBO->Bind();
+        // if (mesh != currentMesh) {
+        //     // TODO: make this better
+        //     glBindBuffer(GL_ARRAY_BUFFER, 0);
+        //     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-            currentMesh = mesh;
-            if (currentMesh == Mesh::PRIMITIVE_BOX_TRIANGLE) {
-                currentMesh->GetVertexArray()->Bind();
-                currentMesh->GetIndexBuffer()->Bind();
-                // glVertexAttribPointer(currentPositionHandle, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-                // glEnableVertexAttribArray(currentPositionHandle);
-            }
-        }
+        //     currentMesh = mesh;
+        //     if (currentMesh == Mesh::PRIMITIVE_BOX_TRIANGLE) {
+        //         currentMesh->GetVertexArray()->Bind();
+        //         currentMesh->GetIndexBuffer()->Bind();
+        //         // glVertexAttribPointer(currentPositionHandle, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+        //         // glEnableVertexAttribArray(currentPositionHandle);
+        //     }
+        // }
 
         glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), model->GetPosition());
         glUniformMatrix4fv(currentModelMatrixHandle, 1, GL_FALSE, glm::value_ptr(modelMatrix));
@@ -199,7 +206,7 @@ void Renderer::Render() {
             }
         }
 
-        glDrawElements(GL_TRIANGLES, currentMesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_TRIANGLES, rb->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
     }
    //     }
    // }
