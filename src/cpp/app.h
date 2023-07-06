@@ -19,12 +19,6 @@ public:
     App();
     ~App();
 
-    static App* GetInstance()
-    {
-        static App* instance = new App();
-        return instance;
-    };
-
     int Initialize();
 
     void Run();
@@ -39,4 +33,6 @@ private:
     int m_ScreenWidth;
     int m_ScreenHeight;
     int m_StartSceneId;
+
+    bool m_IsFirstFrame;
 };

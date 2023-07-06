@@ -27,8 +27,8 @@ public:
 
     static Logger* GetInstance()
     {
-        static Logger* instance = new Logger(Logger::Level::Verbose, "[BEZLOG]");
-        return instance;
+        static Logger instance(Logger::Level::Verbose, "[BEZLOG]");
+        return &instance;
     };
 
     Logger(Level level, const char* name);
@@ -53,6 +53,7 @@ public:
     };
 
     std::vector<std::string> GetLog() { return m_Log; };
+    void Clear() { m_Log.clear(); };
 
 private:
     const char* GetTag(Level level);

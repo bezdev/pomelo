@@ -1,5 +1,7 @@
 #include "GLFWApp.h"
 
+GLFWApp* GLFWApp::s_Instance = nullptr;
+
 #ifdef WIN32
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
@@ -25,18 +27,20 @@ GLFWApp::GLFWApp():
 
 GLFWApp::~GLFWApp()
 {
-
+    glfwDestroyWindow(m_Window);
+    glfwTerminate();
+    LOGI("GLFWApp::~GLFWApp");
 }
 
-int GLFWApp::Initialize()
+int GLFWApp::Initialize(int sceneId)
 {
     glfwSetErrorCallback(glfwOnError);
 
     GLenum hr = glfwInit();
     LOGD("glfwInit: %d", hr);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
@@ -62,7 +66,7 @@ int GLFWApp::Initialize()
     glfwGetFramebufferSize(m_Window, &m_ScreenWidth, &m_ScreenHeight);
     m_App.UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
 
-     m_App.SetStartScene(SCENE_CUBE);
+    m_App.SetStartScene(sceneId);
 
     return 0;
 }

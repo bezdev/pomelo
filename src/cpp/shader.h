@@ -97,3 +97,9 @@ private:
     GLuint m_Program;
     std::vector<GLuint> m_Variables;
 };
+
+class ShaderManager
+{
+public:
+    ShaderManager();
+};

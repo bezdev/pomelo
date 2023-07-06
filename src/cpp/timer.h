@@ -31,11 +31,6 @@ public:
 static inline int clock_gettime(int, struct timespec* spec) {
     static HighResolutionTimer instance;
     auto time = instance.Tick();
-    // LARGE_INTEGER now;
-    // QueryPerformanceCounter(&now);
-    // LARGE_INTEGER interval;
-    // interval.QuadPart = now.QuadPart - instance.Start.QuadPart;
-    // auto time = static_cast<double>(interval.QuadPart) / instance.Frequency.QuadPart;
     spec->tv_sec = static_cast<time_t>(time);
     spec->tv_nsec = static_cast<long>((time - spec->tv_sec) * 1e9);
     return 0;

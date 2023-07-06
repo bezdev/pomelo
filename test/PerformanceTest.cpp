@@ -22,7 +22,7 @@
 void StartApp(int sceneId)
 {
     GLFWApp* app = GLFWApp::GetInstance();
-    app->Initialize();
+    app->Initialize(sceneId);
 
     std::thread t = std::thread([app, sceneId]
     { 
@@ -34,7 +34,7 @@ void StartApp(int sceneId)
 
     t.join();
 
-    delete app;
+    GLFWApp::DestoryInstance();
 }
 
 void LogToFile(std::string testName, std::vector<std::string> log)
@@ -94,4 +94,16 @@ TEST(SingleCubePerformanceTest)
     ASSERT_TRUE(log.size() > 0);
 
     LogToFile(GetName(), log);
+    Logger::GetInstance()->Clear();
+}
+
+TEST(ManyCubePerformanceTest)
+{
+    StartApp(SCENE_MANY_CUBE);
+
+    auto log = Logger::GetInstance()->GetLog();
+    ASSERT_TRUE(log.size() > 0);
+
+    LogToFile(GetName(), log);
+    Logger::GetInstance()->Clear();
 }

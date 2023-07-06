@@ -14,15 +14,22 @@ class GLFWApp
 public:
     static GLFWApp* GetInstance()
     {
-        static GLFWApp* instance = new GLFWApp();
-        return instance;
+        if (!s_Instance) s_Instance = new GLFWApp();
+        return s_Instance;
+    };
+
+    static void DestoryInstance()
+    {
+        delete s_Instance;
+        s_Instance = nullptr;
     };
 
     static void s_SetFramebufferSizeCallback(GLFWwindow* window, int width, int height);
 
     GLFWApp();
     ~GLFWApp();
-    int Initialize();
+    // TODO: remove sceneId parameter
+    int Initialize(int sceneId);
 
     void SetFramebufferSizeCallback(GLFWwindow* window, int width, int height);
     void ProcessInput();
@@ -30,6 +37,7 @@ public:
     void Run();
     void Exit();
 private:
+    static GLFWApp* s_Instance;
     App m_App;
 
     GLFWwindow* m_Window;

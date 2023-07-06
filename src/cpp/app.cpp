@@ -4,14 +4,14 @@
 #include "jniutil.h"
 #endif
 
-App::App()
+App::App():
+    m_IsFirstFrame(true)
 { }
 
 App::~App()
 {
     LOGD("App::~App");
-
-    delete Renderer::GetInstance();
+    Renderer::DestoryInstance();
 
 #if 0
     delete JNIUtil::GetInstance();
@@ -34,27 +34,23 @@ int App::Initialize()
 }
 
 void App::Run() {
-    static bool isFirstFrame = true;
+    if (m_IsFirstFrame) {
+        LOGD("first frame");
 
-    {
-        if (isFirstFrame) {
-            LOGD("first frame");
+        // TODO: creation of meshes should happen dynamically
+        Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
 
-            // TODO: creation of meshes should happen dynamically
-            Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
+        SceneManager::LoadScene(m_StartSceneId);
 
-            SceneManager::LoadScene(m_StartSceneId);
-
-            m_GlobalTimer->Reset();
-            isFirstFrame = false;
-        } else {
-            m_GlobalTimer->Update();
-        }
-
-        m_Renderer->Render();
-
-        LogFPS();
+        m_GlobalTimer->Reset();
+        m_IsFirstFrame = false;
+    } else {
+        m_GlobalTimer->Update();
     }
+
+    m_Renderer->Render();
+
+    LogFPS();
 }
 
 

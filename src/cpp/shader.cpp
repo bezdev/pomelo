@@ -2,7 +2,7 @@
 
 Shader* Shader::SOLID_COLOR_SHADER = nullptr;
 
-Shader::Shader(GLuint program, std::vector<ShaderVariable>& variables):
+Shader::Shader(GLuint program, std::vector<ShaderVariable> &variables):
     m_Program(program),
     m_Variables(variables.size())
 {

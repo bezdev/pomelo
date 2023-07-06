@@ -35,50 +35,49 @@ struct VelocityComponent {
 
 TEST(BasicECSTest)
 {
-    LOGT("LEO");
+    LOGT("ECS");
 
     ECS ecs;
 
-    auto& entity1 = ecs.CreateEntity();
-    entity1.AddComponent<PositionComponent>(1.f, 2.f);
-    entity1.AddComponent<VelocityComponent>(0.5, 0.2);
+    auto& e1 = ecs.CreateEntity();
+    e1.AddComponent<PositionComponent>(1.f, 2.f);
+    e1.AddComponent<VelocityComponent>(0.5, 0.2);
 
-    std::cout << "Entity 1 position: (" << entity1.GetComponent<PositionComponent>().x
-              << ", " << entity1.GetComponent<PositionComponent>().y << ")" << std::endl;
+    auto pc = e1.GetComponent<PositionComponent>();
+    auto vc = e1.GetComponent<VelocityComponent>();
 
-    // Check if an entity has a component
-    if (entity1.HasComponent<VelocityComponent>()) {
-        std::cout << "Entity 1 has velocity component" << std::endl;
+    ASSERT_ARE_EQUAL(1.f, pc.x);
+    ASSERT_ARE_EQUAL(2.f, pc.y);
+    ASSERT_ARE_EQUAL(.5f, vc.x);
+    ASSERT_ARE_EQUAL(.2f, vc.y);
+
+    ASSERT_TRUE(e1.HasComponent<PositionComponent>());
+    ASSERT_TRUE(e1.HasComponent<VelocityComponent>());
+    ASSERT_TRUE((e1.HasComponents<PositionComponent, VelocityComponent>()));
+
+    ASSERT_ARE_EQUAL(1, (ecs.GetEntitiesWithComponents<PositionComponent, VelocityComponent>().size()));
+}
+
+TEST(NoComponentTest)
+{
+    ECS ecs;
+    auto& e1 = ecs.CreateEntity();
+    e1.AddComponent<PositionComponent>(1.f, 2.f);
+
+    ASSERT_TRUE(!e1.HasComponent<VelocityComponent>());
+}
+
+TEST(ComponentPointerTest)
+{
+    ECS ecs;
+    auto& e1 = ecs.CreateEntity();
+    e1.AddComponent<PositionComponent>(1.f, 2.f);
+
+    PositionComponent* p = nullptr;
+    if (e1.HasComponent<PositionComponent>()) {
+        p = &e1.GetComponent<PositionComponent>();
     }
-    // Ecs ecs;
-
-    // ecs.RegisterComponent<PositionComponent>();
-    // ecs.RegisterComponent<VelocityComponent>();
-
-    // Entity entity = ecs.CreateEntity();
-    // ecs.AddComponent(entity, PositionComponent{1.0f, 2.0f});
-    // ecs.AddComponent(entity, VelocityComponent{3.0f, 4.0f});
-
-    // auto position = ecs.GetComponent<PositionComponent>(entity);
-    // auto velocity = ecs.GetComponent<VelocityComponent>(entity);
-
-    // std::vector<Entity> entities = ecs.GetEntitiesWithComponents<PositionComponent, VelocityComponent>();
-    // LOGT("entity count: %d", entities.size());
-
-    // const std::size_t N = 10;
-    // ObjectPool<ClassA, N> op;
-    // op.Create();
-    // ASSERT_ARE_EQUAL(op.Count(), 1);
-
-    // for (std::size_t i = 1; i < N; ++i)
-    // {
-    //     op.Create("line", i);
-    // }
-
-    // ASSERT_ARE_EQUAL(op.Count(), 10);
-
-    // ASSERT_THROWS(op.Create());
-
-    // LOGT("sizeof(ClassA): %d", sizeof(ClassA));
-    // LOGT("sizeof(op): %d", sizeof(op));
+    
+    ASSERT_ARE_EQUAL(1.f, p->x);
+    ASSERT_ARE_EQUAL(2.f, p->y);
 }

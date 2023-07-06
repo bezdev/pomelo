@@ -9,8 +9,9 @@ class Model {
 public:
     Model(glm::vec3 position, Mesh* mesh, Material* material);
 
-    Material* GetMaterial() { return m_Material; }
-    Mesh* GetMesh() { return m_Mesh; }
+    Material* GetMaterial() { return m_Material; };
+    Mesh* GetMesh() { return m_Mesh; };
+    glm::vec3 GetPosition() { return m_Position; };
 private:
     Model();
 
