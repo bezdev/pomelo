@@ -1,14 +1,10 @@
 #include "scene.h"
 
-Scene::Scene() {
-
+Scene::Scene()
+{
 }
 
 void Scene::Load()
 {
-    Renderer::GetInstance()->LoadEntities(m_ECS.GetEntities());
-}
-
-void Scene::AddModel(Model* model) {
-   Renderer::GetInstance()->AddRenderObject(model);
+    Renderer::GetInstance()->LoadEntities(ECS::GetInstance()->GetEntities());
 }

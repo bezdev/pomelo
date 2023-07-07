@@ -68,7 +68,7 @@ void AndroidApp::InitializeWindow(ANativeWindow *window)
     const EGLint contextAttributes[] =
     {
         EGL_CONTEXT_CLIENT_VERSION,
-        1,
+        3,
         EGL_NONE
     };
     m_Context = eglCreateContext(m_Display, m_Config, NULL, contextAttributes);

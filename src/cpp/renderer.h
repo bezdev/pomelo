@@ -14,9 +14,10 @@
 
 
 #include "app.h"
-#include "model.h"
 #include "ECS.h"
 #include "shader.h"
+#include "mesh.h"
+#include "buffers.h"
 #include "scene.h"
 #include "util.h"
 
@@ -29,12 +30,14 @@ struct RenderBuffer
     IndexBuffer* IBO;
 };
 
-struct RenderObject {
-    // RenderObject();
-    RenderBuffer* RenderBuffer;
-    Shader* Shader;
-    Entity* Entity;
-    // Material* Material;
+struct RenderObject
+{
+    const RenderBuffer* RenderBuffer;
+    const Shader* Shader;
+    const Entity* Entity;
+    const Components::Material* Material;
+    const Components::Mesh* Mesh;
+    const Components::Motion* Motion;
 };
 
 class Renderer
@@ -60,7 +63,6 @@ public:
 
     bool IsInitialized() { return m_IsInitialized; };
     void LoadEntities(const std::vector<Entity>& entities);
-    void AddRenderObject(Model* model);
     void UpdateWindowSize(int width, int height);
     void Render();
 private:
@@ -90,12 +92,13 @@ private:
 
     glm::mat4 m_ProjectionMatrix;
 
-    std::vector<Model*> m_RenderObjects;
     std::vector<RenderObject> m_RenderQueue;
     std::unordered_map<int, RenderBuffer*> m_RenderBuffers;
 
-    static void CheckGlError(const char* op) {
-        for (GLint error = glGetError(); error; error = glGetError()) {
+    static void CheckGlError(const char* op)
+    {
+        for (GLint error = glGetError(); error; error = glGetError())
+        {
             LOGI("after %s() glError (0x%x)\n", op, error);
         }
     }

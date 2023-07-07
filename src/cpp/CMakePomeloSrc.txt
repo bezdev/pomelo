@@ -20,9 +20,7 @@ set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/timer.cpp
     ${SOURCES_BASE_PATH}/mesh.cpp
     ${SOURCES_BASE_PATH}/scene.cpp
-    ${SOURCES_BASE_PATH}/model.cpp
-    ${SOURCES_BASE_PATH}/material.cpp
-    ${SOURCES_BASE_PATH}/renderobject.cpp
+    ${SOURCES_BASE_PATH}/ECS.cpp
     ${SOURCES_BASE_PATH}/logger.cpp
     ${SOURCES_BASE_PATH}/util.cpp
 )

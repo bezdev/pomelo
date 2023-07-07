@@ -12,6 +12,7 @@ add_executable(pomelotest
     ${TEST_FOLDER}/LoggerTest.cpp
     ${TEST_FOLDER}/ObjectPoolTest.cpp
     ${TEST_FOLDER}/ECSTest.cpp
+    ${TEST_FOLDER}/SandboxTest.cpp
     ${TEST_FOLDER}/main.cpp
 )
 

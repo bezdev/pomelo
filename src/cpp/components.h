@@ -19,6 +19,7 @@ namespace Components
 
     struct Motion
     {
+        Motion() {}
         Motion(glm::vec3 position):
             Position(position)
         {}
@@ -28,6 +29,7 @@ namespace Components
 
     struct Mesh
     {
+        Mesh() {}
         Mesh(MeshType type):
             Type(type)
         {}
@@ -37,6 +39,7 @@ namespace Components
 
     struct Material
     {
+        Material() {}
         Material(MaterialType type, glm::vec4 color):
             Type(type),
             Color(color)

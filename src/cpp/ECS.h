@@ -36,7 +36,11 @@ ComponentTypeID GetComponentTypeID() noexcept
 class Entity
 {
 public:
-    Entity(EntityID id) : m_ID(id) {}
+    Entity(EntityID id): m_ID(id) {}
+    Entity(const Entity& other):
+        m_ID(other.m_ID),
+        m_ComponentBitset(other.m_ComponentBitset)
+    {}
 
     EntityID GetID() const noexcept
     {
@@ -66,7 +70,7 @@ public:
     }
 
     template<typename T>
-    T& GetComponent()
+    T& GetComponent() const noexcept
     {
         auto& componentArray = GetComponentArray<T>();
         return componentArray[m_ID];
@@ -90,11 +94,6 @@ public:
         return HasComponent<T>() && HasComponents<T2, Rest...>();
     }
 
-    // template<typename... T>
-    // bool HasComponents() const noexcept {
-    //     return (... && HasComponent<T>());
-    // }
-
 private:
     EntityID m_ID;
     std::bitset<MAX_COMPONENTS> m_ComponentBitset;
@@ -103,9 +102,21 @@ private:
 class ECS
 {
 public:
+    static ECS* GetInstance()
+    {
+        if (!s_Instance) s_Instance = new ECS();
+        return s_Instance;
+    }
+
+    static void DestoryInstance()
+    {
+        delete s_Instance;
+        s_Instance = nullptr;
+    }
+
     ECS() {}
 
-    std::vector<Entity> GetEntities() { return m_Entities; }
+    std::vector<Entity>& GetEntities() { return m_Entities; }
 
     Entity& CreateEntity()
     {
@@ -141,6 +152,7 @@ public:
     }
 
 private:
+    static ECS* s_Instance;
     std::vector<Entity> m_Entities;
     EntityID m_nextEntityID = 0;
 };

@@ -12,6 +12,7 @@ App::~App()
 {
     LOGD("App::~App");
     Renderer::DestoryInstance();
+    ECS::DestoryInstance();
 
 #if 0
     delete JNIUtil::GetInstance();

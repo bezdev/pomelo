@@ -31,7 +31,6 @@ int Renderer::Initialize()
         LoadShaders();
         Meshes::Box b(1.f, 1.f, 1.f);
         m_RenderBuffers[static_cast<int>(Components::MeshType::BOX)] = CreateRenderBuffer(b.Vertices, b.Indices, GL_TRIANGLES);
-        // Mesh::CreateBoxMesh(1.f, 1.f, 1.f);
 
         m_IsInitialized = true;
     }
@@ -59,16 +58,11 @@ void Renderer::Cleanup() {
 
 }
 
-void Renderer::AddRenderObject(Model* model) {
-//    m_RenderObjectCollection.Add(model);
-    m_RenderObjects.push_back(model);
-}
-
 void Renderer::LoadEntities(const std::vector<Entity>& entities)
 {
     std::vector<RenderObject> renderObjects;
 
-    for (auto entity : entities)
+    for (const Entity& entity : entities)
     {
         Components::Material* material = nullptr;
         Components::Mesh* mesh = nullptr;
@@ -82,41 +76,24 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         {
             mesh = &entity.GetComponent<Components::Mesh>();
         }
+
+        if (material->Type == Components::MaterialType::SolidColor && mesh->Type == Components::MeshType::BOX)
+        {
+            RenderObject ro;
+            ro.RenderBuffer = m_RenderBuffers[static_cast<int>(Components::MeshType::BOX)];
+            ro.Shader = Shader::SOLID_COLOR_SHADER;
+            ro.Entity = &entity;
+            ro.Material = material;
+            ro.Mesh = mesh;
+            ro.Motion = &entity.GetComponent<Components::Motion>();
+            renderObjects.push_back(ro);
+        }
     }
 
-// Mesh::Mesh(std::vector<float> &vertices, std::vector<short> &indices, PrimitiveType primitiveType, MeshType meshType):
-//     m_Vertices(vertices),
-//     m_Indices(indices),
-//     m_PrimitiveType(primitiveType),
-//     m_Type(meshType)
-// {
-//     // TODO: all this should be somewhere else and better, also state should be managed
-//     m_VertexArray = new VertexArray();
-//     VertexBuffer* vertexBuffer = new VertexBuffer(&vertices[0], vertices.size() * sizeof(GLfloat) , 3 * sizeof(GLfloat));
-//     m_VertexArray->AddVertexBuffer(vertexBuffer);
-//     // TODO: remove reinterpret_cast
-//     m_IndexBuffer = new IndexBuffer(reinterpret_cast<GLushort *>(&indices[0]), indices.size() * sizeof(GLushort));
-
-//     m_VertexArray->Bind();
-//     vertexBuffer->Bind();
-//     glEnableVertexAttribArray(0);
-//     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * 4, 0);
-//     glDisableVertexAttribArray(0);
-//     vertexBuffer->Unbind();
-//     m_VertexArray->Unbind();
-
-    //     if (material->Type == Components::MaterialType::SolidColor && mesh->Type == Components::MeshType::BOX)
-    //     {
-    //         if (RenderBuffer::PRIMITIVE_BOX != nullptr)
-    //         {
-    //             RenderBuffer::PRIMITIVE_BOX = new RenderBuffer();
-    //             RenderBuffer::PRIMITIVE_BOX->AddVertexBuffer(
-    //         }
-    //         RenderObject ro;
-    //         ro.
-    //     }
-    // }
-    // // TODO: implement
+    for (auto ro : renderObjects)
+    {
+        m_RenderQueue.push_back(ro);
+    }
 }
 
 void Renderer::UpdateWindowSize(int width, int height)
@@ -127,7 +104,6 @@ void Renderer::UpdateWindowSize(int width, int height)
     glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 
     auto ratio = 1.f * m_ScreenWidth / m_ScreenHeight;
-    // m_ProjectionMatrix = glm::frustum(-ratio, ratio, -1.f, 1.f, 3.f, 500.f);  
     m_ProjectionMatrix = glm::perspective(glm::radians<float>(45.0f), ratio, 3.f, 500.f);
 }
 
@@ -140,24 +116,17 @@ void Renderer::Render() {
 
     auto viewMatrix = glm::lookAt(glm::vec3(10, 10, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
-    static Shader* currentShader = nullptr;
-    static Material* currentMaterial = nullptr;
-    // static Mesh* currentMesh = nullptr;
+    static const  Shader* currentShader = nullptr;
+    static const Components::Material* currentMaterial = nullptr;
+    static Components::Mesh* currentMesh = nullptr;
     static GLuint currentPositionHandle = 0;
     static GLuint currentColorHandle = 0;
     static GLuint currentModelMatrixHandle = 0;
     static GLuint currentViewMatrixHandle = 0;
     static GLuint currentProjectionMatrixHandle = 0;
-    //int objectCount = 0;
-    //for (auto itByMaterialType = m_RenderObjectCollection.GetRenderObjects().begin(); itByMaterialType != m_RenderObjectCollection.GetRenderObjects().end(); itByMaterialType++) {
-    //    for (auto itByMeshType = itByMaterialType->second.begin(); itByMeshType != itByMaterialType->second.end(); itByMeshType++) {
-    //        for (auto itModels = itByMeshType->second.begin(); itModels != itByMeshType->second.end(); itModels++) {
-    for (auto itModels = m_RenderObjects.begin(); itModels != m_RenderObjects.end(); itModels++) {
-    // for (auto ro : m_RenderQueue) {
-        Model* model = *itModels;
-        Material* material = model->GetMaterial();
-        Shader* shader = material->GetShader();
-        // Mesh* mesh = model->GetMesh();
+    for (auto ro : m_RenderQueue) {
+        const Shader* shader = ro.Shader;
+        const Components::Material* material = ro.Material;
         if (shader != currentShader) {
             glUseProgram(shader->GetProgram());
             currentShader = shader;
@@ -174,41 +143,26 @@ void Renderer::Render() {
             glUniformMatrix4fv(currentProjectionMatrixHandle, 1, GL_FALSE, glm::value_ptr(m_ProjectionMatrix));
         }
 
-        auto rb = m_RenderBuffers[static_cast<int>(Components::MeshType::BOX)];
+        // auto rb = m_RenderBuffers[static_cast<int>(Components::MeshType::BOX)];
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        rb->VAO->Bind();
-        rb->IBO->Bind();
-        // if (mesh != currentMesh) {
-        //     // TODO: make this better
-        //     glBindBuffer(GL_ARRAY_BUFFER, 0);
-        //     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        ro.RenderBuffer->VAO->Bind();
+        ro.RenderBuffer->IBO->Bind();
 
-        //     currentMesh = mesh;
-        //     if (currentMesh == Mesh::PRIMITIVE_BOX_TRIANGLE) {
-        //         currentMesh->GetVertexArray()->Bind();
-        //         currentMesh->GetIndexBuffer()->Bind();
-        //         // glVertexAttribPointer(currentPositionHandle, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-        //         // glEnableVertexAttribArray(currentPositionHandle);
-        //     }
-        // }
-
-        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), model->GetPosition());
+        auto position = ro.Entity->GetComponent<Components::Motion>();
+        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), position.Position);
         glUniformMatrix4fv(currentModelMatrixHandle, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
         // Per object properties
         if (currentMaterial != material) {
             currentMaterial = material;
 
-            if (currentMaterial->GetType() == MaterialType::SolidColor) {
+            if (currentMaterial->Type == Components::MaterialType::SolidColor) {
                 // TODO: replace with actual color from material
                 glUniform4f(currentColorHandle, 0.2f, 0.709803922f, 0.898039216f, 1.0f);
             }
         }
 
-        glDrawElements(GL_TRIANGLES, rb->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_TRIANGLES, ro.RenderBuffer->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
     }
-   //     }
-   // }
-
 }

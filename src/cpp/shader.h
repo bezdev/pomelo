@@ -10,8 +10,14 @@
 #endif
 
 #include <vector>
+#include <unordered_map>
 
 #include "util.h"
+
+enum class ShaderType
+{
+    SOLID_COLOR
+};
 
 enum ShaderVariableType
 {
@@ -101,5 +107,18 @@ private:
 class ShaderManager
 {
 public:
-    ShaderManager();
+    static Shader* GetShader(ShaderType type)
+    {
+
+    }
+
+    static void ClearShaders()
+    {
+        for (const auto& pair : s_ShaderMap)
+        {
+            delete pair.second;
+        }
+    }
+private:
+    static std::unordered_map<ShaderType, Shader*> s_ShaderMap;
 };
