@@ -87,6 +87,7 @@
         "stop_token": "cpp",
         "cinttypes": "cpp",
         "cassert": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "xstring": "cpp"
     }
 }

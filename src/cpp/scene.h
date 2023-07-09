@@ -59,4 +59,26 @@ public:
 
         s.Load();
     }
+
+    static void CreateManyCubeAxisScene()
+    {
+        Scene s;
+
+        int NUM_BOXES = 1;
+        for (int i = 0; i < NUM_BOXES; i++)
+        {
+            glm::vec3 p(RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50));
+
+            s.CreateEntity()
+                .AddComponent<Components::Motion>(p)
+                .AddComponent<Components::Mesh>(Components::MeshType::BOX)
+                .AddComponent<Components::Material>(Components::MaterialType::SolidColor, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            s.CreateEntity()
+                .AddComponent<Components::Motion>(p)
+                .AddComponent<Components::Mesh>(Components::MeshType::AXIS)
+                .AddComponent<Components::Material>(Components::MaterialType::PixelColor);
+        }
+
+        s.Load();
+    }
 };

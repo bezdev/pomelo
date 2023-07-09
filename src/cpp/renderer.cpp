@@ -39,8 +39,10 @@ int Renderer::Initialize()
 }
 
 void Renderer::LoadShaders() {
+    {
     std::vector<ShaderVariable> variables
     {
+
         { ShaderVariableType::ATTRIBUTE, "vPosition" },
         { ShaderVariableType::UNIFORM, "vColor" },
         { ShaderVariableType::UNIFORM, "modelMatrix" },
@@ -52,6 +54,22 @@ void Renderer::LoadShaders() {
         Shader::CompileShader("shaders/SolidColor.vs", Util::ReadFile("shaders/SolidColor.vs"), GL_VERTEX_SHADER),
         Shader::CompileShader("shaders/SolidColor.fs", Util::ReadFile("shaders/SolidColor.fs"), GL_FRAGMENT_SHADER)),
         variables);
+    }
+    {
+    std::vector<ShaderVariable> variables
+    {
+        { ShaderVariableType::ATTRIBUTE, "position" },
+        { ShaderVariableType::ATTRIBUTE, "iColor" },
+        { ShaderVariableType::UNIFORM, "modelMatrix" },
+        { ShaderVariableType::UNIFORM, "viewMatrix" },
+        { ShaderVariableType::UNIFORM, "projectionMatrix" },
+    };
+
+    Shader::PIXEL_COLOR_SHADER = new Shader(Shader::LinkShader(
+        Shader::CompileShader("shaders/PixelColor.vs", Util::ReadFile("shaders/PixelColor.vs"), GL_VERTEX_SHADER),
+        Shader::CompileShader("shaders/PixelColor.ps", Util::ReadFile("shaders/PixelColor.ps"), GL_FRAGMENT_SHADER)),
+        variables);
+    }
 }
 
 void Renderer::Cleanup() {

@@ -14,9 +14,11 @@
 
 #include "util.h"
 
+#define DEBUG
 enum class ShaderType
 {
-    SOLID_COLOR
+    SOLID_COLOR,
+    PIXEL_COLOR
 };
 
 enum ShaderVariableType
@@ -25,7 +27,8 @@ enum ShaderVariableType
     UNIFORM
 };
 
-struct ShaderVariable {
+struct ShaderVariable
+{
     ShaderVariableType Type;
     const GLchar* Name;
 };
@@ -34,15 +37,22 @@ class Shader
 {
 public:
     static Shader* SOLID_COLOR_SHADER;
+    static Shader* PIXEL_COLOR_SHADER;
 
     Shader(GLuint program, std::vector<ShaderVariable>& variables);
     ~Shader();
 
+    // TODO: methods to:
+    //  load shader
+    //  use shader
+    //  setup variables??
+    // bind buffers, update per frame per object... hmm
     GLuint GetProgram() const { return m_Program; }
     const std::vector<GLuint>& GetVariables() const { return m_Variables; }
 
     static GLuint CompileShader(const char* name, const std::vector<char>& source, GLenum shaderType)
     {
+        LOGI("CompilerShader");
         GLuint shaderId = glCreateShader(shaderType);
         const GLchar* rawSource = (GLchar*)&source[0];
         int32_t size = source.size();
@@ -61,11 +71,13 @@ public:
             THROW("Shader compile failed");
         }
 #endif
+        LOGI("END sHsadser");
         return shaderId;
     }
 
     static GLuint LinkShader(GLuint vs, GLuint fs)
     {
+        
         GLuint program = glCreateProgram();
         glAttachShader(program, vs);
         glAttachShader(program, fs);

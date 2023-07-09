@@ -42,3 +42,5 @@ time,OS,resolution,name,average,min,max
 2023-07-07 11-39-42,windows,1600x900,ManyCubePerformanceTest,40.3032,22.4402,93.2118
 2023-07-07 15-50-37,windows,1600x900,SingleCubePerformanceTest,4460.61,2864.52,4945.53
 2023-07-07 15-50-43,windows,1600x900,ManyCubePerformanceTest,26.8573,22.9069,37.8495
+2023-07-08 01-33-29,windows,1600x900,SingleCubePerformanceTest,2380.83,97.9321,4280.57
+2023-07-08 01-33-34,windows,1600x900,ManyCubePerformanceTest,35.0236,22.5731,71.3807

@@ -1,6 +1,8 @@
 #include "shader.h"
 
 Shader* Shader::SOLID_COLOR_SHADER = nullptr;
+Shader* Shader::PIXEL_COLOR_SHADER = nullptr;
+
 
 Shader::Shader(GLuint program, std::vector<ShaderVariable> &variables):
     m_Program(program),
@@ -12,4 +14,9 @@ Shader::Shader(GLuint program, std::vector<ShaderVariable> &variables):
         if (variables[i].Type == ShaderVariableType::ATTRIBUTE) m_Variables[i] = glGetAttribLocation(m_Program, variables[i].Name);
         else if (variables[i].Type == ShaderVariableType::UNIFORM) m_Variables[i] = glGetUniformLocation(m_Program, variables[i].Name);
     }
+}
+
+Shader::~Shader()
+{
+    // DeleteShader(m_
 }

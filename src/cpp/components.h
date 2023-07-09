@@ -14,7 +14,8 @@ namespace Components
 
     enum class MaterialType
     {
-        SolidColor
+        SolidColor,
+        PixelColor
     };
 
     struct Motion
@@ -40,6 +41,10 @@ namespace Components
     struct Material
     {
         Material() {}
+        Material(MaterialType type):
+            Type(type)
+        {}
+
         Material(MaterialType type, glm::vec4 color):
             Type(type),
             Color(color)
