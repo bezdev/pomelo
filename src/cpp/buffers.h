@@ -65,6 +65,7 @@ public:
     ~VertexArray();
 
     void AddVertexBuffer(VertexBuffer* vertexBuffer);
+    std::vector<VertexBuffer*>& GetVertexBuffers() { return m_VertexBuffers; }
     void Bind();
     void Unbind();
 

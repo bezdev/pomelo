@@ -6,6 +6,7 @@
 // TODO: change to enum
 #define SCENE_CUBE 1
 #define SCENE_MANY_CUBE 2
+#define SCENE_MANY_CUBE_AXIS 3
 
 class Scene
 {
@@ -21,9 +22,11 @@ class SceneManager
 public:
     static void LoadScene(int sceneId)
     {
+        // sceneId = 1;
         LOGE("sceneId: %d", sceneId);
         if (sceneId == SCENE_CUBE) CreateCubeScene();
         else if (sceneId == SCENE_MANY_CUBE) CreateManyCubeScene();
+        else if (sceneId == SCENE_MANY_CUBE_AXIS) CreateManyCubeAxisScene();
     }
 
     static void CreateCubeScene()
@@ -64,7 +67,7 @@ public:
     {
         Scene s;
 
-        int NUM_BOXES = 1;
+        int NUM_BOXES = 100000;
         for (int i = 0; i < NUM_BOXES; i++)
         {
             glm::vec3 p(RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50));

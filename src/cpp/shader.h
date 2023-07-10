@@ -52,7 +52,6 @@ public:
 
     static GLuint CompileShader(const char* name, const std::vector<char>& source, GLenum shaderType)
     {
-        LOGI("CompilerShader");
         GLuint shaderId = glCreateShader(shaderType);
         const GLchar* rawSource = (GLchar*)&source[0];
         int32_t size = source.size();
@@ -71,13 +70,11 @@ public:
             THROW("Shader compile failed");
         }
 #endif
-        LOGI("END sHsadser");
         return shaderId;
     }
 
     static GLuint LinkShader(GLuint vs, GLuint fs)
     {
-        
         GLuint program = glCreateProgram();
         glAttachShader(program, vs);
         glAttachShader(program, fs);
