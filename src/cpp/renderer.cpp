@@ -46,7 +46,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
     m_ShaderManager.Cleanup();
     m_RenderBufferManager.Cleanup();
 
-    std::vector<RenderObject> renderObjects;
+    m_RenderQueue.clear();
 
     for (const Entity& entity : entities)
     {
@@ -64,34 +64,37 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             mesh = &entity.GetComponent<Components::Mesh>();
         }
 
-        if (material->Type == Components::MaterialType::SOLID_COLOR && mesh->Type == Components::MeshType::BOX)
+        if (material != nullptr && mesh != nullptr)
         {
-            RenderObject ro;
-            ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::BOX);
-            ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR);
-            ro.Entity = const_cast<Entity*>(&entity);
-            ro.Material = material;
-            ro.Mesh = mesh;
-            ro.Motion = &entity.GetComponent<Components::Motion>();
-            renderObjects.push_back(ro);
-        }
-        else if (material->Type == Components::MaterialType::PIXEL_COLOR && mesh->Type == Components::MeshType::AXIS)
-        {
-            RenderObject ro;
-            ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::AXIS);
-            ro.Shader = m_ShaderManager.GetShader(ShaderType::PIXEL_COLOR);
-            ro.Entity = const_cast<Entity*>(&entity);
-            ro.Material = material;
-            ro.Mesh = mesh;
-            ro.Motion = &entity.GetComponent<Components::Motion>();
-            renderObjects.push_back(ro);
+            if (material->Type == Components::MaterialType::SOLID_COLOR && mesh->Type == Components::MeshType::BOX)
+            {
+                RenderObject ro;
+                ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::BOX);
+                ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR);
+                ro.Entity = const_cast<Entity*>(&entity);
+                ro.Material = material;
+                ro.Mesh = mesh;
+                ro.Motion = &entity.GetComponent<Components::Motion>();
+                m_RenderQueue.push_back(ro);
+            }
+            else if (material->Type == Components::MaterialType::PIXEL_COLOR && mesh->Type == Components::MeshType::AXIS)
+            {
+                RenderObject ro;
+                ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::AXIS);
+                ro.Shader = m_ShaderManager.GetShader(ShaderType::PIXEL_COLOR);
+                ro.Entity = const_cast<Entity*>(&entity);
+                ro.Material = material;
+                ro.Mesh = mesh;
+                ro.Motion = &entity.GetComponent<Components::Motion>();
+                m_RenderQueue.push_back(ro);
+            }
         }
     }
 
-    for (auto ro : renderObjects)
+    std::sort(m_RenderQueue.begin(), m_RenderQueue.end(), [](RenderObject a, RenderObject b)
     {
-        m_RenderQueue.push_back(ro);
-    }
+        return (a.Material->Type < b.Material->Type && a.Mesh->Type < b.Mesh->Type);
+    });
 }
 
 void Renderer::UpdateWindowSize(int width, int height)
@@ -123,6 +126,7 @@ void Renderer::Render()
     for (auto ro : m_RenderQueue)
     {
         Shader* shader = ro.Shader;
+        Entity* entity = ro.Entity;
         Components::Material* material = ro.Material;
         RenderBuffer* renderBuffer = ro.RenderBuffer;
 
@@ -149,7 +153,7 @@ void Renderer::Render()
             currentRenderBuffer = renderBuffer;
         }
 
-        shader->SetPerEntity(ro.Entity);
+        shader->SetPerEntity(entity);
 
         if (currentMaterial != material) {
             shader->SetPerMaterial(material);
@@ -157,8 +161,7 @@ void Renderer::Render()
             currentMaterial = material;
         }
 
-        if (shader == m_ShaderManager.GetShader(ShaderType::SOLID_COLOR)) glDrawElements(GL_TRIANGLES, ro.RenderBuffer->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
-        else glDrawElements(GL_LINES, renderBuffer->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
+        shader->Draw(renderBuffer);
     }
 }
 
