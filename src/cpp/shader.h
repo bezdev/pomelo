@@ -12,6 +12,11 @@
 #include <vector>
 #include <unordered_map>
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
+#include "ECS.h"
 #include "util.h"
 
 #define DEBUG
@@ -39,18 +44,7 @@ public:
     static Shader* SOLID_COLOR_SHADER;
     static Shader* PIXEL_COLOR_SHADER;
 
-    Shader(GLuint program, std::vector<ShaderVariable>& variables);
-    ~Shader();
-
-    // TODO: methods to:
-    //  load shader
-    //  use shader
-    //  setup variables??
-    // bind buffers, update per frame per object... hmm
-    GLuint GetProgram() const { return m_Program; }
-    const std::vector<GLuint>& GetVariables() const { return m_Variables; }
-
-    static GLuint CompileShader(const char* name, const std::vector<char>& source, GLenum shaderType)
+    static GLuint CompileShader(const std::vector<char>& source, GLenum shaderType)
     {
         GLuint shaderId = glCreateShader(shaderType);
         const GLchar* rawSource = (GLchar*)&source[0];
@@ -65,7 +59,7 @@ public:
         {
             GLchar* log = (GLchar*)malloc(logLength);
             glGetShaderInfoLog(shaderId, logLength, &logLength, log);
-            LOGE("Shader compile failed: %s\n%s", name, log);
+            LOGE("Shader compile failed: %s\n%s", source, log);
             free(log);
             THROW("Shader compile failed");
         }
@@ -73,11 +67,13 @@ public:
         return shaderId;
     }
 
-    static GLuint LinkShader(GLuint vs, GLuint fs)
+    static GLuint LinkShader(const std::vector<GLuint>& shaders)
     {
         GLuint program = glCreateProgram();
-        glAttachShader(program, vs);
-        glAttachShader(program, fs);
+        for (auto s : shaders)
+        {
+            glAttachShader(program, s);
+        }
         glLinkProgram(program);
 
 #ifdef DEBUG
@@ -97,8 +93,9 @@ public:
         glGetProgramiv(program, GL_LINK_STATUS, &status);
         if (status == 0)
         {
-            glDeleteShader(vs);
-            glDeleteShader(fs);
+            for (auto s : shaders) {
+                glDeleteShader(s);
+            }
             glDeleteProgram(program);
 
             THROW("Program link failed");
@@ -106,11 +103,43 @@ public:
 
         return program;
     }
-private:
+
+    Shader(const std::vector<GLuint>& shaders, const std::vector<ShaderVariable>& variables);
+    ~Shader();
+
+    void Use() const { glUseProgram(m_Program); }
+
+    virtual void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) = 0;
+    virtual void SetPerEntity(const Entity* entity) = 0;
+    virtual void SetPerMaterial(const Components::Material* material) = 0;
+
+    GLuint GetProgram() const { return m_Program; }
+    const std::vector<GLuint>& GetVariables() const { return m_Variables; }
+
+protected:
     Shader();
 
     GLuint m_Program;
     std::vector<GLuint> m_Variables;
+    std::vector<GLuint> m_Shaders;
+};
+
+class SolidColorShader : public Shader
+{
+public:
+    SolidColorShader();
+    void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override;
+    void SetPerEntity(const Entity* entity) override;
+    void SetPerMaterial(const Components::Material* material) override;
+};
+
+class PixelColorShader : public Shader
+{
+public:
+    PixelColorShader();
+    void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override;
+    void SetPerEntity(const Entity* entity) override;
+    void SetPerMaterial(const Components::Material* material) override;
 };
 
 class ShaderManager

@@ -28,6 +28,7 @@ class ACollection
 {
 public:
     std::vector<A>& GetCollection() { return Collection; }
+    void AddCollection(A item) { printf("AddCollection: %p\n", &item); Collection.push_back(std::move(item)); }
     std::vector<A> Collection;
 };
 
@@ -135,7 +136,7 @@ namespace A2
     };
 }
 
-TEST(CollectionTest)
+TEST(CollectionTest1)
 {
     ACollection ac;
     ac.Collection = { A(1), A(2), A(3) };
@@ -148,8 +149,25 @@ TEST(CollectionTest)
     }
 
     PrintAddress(ac.Collection);
-
     PrintAddress(ac.GetCollection());
+}
+
+TEST(CollectionTest2)
+{
+    ACollection ac;
+    ac.Collection.reserve(5);
+    ac.AddCollection(A(1));
+    ac.AddCollection(A(2));
+    ac.AddCollection(A(3));
+    LOGT("A size: %d", sizeof(A));
+
+    for (const A& a : ac.Collection)
+    {
+        LOGT("Address: %p", &a);
+    }
+
+    // PrintAddress(ac.Collection);
+    // PrintAddress(ac.GetCollection());
 }
 
 TEST(PointerTest)

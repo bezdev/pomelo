@@ -1,10 +1,12 @@
 #include "buffers.h"
 
-VertexBuffer::VertexBuffer(GLfloat *data, int size, int stride, GLenum primitive)
+VertexBuffer::VertexBuffer(GLfloat *data, int size, int dataSize, int stride, int index)
 {
+    size = size * dataSize;
+    stride = stride * dataSize;
+
     ASSERT(size % stride == 0);
 
-    m_Primitive = primitive;
     m_VBO = 0;
     m_Stride = stride;
     m_Count = size / stride;
@@ -12,6 +14,9 @@ VertexBuffer::VertexBuffer(GLfloat *data, int size, int stride, GLenum primitive
     glGenBuffers(1, &m_VBO);
     Bind();
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(index);
+    LOGD("glVertexAttribPointer %d, %d", index, stride/ dataSize);
+    glVertexAttribPointer(index, stride / dataSize, GL_FLOAT, false, 0, 0);
     Unbind();
 }
 

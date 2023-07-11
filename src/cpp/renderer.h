@@ -32,12 +32,12 @@ struct RenderBuffer
 
 struct RenderObject
 {
-    const RenderBuffer* RenderBuffer;
-    const Shader* Shader;
-    const Entity* Entity;
-    const Components::Material* Material;
-    const Components::Mesh* Mesh;
-    const Components::Motion* Motion;
+    RenderBuffer* RenderBuffer;
+    Shader* Shader;
+    Entity* Entity;
+    Components::Material* Material;
+    Components::Mesh* Mesh;
+    Components::Motion* Motion;
 };
 
 class Renderer
@@ -95,7 +95,7 @@ private:
     std::vector<RenderObject> m_RenderQueue;
     std::unordered_map<int, RenderBuffer*> m_RenderBuffers;
 
-    static void CheckGlError(const char* op)
+    static void CheckGLError(const char* op)
     {
         for (GLint error = glGetError(); error; error = glGetError())
         {

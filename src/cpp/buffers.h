@@ -15,7 +15,7 @@
 
 class VertexBuffer {
 public:
-    VertexBuffer(GLfloat *data, int dataSize, int stride, GLenum primitive);
+    VertexBuffer(GLfloat* data, int size, int dataSize, int stride, int index = 0);
     ~VertexBuffer();
 
     void Bind();
@@ -38,7 +38,6 @@ public:
 
 private:
     GLuint m_VBO;
-    GLenum m_Primitive;
     int m_Stride;
     int m_Count;
 };
@@ -65,7 +64,6 @@ public:
     ~VertexArray();
 
     void AddVertexBuffer(VertexBuffer* vertexBuffer);
-    std::vector<VertexBuffer*>& GetVertexBuffers() { return m_VertexBuffers; }
     void Bind();
     void Unbind();
 
