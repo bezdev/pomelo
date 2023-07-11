@@ -71,3 +71,9 @@ private:
     std::vector<VertexBuffer*> m_VertexBuffers;
     GLuint m_VAO;
 };
+
+struct RenderBuffer
+{
+    VertexArray* VAO;
+    IndexBuffer* IBO;
+};

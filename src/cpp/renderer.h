@@ -24,12 +24,6 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-struct RenderBuffer
-{
-    VertexArray* VAO;
-    IndexBuffer* IBO;
-};
-
 struct RenderObject
 {
     RenderBuffer* RenderBuffer;
@@ -39,6 +33,86 @@ struct RenderObject
     Components::Mesh* Mesh;
     Components::Motion* Motion;
 };
+
+#define DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST(MACRO) \
+    MACRO(BOX, CreateBox) \
+    MACRO(AXIS, CreateAxis)
+
+class RenderBufferManager
+{
+public:
+    RenderBufferManager();
+    ~RenderBufferManager();
+
+#define GENERATE_CASE_VALUE(name, func) case Components::MeshType::##name: return func();
+
+    static RenderBuffer* CreateBox()
+    {
+        Meshes::Box b(1.f, 1.f, 1.f);
+        RenderBuffer* rb = new RenderBuffer();
+        rb->VAO = new VertexArray();
+        rb->VAO->Bind();
+        VertexBuffer* vb = new VertexBuffer(&b.Vertices[0], b.Vertices.size(), sizeof(GLfloat), 3, 0);
+        rb->VAO->AddVertexBuffer(vb);
+        rb->VAO->Unbind();
+
+        // TODO: remove reinterpret_cast
+        rb->IBO = new IndexBuffer(reinterpret_cast<GLushort *>(&b.Indices[0]), b.Indices.size() * sizeof(GLushort));
+
+        return rb;
+    }
+
+    static RenderBuffer* CreateAxis()
+    {
+        Meshes::Axis axis(1.f, 1.f, 1.f);
+        RenderBuffer *rb = new RenderBuffer();
+        rb->VAO = new VertexArray();
+        rb->VAO->Bind();
+        rb->VAO->AddVertexBuffer(new VertexBuffer(&axis.Vertices[0], axis.Vertices.size(), sizeof(GLfloat), 3, 0));
+        rb->VAO->AddVertexBuffer(new VertexBuffer(&axis.Colors[0], axis.Colors.size(), sizeof(GLfloat), 4, 1));
+        rb->VAO->Unbind();
+
+        // TODO: remove reinterpret_cast
+        rb->IBO = new IndexBuffer(reinterpret_cast<GLushort *>(&axis.Indices[0]), axis.Indices.size() * sizeof(GLushort));
+
+        return rb;
+    }
+
+    RenderBuffer* CreateRenderBuffer(Components::MeshType type)
+    {
+        switch(type)
+        {
+            DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST(GENERATE_CASE_VALUE)
+        }
+        return nullptr;
+    }
+
+    RenderBuffer* GetRenderBuffer(Components::MeshType type)
+    {
+        auto index = static_cast<size_t>(type);
+
+        if (m_RenderBuffers[index] == nullptr)
+        {
+            m_RenderBuffers[index] = CreateRenderBuffer(type);
+        }
+        return m_RenderBuffers[static_cast<size_t>(type)];
+    }
+
+    void Cleanup()
+    {
+        for (auto rb : m_RenderBuffers)
+        {
+            delete rb;
+        }
+    }
+
+private:
+    std::vector<RenderBuffer*> m_RenderBuffers;
+};
+
+#undef GENERATE_ENUM_VALUE
+#undef GENERATE_CASE_VALUE
+#undef DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST
 
 class Renderer
 {
@@ -59,30 +133,12 @@ public:
     ~Renderer();
 
     int Initialize();
-    void LoadShaders();
 
     bool IsInitialized() { return m_IsInitialized; };
     void LoadEntities(const std::vector<Entity>& entities);
     void UpdateWindowSize(int width, int height);
     void Render();
 private:
-    static RenderBuffer* CreateRenderBuffer(std::vector<float>& vertices, std::vector<short>& indices, GLenum primitive)
-    {
-        RenderBuffer* rb = new RenderBuffer();
-        rb->VAO = new VertexArray();
-        VertexBuffer* vb = new VertexBuffer(&vertices[0], vertices.size() * sizeof(GLfloat), 3 * sizeof(GLfloat), GL_TRIANGLES);
-        rb->VAO->AddVertexBuffer(vb);
-        // TODO: remove reinterpret_cast
-        rb->IBO = new IndexBuffer(reinterpret_cast<GLushort *>(&indices[0]), indices.size() * sizeof(GLushort));
-        rb->VAO->Bind();
-        vb->Bind();
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * 4, 0);
-        vb->Unbind();
-        rb->VAO->Unbind();
-
-        return rb;
-    }
-
     static Renderer* s_Instance;
 
     bool m_IsInitialized;
@@ -91,6 +147,9 @@ private:
     int m_ScreenHeight;
 
     glm::mat4 m_ProjectionMatrix;
+
+    ShaderManager m_ShaderManager;
+    RenderBufferManager m_RenderBufferManager;
 
     std::vector<RenderObject> m_RenderQueue;
     std::unordered_map<int, RenderBuffer*> m_RenderBuffers;

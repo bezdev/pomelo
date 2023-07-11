@@ -22,8 +22,7 @@ class SceneManager
 public:
     static void LoadScene(int sceneId)
     {
-        // sceneId = 1;
-        LOGE("sceneId: %d", sceneId);
+        LOGE("LoadScene: %d", sceneId);
         if (sceneId == SCENE_CUBE) CreateCubeScene();
         else if (sceneId == SCENE_MANY_CUBE) CreateManyCubeScene();
         else if (sceneId == SCENE_MANY_CUBE_AXIS) CreateManyCubeAxisScene();
@@ -39,7 +38,7 @@ public:
             s.CreateEntity()
                 .AddComponent<Components::Motion>(glm::vec3(0, 0, 0))
                 .AddComponent<Components::Mesh>(Components::MeshType::BOX)
-                .AddComponent<Components::Material>(Components::MaterialType::SolidColor, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+                .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         s.Load();
@@ -57,7 +56,7 @@ public:
             s.CreateEntity()
                 .AddComponent<Components::Motion>(p)
                 .AddComponent<Components::Mesh>(Components::MeshType::BOX)
-                .AddComponent<Components::Material>(Components::MaterialType::SolidColor, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+                .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         s.Load();
@@ -75,11 +74,11 @@ public:
             s.CreateEntity()
                 .AddComponent<Components::Motion>(p)
                 .AddComponent<Components::Mesh>(Components::MeshType::BOX)
-                .AddComponent<Components::Material>(Components::MaterialType::SolidColor, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+                .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
             s.CreateEntity()
                 .AddComponent<Components::Motion>(p)
                 .AddComponent<Components::Mesh>(Components::MeshType::AXIS)
-                .AddComponent<Components::Material>(Components::MaterialType::PixelColor);
+                .AddComponent<Components::Material>(Components::MaterialType::PIXEL_COLOR);
         }
 
         s.Load();

@@ -15,7 +15,7 @@ VertexBuffer::VertexBuffer(GLfloat *data, int size, int dataSize, int stride, in
     Bind();
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
     glEnableVertexAttribArray(index);
-    LOGD("glVertexAttribPointer %d, %d", index, stride/ dataSize);
+    // LOGD("glVertexAttribPointer %d, %d", index, stride/ dataSize);
     glVertexAttribPointer(index, stride / dataSize, GL_FLOAT, false, 0, 0);
     Unbind();
 }

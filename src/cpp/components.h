@@ -10,12 +10,14 @@ namespace Components
     {
         BOX,
         AXIS,
+        COUNT
     };
 
     enum class MaterialType
     {
-        SolidColor,
-        PixelColor
+        SOLID_COLOR,
+        PIXEL_COLOR,
+        COUNT
     };
 
     struct Motion

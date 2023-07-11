@@ -17,14 +17,10 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include "ECS.h"
+#include "buffers.h"
 #include "util.h"
 
 #define DEBUG
-enum class ShaderType
-{
-    SOLID_COLOR,
-    PIXEL_COLOR
-};
 
 enum ShaderVariableType
 {
@@ -41,9 +37,6 @@ struct ShaderVariable
 class Shader
 {
 public:
-    static Shader* SOLID_COLOR_SHADER;
-    static Shader* PIXEL_COLOR_SHADER;
-
     static GLuint CompileShader(const std::vector<char>& source, GLenum shaderType)
     {
         GLuint shaderId = glCreateShader(shaderType);
@@ -104,6 +97,7 @@ public:
         return program;
     }
 
+    Shader();
     Shader(const std::vector<GLuint>& shaders, const std::vector<ShaderVariable>& variables);
     ~Shader();
 
@@ -112,13 +106,12 @@ public:
     virtual void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) = 0;
     virtual void SetPerEntity(const Entity* entity) = 0;
     virtual void SetPerMaterial(const Components::Material* material) = 0;
+    virtual void Draw(const RenderBuffer* renderBuffer) = 0;
 
     GLuint GetProgram() const { return m_Program; }
     const std::vector<GLuint>& GetVariables() const { return m_Variables; }
 
 protected:
-    Shader();
-
     GLuint m_Program;
     std::vector<GLuint> m_Variables;
     std::vector<GLuint> m_Shaders;
@@ -131,6 +124,7 @@ public:
     void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override;
     void SetPerEntity(const Entity* entity) override;
     void SetPerMaterial(const Components::Material* material) override;
+    void Draw(const RenderBuffer* renderBuffer) override;
 };
 
 class PixelColorShader : public Shader
@@ -140,23 +134,43 @@ public:
     void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override;
     void SetPerEntity(const Entity* entity) override;
     void SetPerMaterial(const Components::Material* material) override;
+    void Draw(const RenderBuffer* renderBuffer) override;
+};
+
+#define DEFINE_SHADER_ENUM_CLASS_LIST(MACRO) \
+    MACRO(SOLID_COLOR, SolidColorShader) \
+    MACRO(PIXEL_COLOR, PixelColorShader)
+
+#define GENERATE_ENUM_VALUE(name, func) name,
+enum class ShaderType
+{
+    DEFINE_SHADER_ENUM_CLASS_LIST(GENERATE_ENUM_VALUE)
+    COUNT
 };
 
 class ShaderManager
 {
 public:
-    static Shader* GetShader(ShaderType type)
-    {
+    ShaderManager();
+    ~ShaderManager();
 
-    }
+#define GENERATE_CASE_VALUE(name, func) case ShaderType::##name: return new func();
 
-    static void ClearShaders()
+    Shader* CreateShader(ShaderType type)
     {
-        for (const auto& pair : s_ShaderMap)
+        switch(type)
         {
-            delete pair.second;
+            DEFINE_SHADER_ENUM_CLASS_LIST(GENERATE_CASE_VALUE)
         }
+        return nullptr;
     }
+    Shader* GetShader(ShaderType type);
+
+    void Cleanup();
 private:
-    static std::unordered_map<ShaderType, Shader*> s_ShaderMap;
+    std::vector<Shader*> m_Shaders;
 };
+
+#undef GENERATE_ENUM_VALUE
+#undef GENERATE_CASE_VALUE
+#undef DEFINE_SHADER_ENUM_CLASS_LIST
