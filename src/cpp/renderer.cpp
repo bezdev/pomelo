@@ -104,9 +104,7 @@ void Renderer::UpdateWindowSize(int width, int height)
 
     glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 
-    auto ratio = 1.f * m_ScreenWidth / m_ScreenHeight;
-
-    m_ProjectionMatrix = glm::frustum<float>(-ratio, ratio, -1.0f, 1.0f, 3, 500);
+    Camera::GetInstance()->UpdateViewSize(width, height);
 }
 
 void Renderer::Render()
@@ -116,8 +114,6 @@ void Renderer::Render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-
-    auto viewMatrix = glm::lookAt(glm::vec3(0, 0, 100), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
     Shader* currentShader = nullptr;
     Components::Material* currentMaterial = nullptr;
@@ -133,7 +129,11 @@ void Renderer::Render()
         if (shader != currentShader)
         {
             shader->Use();
-            shader->SetVPMatrix(glm::value_ptr(viewMatrix), glm::value_ptr(m_ProjectionMatrix));
+            glm::mat4& viewMatrix = Camera::GetInstance()->GetViewMatrix();
+            glm::mat4& projectionMatrix = Camera::GetInstance()->GetProjectionMatrix();
+            shader->SetVPMatrix(
+                glm::value_ptr(viewMatrix),
+                glm::value_ptr(projectionMatrix));
             currentShader = shader;
         }
 

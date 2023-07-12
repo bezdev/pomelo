@@ -123,7 +123,7 @@ public:
         return s_Instance;
     }
 
-    static void DestoryInstance()
+    static void DestroyInstance()
     {
         delete s_Instance;
         s_Instance = nullptr;
@@ -145,8 +145,6 @@ private:
 
     int m_ScreenWidth;
     int m_ScreenHeight;
-
-    glm::mat4 m_ProjectionMatrix;
 
     ShaderManager m_ShaderManager;
     RenderBufferManager m_RenderBufferManager;

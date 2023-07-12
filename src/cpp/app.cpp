@@ -6,12 +6,14 @@
 
 App::App():
     m_IsFirstFrame(true)
-{ }
+{
+}
 
 App::~App()
 {
     LOGD("App::~App");
-    Renderer::DestoryInstance();
+    Renderer::DestroyInstance();
+    Camera::DestroyInstance();
     ECS::DestoryInstance();
 
 #if 0

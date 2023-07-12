@@ -18,6 +18,7 @@ set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/shader.cpp
     ${SOURCES_BASE_PATH}/buffers.cpp
     ${SOURCES_BASE_PATH}/timer.cpp
+    ${SOURCES_BASE_PATH}/camera.cpp
     ${SOURCES_BASE_PATH}/mesh.cpp
     ${SOURCES_BASE_PATH}/scene.cpp
     ${SOURCES_BASE_PATH}/ECS.cpp

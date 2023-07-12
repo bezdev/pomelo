@@ -1,5 +1,6 @@
 #pragma once
 
+#include "camera.h"
 #include "renderer.h"
 #include "timer.h"
 #include "util.h"

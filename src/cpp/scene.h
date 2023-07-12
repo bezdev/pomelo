@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ECS.h"
+#include "camera.h"
 #include "renderer.h"
 
 // TODO: change to enum
@@ -41,6 +42,7 @@ public:
                 .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
+        Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
         s.Load();
     }
 
@@ -59,6 +61,7 @@ public:
                 .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
+        Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
         s.Load();
     }
 
@@ -81,6 +84,7 @@ public:
                 .AddComponent<Components::Material>(Components::MaterialType::PIXEL_COLOR);
         }
 
+        Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
         s.Load();
     }
 };
