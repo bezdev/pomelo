@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <iostream>
 #include <random>
+#include <cmath>
 
 #include <assert.h>
 
@@ -15,6 +16,11 @@
 #endif
 
 #define ASSERT(condition) { if (!(condition)) { LOGE("ASSERTION FAILED: %s", #condition); } }
+
+namespace Constants
+{
+    constexpr float PI = 3.14159f;
+}
 
 inline void THROW(const char* message)
 {
@@ -49,6 +55,38 @@ inline float RANDOM_FLOAT(float min, float max)
     static std::mt19937 gen(rd());
     std::uniform_real_distribution<double> dist(static_cast<double>(min), static_cast<double>(max));
     return static_cast<float>(dist(gen));
+}
+
+inline float GET_ANGLE_IN_RANGE(float radians, float min, float max)
+{
+    float range = std::abs(max - min);
+    float mod = std::fmod(radians, range);
+
+    if (mod > max) {
+        return min + std::abs(mod);
+    }
+
+    if (mod < min) {
+        return max - std::abs(mod);
+    }
+
+    return mod;
+}
+
+inline float CAP_ANGLE(float radians, float min, float max)
+{
+    if (radians < min) {
+        return min;
+    } else if (radians > max) {
+        return max;
+    } else {
+        return radians;
+    }
+}
+
+inline float TO_DEGRESS(float radians)
+{
+    return 180 / Constants::PI * radians;
 }
 
 class Util

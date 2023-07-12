@@ -1,5 +1,6 @@
 #pragma once
 
+#include "InputManager.h"
 #include "camera.h"
 #include "renderer.h"
 #include "timer.h"
@@ -23,6 +24,7 @@ public:
     int Initialize();
 
     void Run();
+    void OnInputEvent(InputEvent event, InputData data) { InputManager::GetInstance()->OnEvent(event, data); }
     void UpdateWindowSize(int width, int height);
     void SetStartScene(int sceneId) { m_StartSceneId = sceneId; }
 private:

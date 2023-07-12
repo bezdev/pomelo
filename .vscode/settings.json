@@ -89,6 +89,7 @@
         "cassert": "cpp",
         "list": "cpp",
         "xstring": "cpp",
-        "xlocale": "cpp"
+        "xlocale": "cpp",
+        "xiosbase": "cpp"
     }
 }

@@ -25,13 +25,20 @@ public:
     };
 
     static void s_SetFramebufferSizeCallback(GLFWwindow* window, int width, int height);
+    static void s_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void s_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+    static void s_CursorPositionCallback(GLFWwindow* window, double x, double y);
+    void SetFramebufferSizeCallback(GLFWwindow* window, int width, int height);
+    void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+    void CursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
 
     GLFWApp();
     ~GLFWApp();
+
     // TODO: remove sceneId parameter
     int Initialize(int sceneId);
 
-    void SetFramebufferSizeCallback(GLFWwindow* window, int width, int height);
     void ProcessInput();
 
     void Run();
@@ -44,4 +51,7 @@ private:
 
     int m_ScreenWidth;
     int m_ScreenHeight;
+
+    static std::map<int, InputEvent> GLFWKeyToInputEventMap;
+    static std::map<int, InputEvent> GLFWMouseToInputEventMap;
 };

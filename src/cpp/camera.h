@@ -5,9 +5,15 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#include "util.h"
+
 class Camera
 {
 public:
+    static constexpr float MIN_PHI = -Constants::PI / 2 + .087;
+    static constexpr float MAX_PHI = Constants::PI / 2 - .087;
+    static constexpr float MOVE_SCALE = .0025f;
+
     static Camera* GetInstance()
     {
         if (!s_Instance) s_Instance = new Camera();
@@ -36,21 +42,13 @@ private:
     float m_NearPlane;
     float m_FarPlane;
     float m_LookAtDistance;
-    // float m_CamTheta = 0;
-    // float m_CamPhi = 0;
-    // float m_Scale = .0025f;
-    // float m_FollowBoxRatio = .6f;
-    // double m_MinPhi = -Math.PI / 2 + .087;
-    // double m_MaxPhi = Math.PI / 2 - .087;
+    float m_CamTheta;
+    float m_CamPhi;
 
     glm::vec3 m_Position;
     glm::vec3 m_Target;
     glm::vec3 m_LookAt;
     glm::vec3 m_PreviousTargetPosition;
-    // Model m_followTarget;
-    // Box m_viewBox;
-    // Box m_followBox;
-    // Plane m_viewPlane;
     glm::mat4 m_ViewMatrix;
     glm::mat4 m_ProjectionMatrix;
 };

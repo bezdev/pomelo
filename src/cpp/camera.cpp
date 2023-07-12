@@ -1,5 +1,7 @@
 #include "camera.h"
 
+#include "InputManager.h"
+
 Camera* Camera::s_Instance = nullptr;
 
 Camera::Camera():
@@ -7,8 +9,29 @@ Camera::Camera():
     m_Width(0),
     m_Ratio(0),
     m_NearPlane(3),
-    m_FarPlane(500)
+    m_FarPlane(500),
+    m_CamTheta(0.f),
+    m_CamPhi(0.f)
 {
+    InputManager::GetInstance()->RegisterCallback(InputEvent::MOUSE_MOVE, [&](InputEvent event, InputData data) {
+        if (!InputManager::GetInstance()->IsKeyDown(InputEvent::MOUSE_BUTTON_LEFT)) return;
+
+        m_CamTheta += (data.DX * MOVE_SCALE);
+        m_CamPhi -= (data.DY * MOVE_SCALE);
+
+        m_CamTheta = GET_ANGLE_IN_RANGE(m_CamTheta, 0, 2 * Constants::PI);
+        m_CamPhi = CAP_ANGLE(m_CamPhi, MIN_PHI, MAX_PHI);
+
+        m_Position = glm::vec3(
+            m_LookAtDistance * std::cos(m_CamPhi) * std::sin(m_CamTheta),
+            m_LookAtDistance * std::sin(m_CamPhi),
+            m_LookAtDistance * std::cos(m_CamPhi) * std::cos(m_CamTheta)
+        );
+
+        // LOGD("CamTheta,CamPhi: %f,%f p: (%f,%f,%f)", TO_DEGRESS(m_CamTheta), TO_DEGRESS(m_CamPhi), m_Position.x, m_Position.y, m_Position.z );
+
+        SetLookAt(m_Position, glm::vec3(0, 0, 0));
+    });
 }
 
 void Camera::SetLookAt(glm::vec3 position, glm::vec3 target)

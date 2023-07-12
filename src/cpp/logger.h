@@ -63,12 +63,12 @@ private:
 };
 
 #ifdef BUILD_DESKTOP
-#ifndef BUILD_TEST
-#define LOG(...) do { char buffer[1000]; snprintf(buffer, sizeof(buffer), __VA_ARGS__); std::cout << buffer << std::endl; } while (0);
-#else
+// #ifndef BUILD_TEST
+// #define LOG(...) do { char buffer[1000]; snprintf(buffer, sizeof(buffer), __VA_ARGS__); std::cout << buffer << std::endl; } while (0);
+// #else
 // #define LOG(...) do { char buffer[1000]; snprintf(buffer, sizeof(buffer), __VA_ARGS__); std::cout << buffer << std::endl; /* TestSuite::GetInstance().AddLog(std::string(buffer)); */ } while (0);
 #define LOG(...) do { Logger::GetInstance()->Log(__VA_ARGS__); } while(0);
-#endif
+// #endif
 #define LOGT(...) LOG(Logger::Level::Test, __VA_ARGS__)
 #define LOGD(...) LOG(Logger::Level::Debug, __VA_ARGS__)
 #define LOGI(...) LOG(Logger::Level::Info, __VA_ARGS__)

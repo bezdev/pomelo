@@ -119,7 +119,7 @@ void Renderer::Render()
     Components::Material* currentMaterial = nullptr;
     RenderBuffer* currentRenderBuffer = nullptr;
 
-    for (auto ro : m_RenderQueue)
+    for (RenderObject& ro : m_RenderQueue)
     {
         Shader* shader = ro.Shader;
         Entity* entity = ro.Entity;
@@ -129,11 +129,13 @@ void Renderer::Render()
         if (shader != currentShader)
         {
             shader->Use();
+
             glm::mat4& viewMatrix = Camera::GetInstance()->GetViewMatrix();
             glm::mat4& projectionMatrix = Camera::GetInstance()->GetProjectionMatrix();
             shader->SetVPMatrix(
                 glm::value_ptr(viewMatrix),
                 glm::value_ptr(projectionMatrix));
+
             currentShader = shader;
         }
 
