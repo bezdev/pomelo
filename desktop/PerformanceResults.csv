@@ -84,3 +84,6 @@ time,OS,resolution,name,average,min,max
 2023-07-12 10-54-57,windows,1600x900,SingleCubePerformanceTest,4207.44,3218.54,4743.17
 2023-07-12 10-55-02,windows,1600x900,ManyCubePerformanceTest,936.14,30.3636,4551.41
 2023-07-12 10-55-08,windows,1600x900,ManyCubeAxisPerformanceTest,19.7975,16.5276,32.3438
+2023-07-13 16-02-12,windows,1600x900,SingleCubePerformanceTest,4738.11,3575.57,5096.79
+2023-07-13 16-02-17,windows,1600x900,ManyCubePerformanceTest,44.2264,32.3668,79.4132
+2023-07-13 16-02-23,windows,1600x900,ManyCubeAxisPerformanceTest,19.3269,16.1116,31.8979

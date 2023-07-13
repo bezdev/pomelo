@@ -126,6 +126,7 @@ public:
 
     void RemoveEntity(EntityID id)
     {
+
         auto it = std::find_if(m_Entities.begin(), m_Entities.end(), [id](const Entity& e)
         {
             return e.GetID() == id;
@@ -138,14 +139,14 @@ public:
     }
 
     template <typename... Ts>
-    std::vector<Entity> GetEntitiesWithComponents()
+    std::vector<Entity*> GetEntitiesWithComponents()
     {
-        std::vector<Entity> entities;
+        std::vector<Entity*> entities;
         for (Entity entity : m_Entities)
         {
             if (entity.HasComponents<Ts...>())
             {
-                entities.push_back(entity);
+                entities.push_back(&m_Entities[entity.GetID()]);
             }
         }
         return entities;

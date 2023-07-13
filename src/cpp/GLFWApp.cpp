@@ -136,7 +136,7 @@ void GLFWApp::KeyCallback(GLFWwindow *window, int key, int scancode, int action,
     }
 }
 
-void GLFWApp::MouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
+void GLFWApp::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
     if (GLFWMouseToInputEventMap.count(button) != 0)
     {

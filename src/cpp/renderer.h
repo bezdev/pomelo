@@ -31,7 +31,7 @@ struct RenderObject
     Entity* Entity;
     Components::Material* Material;
     Components::Mesh* Mesh;
-    Components::Motion* Motion;
+    Components::Transform* Transform;
 };
 
 #define DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST(MACRO) \

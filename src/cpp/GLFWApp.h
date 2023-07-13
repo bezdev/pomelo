@@ -31,7 +31,7 @@ public:
     void SetFramebufferSizeCallback(GLFWwindow* window, int width, int height);
     void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-    void CursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
+    void CursorPositionCallback(GLFWwindow* window, double x, double y);
 
     GLFWApp();
     ~GLFWApp();

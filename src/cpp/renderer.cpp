@@ -23,8 +23,8 @@ int Renderer::Initialize()
     if (!m_IsInitialized)
     {
         GLint majorVersion;
-        glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
         GLint minorVersion;
+        glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
         glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
         LOGI("OpenGL Version: %d.%d", majorVersion, minorVersion);
 
@@ -74,7 +74,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 ro.Entity = const_cast<Entity*>(&entity);
                 ro.Material = material;
                 ro.Mesh = mesh;
-                ro.Motion = &entity.GetComponent<Components::Motion>();
+                ro.Transform = &entity.GetComponent<Components::Transform>();
                 m_RenderQueue.push_back(ro);
             }
             else if (material->Type == Components::MaterialType::PIXEL_COLOR && mesh->Type == Components::MeshType::AXIS)
@@ -85,7 +85,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 ro.Entity = const_cast<Entity*>(&entity);
                 ro.Material = material;
                 ro.Mesh = mesh;
-                ro.Motion = &entity.GetComponent<Components::Motion>();
+                ro.Transform = &entity.GetComponent<Components::Transform>();
                 m_RenderQueue.push_back(ro);
             }
         }
@@ -143,11 +143,6 @@ void Renderer::Render()
         {
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-            if (renderBuffer == m_RenderBuffers[static_cast<int>(Components::MeshType::AXIS)])
-            {
-                glLineWidth(20);
-            }
 
             ro.RenderBuffer->VAO->Bind();
             ro.RenderBuffer->IBO->Bind();

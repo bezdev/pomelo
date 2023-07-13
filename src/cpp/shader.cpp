@@ -51,7 +51,7 @@ void SolidColorShader::SetVPMatrix(glm::f32 *viewMatrix, glm::f32 *projectionMat
 
 void SolidColorShader::SetPerEntity(const Entity *entity)
 {
-    auto position = entity->GetComponent<Components::Motion>();
+    auto position = entity->GetComponent<Components::Transform>();
     glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), position.Position);
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(modelMatrix));
 }
@@ -92,13 +92,14 @@ void PixelColorShader::SetVPMatrix(glm::f32 *viewMatrix, glm::f32 *projectionMat
 
 void PixelColorShader::SetPerEntity(const Entity *entity)
 {
-    auto position = entity->GetComponent<Components::Motion>();
+    auto position = entity->GetComponent<Components::Transform>();
     glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), position.Position);
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(modelMatrix));
 }
 
 void PixelColorShader::SetPerMaterial(const Components::Material *material)
 {
+    glLineWidth(3);
 }
 
 void PixelColorShader::Draw(const RenderBuffer* renderBuffer)

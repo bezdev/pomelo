@@ -1,8 +1,6 @@
 #include "app.h"
 
-#if 0
-#include "jniutil.h"
-#endif
+#include "PhysicsEngine.h"
 
 App::App():
     m_IsFirstFrame(true)
@@ -12,6 +10,7 @@ App::App():
 App::~App()
 {
     LOGD("App::~App");
+    PhysicsEngine::DestroyInstance();
     Renderer::DestroyInstance();
     Camera::DestroyInstance();
     ECS::DestoryInstance();
@@ -47,6 +46,8 @@ void App::Run() {
     } else {
         m_GlobalTimer->Update();
     }
+
+    PhysicsEngine::GetInstance()->UpdateMotions(m_GlobalTimer->GetDelta());
 
     m_Renderer->Render();
 
