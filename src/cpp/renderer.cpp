@@ -60,7 +60,6 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 
         if (entity.HasComponent<Components::Mesh>())
         {
-
             mesh = &entity.GetComponent<Components::Mesh>();
         }
 

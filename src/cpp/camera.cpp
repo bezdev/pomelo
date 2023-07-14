@@ -9,28 +9,28 @@ Camera::Camera():
     m_Width(0),
     m_Ratio(0),
     m_NearPlane(3),
-    m_FarPlane(500),
-    m_CamTheta(0.f),
-    m_CamPhi(0.f)
+    m_FarPlane(500)
 {
     InputManager::GetInstance()->RegisterCallback(InputEvent::MOUSE_MOVE, [&](InputEvent event, InputData data) {
         if (!InputManager::GetInstance()->IsKeyDown(InputEvent::MOUSE_BUTTON_LEFT)) return;
 
-        m_CamTheta += (data.DX * MOVE_SCALE);
-        m_CamPhi -= (data.DY * MOVE_SCALE);
+        float camTheta = std::atan2f(m_LookAt.x, m_LookAt.z);
+        float camPhi = std::asinf(m_LookAt.y);
 
-        m_CamTheta = GET_ANGLE_IN_RANGE(m_CamTheta, 0, 2 * Constants::PI);
-        m_CamPhi = CAP_ANGLE(m_CamPhi, MIN_PHI, MAX_PHI);
+        camTheta += (data.DX * MOVE_SCALE);
+        camPhi -= (data.DY * MOVE_SCALE);
 
-        m_Position = glm::vec3(
-            m_LookAtDistance * std::cos(m_CamPhi) * std::sin(m_CamTheta),
-            m_LookAtDistance * std::sin(m_CamPhi),
-            m_LookAtDistance * std::cos(m_CamPhi) * std::cos(m_CamTheta)
-        );
+        camTheta = GET_ANGLE_IN_RANGE(camTheta, 0, 2 * Constants::PI);
+        camPhi = CAP_ANGLE(camPhi, MIN_PHI, MAX_PHI);
 
-        // LOGD("CamTheta,CamPhi: %f,%f p: (%f,%f,%f)", TO_DEGRESS(m_CamTheta), TO_DEGRESS(m_CamPhi), m_Position.x, m_Position.y, m_Position.z );
+        m_Position = m_Target - glm::vec3(
+            m_LookAtDistance * std::cos(camPhi) * std::sin(camTheta),
+            m_LookAtDistance * std::sin(camPhi),
+            m_LookAtDistance * std::cos(camPhi) * std::cos(camTheta));
 
-        SetLookAt(m_Position, glm::vec3(0, 0, 0));
+        // LOGD("CamTheta,CamPhi: %f,%f p: (%f,%f,%f)", TO_DEGRESS(camTheta), TO_DEGRESS(camPhi), m_Position.x, m_Position.y, m_Position.z );
+
+        SetLookAt(m_Position, m_Target);
     });
 }
 
@@ -41,6 +41,7 @@ void Camera::SetLookAt(glm::vec3 position, glm::vec3 target)
     m_LookAt = target - position;
     m_LookAtDistance = glm::length(m_LookAt);
     m_LookAt = glm::normalize(m_LookAt);
+
     m_ViewMatrix = glm::lookAt(m_Position, m_LookAt, glm::vec3(0.f, 1.f, 0.f));
 }
 

@@ -42,13 +42,10 @@ private:
     float m_NearPlane;
     float m_FarPlane;
     float m_LookAtDistance;
-    float m_CamTheta;
-    float m_CamPhi;
 
     glm::vec3 m_Position;
     glm::vec3 m_Target;
     glm::vec3 m_LookAt;
-    glm::vec3 m_PreviousTargetPosition;
     glm::mat4 m_ViewMatrix;
     glm::mat4 m_ProjectionMatrix;
 };
