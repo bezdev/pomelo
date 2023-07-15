@@ -154,7 +154,7 @@ public:
     ShaderManager();
     ~ShaderManager();
 
-#define GENERATE_CASE_VALUE(name, func) case ShaderType::##name: return new func();
+#define GENERATE_CASE_VALUE(name, func) case ShaderType::name: return new func();
 
     Shader* CreateShader(ShaderType type)
     {

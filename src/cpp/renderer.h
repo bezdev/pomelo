@@ -26,9 +26,9 @@
 
 struct RenderObject
 {
-    RenderBuffer* RenderBuffer;
-    Shader* Shader;
-    Entity* Entity;
+    ::RenderBuffer* RenderBuffer;
+    ::Shader* Shader;
+    ::Entity* Entity;
     Components::Material* Material;
     Components::Mesh* Mesh;
     Components::Transform* Transform;
@@ -44,7 +44,7 @@ public:
     RenderBufferManager();
     ~RenderBufferManager();
 
-#define GENERATE_CASE_VALUE(name, func) case Components::MeshType::##name: return func();
+#define GENERATE_CASE_VALUE(name, func) case Components::MeshType::name: return func();
 
     static RenderBuffer* CreateBox()
     {

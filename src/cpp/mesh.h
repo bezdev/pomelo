@@ -13,8 +13,7 @@ namespace Meshes
 
     struct Box
     {
-        Box(float width, float height, float depth):
-            PrimitiveType(PrimitiveType::Triangle)
+        Box(float width, float height, float depth)
         {
             float x2 = 0.5f * width;
             float y2 = 0.5f * height;
@@ -55,7 +54,6 @@ namespace Meshes
 
         std::vector<float> Vertices;
         std::vector<short> Indices;
-        PrimitiveType PrimitiveType;
     };
 
     struct Axis

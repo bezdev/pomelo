@@ -14,8 +14,8 @@ Camera::Camera():
     InputManager::GetInstance()->RegisterCallback(InputEvent::MOUSE_MOVE, [&](InputEvent event, InputData data) {
         if (!InputManager::GetInstance()->IsKeyDown(InputEvent::MOUSE_BUTTON_LEFT)) return;
 
-        float camTheta = std::atan2f(m_LookAt.x, m_LookAt.z);
-        float camPhi = std::asinf(m_LookAt.y);
+        float camTheta = atan2f(m_LookAt.x, m_LookAt.z);
+        float camPhi = asinf(m_LookAt.y);
 
         camTheta += (data.DX * MOVE_SCALE);
         camPhi -= (data.DY * MOVE_SCALE);

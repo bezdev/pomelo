@@ -129,8 +129,8 @@ void Renderer::Render()
         {
             shader->Use();
 
-            glm::mat4& viewMatrix = Camera::GetInstance()->GetViewMatrix();
-            glm::mat4& projectionMatrix = Camera::GetInstance()->GetProjectionMatrix();
+            glm::mat4 viewMatrix = Camera::GetInstance()->GetViewMatrix();
+            glm::mat4 projectionMatrix = Camera::GetInstance()->GetProjectionMatrix();
             shader->SetVPMatrix(
                 glm::value_ptr(viewMatrix),
                 glm::value_ptr(projectionMatrix));
