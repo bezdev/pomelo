@@ -63,7 +63,8 @@ void App::UpdateWindowSize(int width, int height)
     m_Renderer->UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
 }
 
-void App::LogFPS() {
+void App::LogFPS()
+{
     static int frameCount = 0;
     static float timeElapsed = 0.0f;
 

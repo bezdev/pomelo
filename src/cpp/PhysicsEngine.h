@@ -26,6 +26,7 @@ private:
     static PhysicsEngine* s_Instance;
 
     void UpdatePath(Entity* entity, Components::Motion* motion, float delta);
+    void UpdateOrbit(Entity* entity, Components::Motion* motion, float delta);
 
     std::vector<Entity*> m_MotionEntities;
 };
