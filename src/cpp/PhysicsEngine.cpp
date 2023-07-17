@@ -46,7 +46,7 @@ void PhysicsEngine::UpdatePath(Entity* entity, Components::Motion* motion, float
     }
 
     Components::Transform& transform = entity->GetComponent<Components::Transform>();
-    transform.Position = position;
+    transform.SetPosition(position);
 }
 
 void PhysicsEngine::UpdateOrbit(Entity* entity, Components::Motion* motion, float delta)
@@ -62,13 +62,13 @@ void PhysicsEngine::UpdateOrbit(Entity* entity, Components::Motion* motion, floa
     float distance = glm::length(direction);
     direction = glm::normalize(direction);
 
-    glm::vec3 rotationAxis = glm::normalize(glm::cross(motion->Start - motion->Target, glm::vec3(0.f, 0.f, 1.f)));
     // Rotate the relative position
+    glm::vec3 rotationAxis = glm::normalize(glm::cross(motion->Start - motion->Target, glm::vec3(0.f, 0.f, 1.f)));
     glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), deltaAngle, rotationAxis);
     glm::vec3 rotatedPosition = glm::vec3(rotation * glm::vec4(direction, 0.0f));
 
     // Update the position
-    transform.Position = motion->Target + rotatedPosition * distance;
+    transform.SetPosition(motion->Target + rotatedPosition * distance);
 
     // Update the step
     motion->Step += delta / motion->Time;

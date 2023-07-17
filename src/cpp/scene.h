@@ -10,6 +10,7 @@
 #define SCENE_MANY_CUBE 2
 #define SCENE_MANY_CUBE_AXIS 3
 
+
 class Scene
 {
 public:
@@ -32,31 +33,7 @@ public:
         else if (sceneId == SCENE_MANY_CUBE_AXIS) CreateManyCubeAxisScene();
     }
 
-    static void CreateSandboxScene()
-    {
-        Scene s;
-
-        glm::vec3 p(0.f, 0.f, 0.f);
-
-        // s.CreateEntity()
-        //     .AddComponent<Components::Transform>(p)
-        //     .AddComponent<Components::Mesh>(Components::MeshType::BOX)
-        //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
-        s.CreateEntity()
-            .AddComponent<Components::Transform>(p)
-            .AddComponent<Components::Mesh>(Components::MeshType::AXIS)
-            .AddComponent<Components::Material>(Components::MaterialType::PIXEL_COLOR);
-
-        s.CreateEntity()
-            .AddComponent<Components::Transform>(glm::vec3(-10, 0, 0))
-            .AddComponent<Components::Mesh>(Components::MeshType::BOX)
-            .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 0.f, 0.f, 1.0f))
-            // .AddComponent<Components::Motion>(Components::MotionType::PATH, glm::vec3(-10.f, 0.f, 0.f), glm::vec3(10.f, 0.f, 0.f), 5000);
-            .AddComponent<Components::Motion>(Components::MotionType::ORBIT, glm::vec3(-10.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), 5000);
-
-        Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 40.f, 40.f), glm::vec3(0.f, 0.f, 0.f));
-        s.Load();
-    }
+    static void CreateSandboxScene();
 
     static void CreateCubeScene()
     {

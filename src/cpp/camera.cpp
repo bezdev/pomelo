@@ -52,4 +52,5 @@ void Camera::UpdateViewSize(int width, int height)
     m_Ratio = 1.f * m_Width / m_Height;
 
     m_ProjectionMatrix = glm::frustum<float>(-m_Ratio, m_Ratio, -1.0f, 1.0f, m_NearPlane, m_FarPlane);
+    // m_ProjectionMatrix[2][2] *= -1;
 }

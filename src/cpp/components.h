@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class Entity;
 
@@ -9,14 +10,29 @@ namespace Components
     struct Transform
     {
         Transform() {}
+
         Transform(glm::vec3 position):
-            Position(position)
+            Transform(position, glm::vec3(1.f))
         {}
+
+        Transform(glm::vec3 position, glm::vec3 scale):
+            Position(position),
+            Scale(scale)
+        {
+            MM = glm::translate(glm::mat4(1.f), Position);
+            MM = glm::scale(MM, Scale);
+        }
+
+        void SetPosition(const glm::vec3& position)
+        {
+            Position = position;
+            MM[3] = glm::vec4(Position, 1.f);
+        }
 
         glm::vec3 Position;
         // glm::vec3 Rotation;
         glm::vec3 Scale;
-
+        glm::mat4 MM;
     };
 
     enum class MeshType

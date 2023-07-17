@@ -245,3 +245,8 @@ TEST(FunctionCalls)
         }
     }
 }
+
+TEST(AssignmentOperator)
+{
+    A a(1);
+}

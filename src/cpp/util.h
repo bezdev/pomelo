@@ -17,6 +17,13 @@
 
 #define ASSERT(condition) { if (!(condition)) { LOGE("ASSERTION FAILED: %s", #condition); } }
 
+#define GETSET(type, name) \
+    private: \
+        type name; \
+    public: \
+        type Get##name() const { return name; } \
+        void Set##name(type value) { name = value; }
+
 namespace Constants
 {
     constexpr float PI = 3.14159f;

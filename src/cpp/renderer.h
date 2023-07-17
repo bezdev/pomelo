@@ -142,6 +142,7 @@ private:
     static Renderer* s_Instance;
 
     bool m_IsInitialized;
+    bool m_IsDrawWireFrame;
 
     int m_ScreenWidth;
     int m_ScreenHeight;

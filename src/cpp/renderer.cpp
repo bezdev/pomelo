@@ -1,5 +1,8 @@
 #include "renderer.h"
 #include "shader.h"
+
+#include "InputManager.h"
+
 #include "jniutil.h"
 
 
@@ -8,8 +11,15 @@ Renderer* Renderer::s_Instance = nullptr;
 Renderer::Renderer():
     m_IsInitialized(false),
     m_ScreenWidth(0),
-    m_ScreenHeight(0)
+    m_ScreenHeight(0),
+    m_IsDrawWireFrame(false)
 {
+    InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_W, [&](InputEvent event, InputData data) {
+        if (data.Action == InputAction::UP)
+        {
+            m_IsDrawWireFrame = !m_IsDrawWireFrame;
+        }
+    });
 }
 
 Renderer::~Renderer()
@@ -151,13 +161,24 @@ void Renderer::Render()
 
         shader->SetPerEntity(entity);
 
-        if (currentMaterial != material) {
+        if (currentMaterial != material)
+        {
             shader->SetPerMaterial(material);
 
             currentMaterial = material;
         }
 
+        if (m_IsDrawWireFrame)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+
         shader->Draw(renderBuffer);
+
+        if (m_IsDrawWireFrame)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
     }
 }
 

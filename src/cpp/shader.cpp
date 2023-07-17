@@ -51,15 +51,14 @@ void SolidColorShader::SetVPMatrix(glm::f32 *viewMatrix, glm::f32 *projectionMat
 
 void SolidColorShader::SetPerEntity(const Entity *entity)
 {
-    auto position = entity->GetComponent<Components::Transform>();
-    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), position.Position);
-    glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    auto transform = entity->GetComponent<Components::Transform>();
+    glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.MM));
 }
 
 void SolidColorShader::SetPerMaterial(const Components::Material *material)
 {
     auto color = material->Color;
-    glUniform4f(m_Variables[1], color.r, color.g, color.b, color.a);//0.2f, 0.709803922f, 0.898039216f, 1.0f);
+    glUniform4f(m_Variables[1], color.r, color.g, color.b, color.a);
 }
 
 void SolidColorShader::Draw(const RenderBuffer* renderBuffer)
@@ -92,9 +91,8 @@ void PixelColorShader::SetVPMatrix(glm::f32 *viewMatrix, glm::f32 *projectionMat
 
 void PixelColorShader::SetPerEntity(const Entity *entity)
 {
-    auto position = entity->GetComponent<Components::Transform>();
-    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), position.Position);
-    glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    auto transform = entity->GetComponent<Components::Transform>();
+    glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.MM));
 }
 
 void PixelColorShader::SetPerMaterial(const Components::Material *material)
