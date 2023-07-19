@@ -1,6 +1,6 @@
 #include "buffers.h"
 
-VertexBuffer::VertexBuffer(GLfloat *data, int size, int dataSize, int stride, int index)
+VertexBuffer::VertexBuffer(float* data, int size, int dataSize, int stride, int index)
 {
     size = size * dataSize;
     stride = stride * dataSize;
@@ -36,9 +36,9 @@ VertexBuffer::~VertexBuffer()
     m_VBO = 0;
 }
 
-IndexBuffer::IndexBuffer(GLushort *data, int size)
+IndexBuffer::IndexBuffer(unsigned short* data, int size)
 {
-    m_Count = size / sizeof(GLushort);
+    m_Count = size / sizeof(unsigned short);
 
     glGenBuffers(1, &m_IBO);
     Bind();

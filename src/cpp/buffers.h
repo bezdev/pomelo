@@ -15,7 +15,7 @@
 
 class VertexBuffer {
 public:
-    VertexBuffer(GLfloat* data, int size, int dataSize, int stride, int index = 0);
+    VertexBuffer(float* data, int size, int dataSize, int stride, int index = 0);
     ~VertexBuffer();
 
     void Bind();
@@ -45,7 +45,7 @@ private:
 class IndexBuffer
 {
 public:
-    IndexBuffer(GLushort *data, int size);
+    IndexBuffer(unsigned short* data, int size);
     ~IndexBuffer();
 
     void Bind();

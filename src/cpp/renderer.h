@@ -52,12 +52,11 @@ public:
         RenderBuffer* rb = new RenderBuffer();
         rb->VAO = new VertexArray();
         rb->VAO->Bind();
-        VertexBuffer* vb = new VertexBuffer(&b.Vertices[0], b.Vertices.size(), sizeof(GLfloat), 3, 0);
+        VertexBuffer* vb = new VertexBuffer(b.Vertices.data(), b.Vertices.size(), sizeof(float), 3, 0);
         rb->VAO->AddVertexBuffer(vb);
         rb->VAO->Unbind();
 
-        // TODO: remove reinterpret_cast
-        rb->IBO = new IndexBuffer(reinterpret_cast<GLushort *>(&b.Indices[0]), b.Indices.size() * sizeof(GLushort));
+        rb->IBO = new IndexBuffer(b.Indices.data(), b.Indices.size() * sizeof(unsigned short));
 
         return rb;
     }
@@ -68,12 +67,11 @@ public:
         RenderBuffer *rb = new RenderBuffer();
         rb->VAO = new VertexArray();
         rb->VAO->Bind();
-        rb->VAO->AddVertexBuffer(new VertexBuffer(&axis.Vertices[0], axis.Vertices.size(), sizeof(GLfloat), 3, 0));
-        rb->VAO->AddVertexBuffer(new VertexBuffer(&axis.Colors[0], axis.Colors.size(), sizeof(GLfloat), 4, 1));
+        rb->VAO->AddVertexBuffer(new VertexBuffer(axis.Vertices.data(), axis.Vertices.size(), sizeof(float), 3, 0));
+        rb->VAO->AddVertexBuffer(new VertexBuffer(axis.Colors.data(), axis.Colors.size(), sizeof(float), 4, 1));
         rb->VAO->Unbind();
-
-        // TODO: remove reinterpret_cast
-        rb->IBO = new IndexBuffer(reinterpret_cast<GLushort *>(&axis.Indices[0]), axis.Indices.size() * sizeof(GLushort));
+    
+        rb->IBO = new IndexBuffer(axis.Indices.data(), axis.Indices.size() * sizeof(unsigned short));
 
         return rb;
     }
@@ -110,7 +108,6 @@ private:
     std::vector<RenderBuffer*> m_RenderBuffers;
 };
 
-#undef GENERATE_ENUM_VALUE
 #undef GENERATE_CASE_VALUE
 #undef DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST
 

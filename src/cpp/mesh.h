@@ -1,6 +1,9 @@
 #pragma once
 
 #include <vector>
+
+#include <glm/glm.hpp>
+
 #include "buffers.h"
 
 namespace Meshes
@@ -53,7 +56,7 @@ namespace Meshes
         }
 
         std::vector<float> Vertices;
-        std::vector<short> Indices;
+        std::vector<unsigned short> Indices;
     };
 
     struct Axis
@@ -85,7 +88,7 @@ namespace Meshes
 
         std::vector<float> Vertices;
         std::vector<float> Colors;
-        std::vector<short> Indices;
+        std::vector<unsigned short> Indices;
         short LineWidth;
     };
 
@@ -93,10 +96,10 @@ namespace Meshes
     {
         Sphere(float radius, int stacks, int slices)
         {
-            std::vector<glm::vec3> vertices;
+            // std::vector<glm::vec3> vertices;
 
             // top
-            vertices.push_back(glm::vec3(0, radius, 0));
+            Vertices.push_back(glm::vec3(0, radius, 0));
 
             // middle
             float phiStep = Constants::PI / stacks;
@@ -108,7 +111,7 @@ namespace Meshes
                 {
                     double theta = j * thetaStep;
 
-                    vertices.push_back(glm::vec3(
+                    Vertices.push_back(glm::vec3(
                         radius * std::sin(phi) * std::cos(theta),
                         radius * std::cos(phi),
                         radius * std::sin(phi) * std::sin(theta)));
@@ -116,7 +119,7 @@ namespace Meshes
             }
 
             // bottom
-            vertices.push_back(glm::vec3(0, -radius, 0));
+            Vertices.push_back(glm::vec3(0, -radius, 0));
 
             // top
             for (int i = 1; i <= slices; i++)
@@ -144,7 +147,7 @@ namespace Meshes
             }
 
             // bot
-            int southPoleIndex = vertices.size() - 1;
+            int southPoleIndex = Vertices.size() - 1;
             baseIndex = southPoleIndex - ringVertexCount;
             for (int i = 0; i < slices; i++) {
                 Indices.push_back(southPoleIndex);
@@ -152,35 +155,35 @@ namespace Meshes
                 Indices.push_back(baseIndex + i + 1);
             }
 
-            float[] verticesArray = new float[vertices.size() * 3];
-            Vertices(vertices.size() * 3);
-            int index = 0;
-            for (Vector3 v : vertices) {
-                verticesArray[index++] = v.x;
-                verticesArray[index++] = v.y;
-                verticesArray[index++] = v.z;
-            }
+            // float[] verticesArray = new float[vertices.size() * 3];
+            // Vertices(vertices.size() * 3);
+            // int index = 0;
+            // for (Vector3 v : vertices) {
+            //     verticesArray[index++] = v.x;
+            //     verticesArray[index++] = v.y;
+            //     verticesArray[index++] = v.z;
+            // }
 
-            short[] indicesArray = new short[indices.size()];
-            index = 0;
-            for (Integer i : indices) {
-                indicesArray[index++] = (short)(int)i;
-            }
+            // short[] indicesArray = new short[indices.size()];
+            // index = 0;
+            // for (Integer i : indices) {
+            //     indicesArray[index++] = (short)(int)i;
+            // }
 
-            float[] normalsArray = new float[vertices.size() * 3];
-            index = 0;
-            for (Vector3 v : vertices) {
-                Vector3 n = v.normalize();
-                normalsArray[index++] = n.x;
-                normalsArray[index++] = n.y;
-                normalsArray[index++] = n.z;
-            }
+            // float[] normalsArray = new float[vertices.size() * 3];
+            // index = 0;
+            // for (Vector3 v : vertices) {
+            //     Vector3 n = v.normalize();
+            //     normalsArray[index++] = n.x;
+            //     normalsArray[index++] = n.y;
+            //     normalsArray[index++] = n.z;
+            // }
         }
 
-        std::vector<float> Vertices;
+        std::vector<glm::vec3> Vertices;
         std::vector<float> Normals;
-        std::vector<short> Indices;
-    }
+        std::vector<unsigned short> Indices;
+    };
 
 /*
     struct Geosphere
