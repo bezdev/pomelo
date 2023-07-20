@@ -19,8 +19,6 @@
 #include "buffers.h"
 #include "util.h"
 
-#define DEBUG
-
 enum ShaderVariableType
 {
     ATTRIBUTE = 0,
@@ -44,7 +42,7 @@ public:
         glShaderSource(shaderId, 1, &rawSource, &size);
         glCompileShader(shaderId);
 
-#ifdef DEBUG
+#ifdef BUILD_DESKTOP
         GLint logLength;
         glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logLength);
         if (logLength > 0)
@@ -68,7 +66,7 @@ public:
         }
         glLinkProgram(program);
 
-#ifdef DEBUG
+#ifdef BUILD_DESKTOP
         GLint logLength;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
         if (logLength > 0)

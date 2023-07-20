@@ -207,14 +207,18 @@ void Renderer::Render()
 
         if (m_IsDrawWireFrame)
         {
+#ifdef BUILD_DESKTOP
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+#endif
         }
 
         shader->Draw(renderBuffer);
 
         if (m_IsDrawWireFrame)
         {
+#ifdef BUILD_DESKTOP
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#endif
         }
     }
 }

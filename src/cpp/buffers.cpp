@@ -23,12 +23,7 @@ VertexBuffer::VertexBuffer(int index, void* data, int count, int dataSize, int s
     CHECK_GL_ERROR("VertexBuffer::VertexBuffer");
     if (divisor > 0)
     {
-#ifdef BUILD_ANDROID
-        glVertexAttribDivisorARB(index, divisor);
-#endif
-#ifdef BUILD_DESKTOP
         glVertexAttribDivisor(index, divisor);
-#endif
     }
 
     CHECK_GL_ERROR("VertexBuffer::VertexBuffer");
