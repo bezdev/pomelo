@@ -108,6 +108,17 @@ TEST(ManyCubePerformanceTest)
     Logger::GetInstance()->Clear();
 }
 
+TEST(ManyCubeInstancedPerformanceTest)
+{
+    StartApp(SCENE_MANY_CUBE_INSTANCED);
+
+    auto log = Logger::GetInstance()->GetLog();
+    ASSERT_TRUE(log.size() > 0);
+
+    LogToFile(GetName(), log);
+    Logger::GetInstance()->Clear();
+}
+
 TEST(ManyCubeAxisPerformanceTest)
 {
     StartApp(SCENE_MANY_CUBE_AXIS);

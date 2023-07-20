@@ -14,12 +14,12 @@
 #include "ECS.h"
 #include "util.h"
 
-template<typename T>
 struct VertexBufferData
 {
     int Index;
-    T* Data;
+    void* Data;
     int Count;
+    int DataSize;
     int Stride;
     int Offset;
     int Type;
@@ -30,14 +30,13 @@ struct VertexBufferData
 class VertexBuffer
 {
 public:
-    template<typename T>
-    static VertexBuffer* CreateVertexBuffer(const VertexBufferData<T>& data)
+    static VertexBuffer* CreateVertexBuffer(const VertexBufferData& data)
     {
         return new VertexBuffer(
             data.Index,
-            reinterpret_cast<void*>(data.Data),
+            data.Data,
             data.Count,
-            sizeof(T),
+            data.DataSize,
             data.Stride,
             data.Offset,
             data.Type,
@@ -47,7 +46,6 @@ public:
     }
 
     VertexBuffer(int index, void* data, int count, int dataSize, int stride, int offset, int type, int usage, int divisor);
-    VertexBuffer(float* data, int size, int dataSize, int stride, int index = 0);
     ~VertexBuffer();
 
     void Bind();
@@ -131,6 +129,20 @@ public:
     static RenderBuffer* CreateSphere();
 
     static RenderBuffer* CreateInstancedBox(std::vector<glm::vec3>& positions);
+
+    static RenderBuffer* CreateRenderBuffer(const std::vector<VertexBufferData>& bufferData)
+    {
+        RenderBuffer* rb = new RenderBuffer();
+        rb->VAO = new VertexArray();
+        rb->VAO->Bind();
+        for (auto vbd : bufferData)
+        {
+            rb->VAO->AddVertexBuffer(VertexBuffer::CreateVertexBuffer(vbd));
+        }
+        rb->VAO->Unbind();
+
+        return rb;
+    }
 
     RenderBuffer* CreateRenderBuffer(Components::MeshType type)
     {

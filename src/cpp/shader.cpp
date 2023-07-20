@@ -5,7 +5,7 @@ Shader::Shader():
     m_Shaders(2)
 {}
 
-void Shader::LoadShader(const std::vector<GLuint> &shaders, const std::vector<ShaderVariable> &variables)
+void Shader::LoadShader(const std::vector<GLuint>& shaders, const std::vector<ShaderVariable>& variables)
 {
     m_Program = LinkShader(shaders);
     for (std::size_t i = 0; i < variables.size(); i++)
@@ -97,7 +97,9 @@ void SolidColorShaderInstanced::SetPerRenderObject(const std::vector<const Entit
 
 void SolidColorShaderInstanced::Draw(const RenderBuffer* renderBuffer)
 {
-    glDrawArraysInstanced(GL_TRIANGLES, 0, renderBuffer->VAO->GetVertexBuffers()[0]->GetCount(), renderBuffer->VAO->GetVertexBuffers()[1]->GetCount() / 3);
+    // TODO: fix this hack
+    int instanceCount = renderBuffer->VAO->GetVertexBuffers()[1]->GetCount() / 3;
+    glDrawElementsInstanced(GL_TRIANGLES, renderBuffer->IBO->GetCount(), GL_UNSIGNED_SHORT, 0, instanceCount);
 }
 
 PixelColorShader::PixelColorShader():

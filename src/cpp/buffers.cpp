@@ -23,31 +23,16 @@ VertexBuffer::VertexBuffer(int index, void* data, int count, int dataSize, int s
     CHECK_GL_ERROR("VertexBuffer::VertexBuffer");
     if (divisor > 0)
     {
+#ifdef BUILD_ANDROID
+        glVertexAttribDivisorARB(index, divisor);
+#endif
+#ifdef BUILD_DESKTOP
         glVertexAttribDivisor(index, divisor);
+#endif
     }
 
     CHECK_GL_ERROR("VertexBuffer::VertexBuffer");
 
-    Unbind();
-}
-
-VertexBuffer::VertexBuffer(float* data, int size, int dataSize, int stride, int index)
-{
-    size = size * dataSize;
-    stride = stride * dataSize;
-
-    ASSERT(size % stride == 0);
-
-    m_VBO = 0;
-    m_Stride = stride;
-    m_Count = size / stride;
-
-    glGenBuffers(1, &m_VBO);
-    Bind();
-    glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(index);
-    // LOGD("glVertexAttribPointer %d, %d", index, stride/ dataSize);
-    glVertexAttribPointer(index, stride / dataSize, GL_FLOAT, false, 0, 0);
     Unbind();
 }
 
@@ -140,13 +125,10 @@ RenderBufferManager::~RenderBufferManager()
 RenderBuffer* RenderBufferManager::CreateBox()
 {
     Mesh::Box box(1.f, 1.f, 1.f);
-    RenderBuffer* rb = new RenderBuffer();
-    rb->VAO = new VertexArray();
-    rb->VAO->Bind();
-    VertexBuffer* vb = new VertexBuffer(box.Vertices.data(), box.Vertices.size(), sizeof(float), 3, 0);
-    rb->VAO->AddVertexBuffer(vb);
-    rb->VAO->Unbind();
 
+    RenderBuffer* rb = CreateRenderBuffer({
+        VertexBufferData { 0, box.Vertices.data(), (int)box.Vertices.size(), sizeof(float), 3, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+    });
     rb->IBO = new IndexBuffer(box.Indices.data(), box.Indices.size() * sizeof(unsigned short));
 
     return rb;
@@ -155,13 +137,11 @@ RenderBuffer* RenderBufferManager::CreateBox()
 RenderBuffer* RenderBufferManager::CreateAxis()
 {
     Mesh::Axis axis(1.f, 1.f, 1.f);
-    RenderBuffer *rb = new RenderBuffer();
-    rb->VAO = new VertexArray();
-    rb->VAO->Bind();
-    rb->VAO->AddVertexBuffer(new VertexBuffer(axis.Vertices.data(), axis.Vertices.size(), sizeof(float), 3, 0));
-    rb->VAO->AddVertexBuffer(new VertexBuffer(axis.Colors.data(), axis.Colors.size(), sizeof(float), 4, 1));
-    rb->VAO->Unbind();
 
+    RenderBuffer* rb = CreateRenderBuffer({
+        VertexBufferData { 0, axis.Vertices.data(), (int)axis.Vertices.size(), sizeof(float), 3, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+        VertexBufferData { 1, axis.Colors.data(), (int)axis.Colors.size(), sizeof(float), 4, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+    });
     rb->IBO = new IndexBuffer(axis.Indices.data(), axis.Indices.size() * sizeof(unsigned short));
 
     return rb;
@@ -171,12 +151,9 @@ RenderBuffer* RenderBufferManager::CreateSphere()
 {
     Mesh::Sphere sphere(.5f, 8.f, 8.f);
 
-    RenderBuffer *rb = new RenderBuffer();
-    rb->VAO = new VertexArray();
-    rb->VAO->Bind();
-    rb->VAO->AddVertexBuffer(new VertexBuffer(sphere.Vertices.data(), sphere.Vertices.size(), sizeof(float), 3, 0));
-    rb->VAO->Unbind();
-
+    RenderBuffer* rb = CreateRenderBuffer({
+        VertexBufferData { 0, sphere.Vertices.data(), (int)sphere.Vertices.size(), sizeof(float), 3, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+    });
     rb->IBO = new IndexBuffer(sphere.Indices.data(), sphere.Indices.size() * sizeof(unsigned short));
 
     return rb;
@@ -186,24 +163,10 @@ RenderBuffer* RenderBufferManager::CreateInstancedBox(std::vector<glm::vec3>& po
 {
     Mesh::Box box(1.f, 1.f, 1.f);
 
-    RenderBuffer* rb = new RenderBuffer();
-    rb->VAO = new VertexArray();
-    rb->VAO->Bind();
-    VertexBuffer* vb = new VertexBuffer(box.Vertices.data(), box.Vertices.size(), sizeof(float), 3, 0);
-    rb->VAO->AddVertexBuffer(vb);
-    const VertexBufferData<float> vbd = {
-        1,
-        reinterpret_cast<float*>(positions.data()),
-        positions.size() * 3,
-        3,
-        0,
-        GL_FLOAT,
-        GL_STATIC_DRAW,
-        1
-    };
-    rb->VAO->AddVertexBuffer(VertexBuffer::CreateVertexBuffer(vbd));
-    rb->VAO->Unbind();
-
+    RenderBuffer* rb = CreateRenderBuffer({
+        VertexBufferData { 0, box.Vertices.data(), (int)box.Vertices.size(), sizeof(float), 3, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+        VertexBufferData { 1, positions.data(), (int)positions.size() * 3, sizeof(float), 3, 0, GL_FLOAT, GL_STATIC_DRAW, 1 },
+    });
     rb->IBO = new IndexBuffer(box.Indices.data(), box.Indices.size() * sizeof(unsigned short));
 
     return rb;
