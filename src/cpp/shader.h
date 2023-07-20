@@ -10,7 +10,6 @@
 #endif
 
 #include <vector>
-#include <unordered_map>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -127,6 +126,16 @@ public:
     void Draw(const RenderBuffer* renderBuffer) override;
 };
 
+class SolidColorShaderInstanced : public Shader
+{
+public:
+    SolidColorShaderInstanced();
+    void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override;
+    void SetPerEntity(const Entity* entity) override;
+    void SetPerMaterial(const Components::Material* material) override;
+    void Draw(const RenderBuffer* renderBuffer) override;
+};
+
 class PixelColorShader : public Shader
 {
 public:
@@ -139,6 +148,7 @@ public:
 
 #define DEFINE_SHADER_ENUM_CLASS_LIST(MACRO) \
     MACRO(SOLID_COLOR, SolidColorShader) \
+    MACRO(SOLID_COLOR_INSTANCED, SolidColorShaderInstanced) \
     MACRO(PIXEL_COLOR, PixelColorShader)
 
 #define GENERATE_ENUM_VALUE(name, func) name,

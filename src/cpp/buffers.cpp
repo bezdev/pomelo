@@ -1,6 +1,35 @@
 #include "buffers.h"
 
+#include "renderer.h"
 #include "mesh.h"
+
+VertexBuffer::VertexBuffer(int index, void* data, int count, int dataSize, int stride, int offset, int type, int usage, int divisor)
+{
+    int size = count * dataSize;
+    int strideSize = stride * dataSize;
+
+    ASSERT(size % strideSize == 0);
+
+    m_VBO = 0;
+    m_Stride = stride;
+    m_Count = count;
+    m_Offset = offset;
+
+    glGenBuffers(1, &m_VBO);
+    Bind();
+    glBufferData(GL_ARRAY_BUFFER, size, data, usage);
+    glEnableVertexAttribArray(index);
+    glVertexAttribPointer(index, stride, type, false, strideSize, reinterpret_cast<void*>(offset));
+    CHECK_GL_ERROR("VertexBuffer::VertexBuffer");
+    if (divisor > 0)
+    {
+        glVertexAttribDivisor(index, divisor);
+    }
+
+    CHECK_GL_ERROR("VertexBuffer::VertexBuffer");
+
+    Unbind();
+}
 
 VertexBuffer::VertexBuffer(float* data, int size, int dataSize, int stride, int index)
 {
@@ -108,7 +137,7 @@ RenderBufferManager::~RenderBufferManager()
     Cleanup();
 }
 
-RenderBuffer *RenderBufferManager::CreateBox()
+RenderBuffer* RenderBufferManager::CreateBox()
 {
     Mesh::Box box(1.f, 1.f, 1.f);
     RenderBuffer* rb = new RenderBuffer();
@@ -123,7 +152,7 @@ RenderBuffer *RenderBufferManager::CreateBox()
     return rb;
 }
 
-RenderBuffer *RenderBufferManager::CreateAxis()
+RenderBuffer* RenderBufferManager::CreateAxis()
 {
     Mesh::Axis axis(1.f, 1.f, 1.f);
     RenderBuffer *rb = new RenderBuffer();
@@ -138,9 +167,10 @@ RenderBuffer *RenderBufferManager::CreateAxis()
     return rb;
 }
 
-RenderBuffer *RenderBufferManager::CreateSphere()
+RenderBuffer* RenderBufferManager::CreateSphere()
 {
     Mesh::Sphere sphere(.5f, 8.f, 8.f);
+
     RenderBuffer *rb = new RenderBuffer();
     rb->VAO = new VertexArray();
     rb->VAO->Bind();
@@ -148,6 +178,33 @@ RenderBuffer *RenderBufferManager::CreateSphere()
     rb->VAO->Unbind();
 
     rb->IBO = new IndexBuffer(sphere.Indices.data(), sphere.Indices.size() * sizeof(unsigned short));
+
+    return rb;
+}
+
+RenderBuffer* RenderBufferManager::CreateInstancedBox(std::vector<glm::vec3>& positions)
+{
+    Mesh::Box box(1.f, 1.f, 1.f);
+
+    RenderBuffer* rb = new RenderBuffer();
+    rb->VAO = new VertexArray();
+    rb->VAO->Bind();
+    VertexBuffer* vb = new VertexBuffer(box.Vertices.data(), box.Vertices.size(), sizeof(float), 3, 0);
+    rb->VAO->AddVertexBuffer(vb);
+    const VertexBufferData<float> vbd = {
+        1,
+        reinterpret_cast<float*>(positions.data()),
+        positions.size() * 3,
+        3,
+        0,
+        GL_FLOAT,
+        GL_STATIC_DRAW,
+        1
+    };
+    rb->VAO->AddVertexBuffer(VertexBuffer::CreateVertexBuffer(vbd));
+    rb->VAO->Unbind();
+
+    rb->IBO = new IndexBuffer(box.Indices.data(), box.Indices.size() * sizeof(unsigned short));
 
     return rb;
 }

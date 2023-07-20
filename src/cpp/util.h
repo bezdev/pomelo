@@ -29,6 +29,7 @@ namespace Constants
     constexpr float PI = 3.14159f;
 }
 
+
 inline void THROW(const char* message)
 {
     LOGE("%s", message);

@@ -108,3 +108,9 @@ time,OS,resolution,name,average,min,max
 2023-07-19 20-45-14,windows,1920x1080,SingleCubePerformanceTest,4653.55,3255.93,5170.39
 2023-07-19 20-45-19,windows,1920x1080,ManyCubePerformanceTest,1044.61,31.4086,5092.1
 2023-07-19 20-45-24,windows,1920x1080,ManyCubeAxisPerformanceTest,19.6913,16.138,32.6754
+2023-07-20 00-38-12,windows,1920x1080,SingleCubePerformanceTest,4391.95,3411.42,5098.38
+2023-07-20 00-38-17,windows,1920x1080,ManyCubePerformanceTest,1047.51,31.6348,5105.87
+2023-07-20 00-38-22,windows,1920x1080,ManyCubeAxisPerformanceTest,19.356,15.8241,32.3543
+2023-07-20 12-50-08,windows,1920x1080,SingleCubePerformanceTest,4386.45,3509.86,5003.64
+2023-07-20 12-50-14,windows,1920x1080,ManyCubePerformanceTest,1023.11,32.4111,4984.35
+2023-07-20 12-50-19,windows,1920x1080,ManyCubeAxisPerformanceTest,19.4667,15.9145,31.5697

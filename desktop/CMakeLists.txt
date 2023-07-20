@@ -27,6 +27,8 @@ include_directories(${TEST_FOLDER})
 set(ASSET_FOLDER ../src/assets)
 configure_file(${ASSET_FOLDER}/shaders/SolidColor.fs ${CMAKE_CURRENT_BINARY_DIR}/shaders/SolidColor.fs COPYONLY)
 configure_file(${ASSET_FOLDER}/shaders/SolidColor.vs ${CMAKE_CURRENT_BINARY_DIR}/shaders/SolidColor.vs COPYONLY)
+configure_file(${ASSET_FOLDER}/shaders/SolidColorInstanced.ps ${CMAKE_CURRENT_BINARY_DIR}/shaders/SolidColorInstanced.ps COPYONLY)
+configure_file(${ASSET_FOLDER}/shaders/SolidColorInstanced.vs ${CMAKE_CURRENT_BINARY_DIR}/shaders/SolidColorInstanced.vs COPYONLY)
 configure_file(${ASSET_FOLDER}/shaders/PixelColor.ps ${CMAKE_CURRENT_BINARY_DIR}/shaders/PixelColor.ps COPYONLY)
 configure_file(${ASSET_FOLDER}/shaders/PixelColor.vs ${CMAKE_CURRENT_BINARY_DIR}/shaders/PixelColor.vs COPYONLY)
 

@@ -66,6 +66,39 @@ void SolidColorShader::Draw(const RenderBuffer* renderBuffer)
     glDrawElements(GL_TRIANGLES, renderBuffer->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
 }
 
+SolidColorShaderInstanced::SolidColorShaderInstanced():
+    Shader(
+        {
+            Shader::CompileShader(Util::ReadFile("shaders/SolidColorInstanced.vs"), GL_VERTEX_SHADER),
+            Shader::CompileShader(Util::ReadFile("shaders/SolidColorInstanced.ps"), GL_FRAGMENT_SHADER)
+        },
+        {
+            { ShaderVariableType::ATTRIBUTE, "vPosition" },
+            { ShaderVariableType::ATTRIBUTE, "vInstancePosition" },
+            { ShaderVariableType::UNIFORM, "vColor" },
+            { ShaderVariableType::UNIFORM, "modelMatrix" },
+            { ShaderVariableType::UNIFORM, "viewMatrix" },
+            { ShaderVariableType::UNIFORM, "projectionMatrix" },
+        })
+{
+}
+
+void SolidColorShaderInstanced::SetVPMatrix(glm::f32 *viewMatrix, glm::f32 *projectionMatrix)
+{
+}
+
+void SolidColorShaderInstanced::SetPerEntity(const Entity *entity)
+{
+}
+
+void SolidColorShaderInstanced::SetPerMaterial(const Components::Material *material)
+{
+}
+
+void SolidColorShaderInstanced::Draw(const RenderBuffer *renderBuffer)
+{
+}
+
 PixelColorShader::PixelColorShader():
     Shader(
         {

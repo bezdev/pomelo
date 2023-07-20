@@ -40,6 +40,7 @@ namespace Components
         AXIS,
         BOX,
         SPHERE,
+        INSTANCED_BOX,
         COUNT
     };
 

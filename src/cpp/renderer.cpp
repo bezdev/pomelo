@@ -27,7 +27,7 @@ Renderer::~Renderer()
     LOGD("Renderer::~Renderer");
     Cleanup();
 }
-
+ 
 int Renderer::Initialize()
 {
     if (!m_IsInitialized)
@@ -38,9 +38,30 @@ int Renderer::Initialize()
         glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
         LOGI("OpenGL Version: %d.%d", majorVersion, minorVersion);
 
-        m_IsInitialized = true;
+        if (majorVersion == 3 && minorVersion < 3)
+        {
+            bool hasARBDrawInstanced = false;
+            std::string extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+            std::stringstream ss(extensions);
+            std::string extension;
+            LOGI("glGetString(GL_EXTENSIONS): %s", extensions.c_str());
+            while (ss >> extension)
+            {
+                if (extension == "GL_ARB_draw_instanced")
+                {
+                    hasARBDrawInstanced = true;
+                }
 
-        LOGI("glGetString(GL_EXTENSIONS): %s", glGetString(GL_EXTENSIONS));
+                // LOGI(extension.c_str());
+            }
+
+            if (majorVersion == 3 && minorVersion < 3 && !hasARBDrawInstanced)
+            {
+                LOGE("no instancing support");
+            }
+        }
+
+        m_IsInitialized = true;
     }
 
     return 0;
@@ -55,8 +76,9 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 {
     m_ShaderManager.Cleanup();
     m_RenderBufferManager.Cleanup();
-
     m_RenderQueue.clear();
+
+    std::map<Components::MeshType, std::vector<const Entity*>> instancedMap;
 
     for (const Entity& entity : entities)
     {
@@ -71,6 +93,12 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         if (entity.HasComponent<Components::Mesh>())
         {
             mesh = &entity.GetComponent<Components::Mesh>();
+
+            if (mesh->Type == Components::MeshType::INSTANCED_BOX)
+            {
+                instancedMap[mesh->Type].push_back(&entity);
+                continue;
+            }
         }
 
         if (material != nullptr && mesh != nullptr)
@@ -99,6 +127,28 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             }
         }
     }
+
+    for (const auto& kv : instancedMap)
+    {
+        std::vector<glm::vec3> positions(kv.second.size());
+
+        for (const auto& e : kv.second)
+        {
+            auto& position = e->GetComponent<Components::Transform>();
+            positions.push_back(position.Position);
+        }
+
+        RenderObject ro;
+        ro.RenderBuffer = m_RenderBufferManager.CreateInstancedBox(positions);
+        ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR_INSTANCED);
+        // ro.Entity = const_cast<Entity*>();
+        // ro.Material = material;
+        // ro.Mesh = mesh;
+        // ro.Transform = &entity.GetComponent<Components::Transform>();
+        m_RenderQueue.push_back(ro);
+    }
+    // Create instanced buffers
+    // Create shader
 
     std::sort(m_RenderQueue.begin(), m_RenderQueue.end(), [](RenderObject a, RenderObject b)
     {

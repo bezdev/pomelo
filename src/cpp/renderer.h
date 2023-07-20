@@ -2,7 +2,8 @@
 
 #include <map>
 #include <vector>
-#include <unordered_map>
+#include <list>
+#include <map>
 
 #ifdef BUILD_ANDROID
 #include <EGL/egl.h>
@@ -23,6 +24,14 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+
+inline void CHECK_GL_ERROR(const char* label)
+{
+    for (GLint error = glGetError(); error; error = glGetError())
+    {
+        LOGE("%s: glError: (0x%x)\n", label, error);
+    }
+}
 
 struct RenderObject
 {
@@ -71,15 +80,6 @@ private:
     RenderBufferManager m_RenderBufferManager;
 
     std::vector<RenderObject> m_RenderQueue;
-    std::unordered_map<int, RenderBuffer*> m_RenderBuffers;
-
-    static void CheckGLError(const char* op)
-    {
-        for (GLint error = glGetError(); error; error = glGetError())
-        {
-            LOGI("after %s() glError (0x%x)\n", op, error);
-        }
-    }
 
     void Cleanup();
 };

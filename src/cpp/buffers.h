@@ -14,8 +14,39 @@
 #include "ECS.h"
 #include "util.h"
 
-class VertexBuffer {
+template<typename T>
+struct VertexBufferData
+{
+    int Index;
+    T* Data;
+    int Count;
+    int Stride;
+    int Offset;
+    int Type;
+    int Usage;
+    int Divisor;
+};
+
+class VertexBuffer
+{
 public:
+    template<typename T>
+    static VertexBuffer* CreateVertexBuffer(const VertexBufferData<T>& data)
+    {
+        return new VertexBuffer(
+            data.Index,
+            reinterpret_cast<void*>(data.Data),
+            data.Count,
+            sizeof(T),
+            data.Stride,
+            data.Offset,
+            data.Type,
+            data.Usage,
+            data.Divisor
+        );
+    }
+
+    VertexBuffer(int index, void* data, int count, int dataSize, int stride, int offset, int type, int usage, int divisor);
     VertexBuffer(float* data, int size, int dataSize, int stride, int index = 0);
     ~VertexBuffer();
 
@@ -40,6 +71,7 @@ public:
 private:
     GLuint m_VBO;
     int m_Stride;
+    int m_Offset;
     int m_Count;
 };
 
@@ -95,6 +127,8 @@ public:
     static RenderBuffer* CreateBox();
     static RenderBuffer* CreateAxis();
     static RenderBuffer* CreateSphere();
+
+    static RenderBuffer* CreateInstancedBox(std::vector<glm::vec3>& positions);
 
     RenderBuffer* CreateRenderBuffer(Components::MeshType type)
     {
