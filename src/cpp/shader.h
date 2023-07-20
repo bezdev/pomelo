@@ -96,75 +96,54 @@ public:
         return program;
     }
 
-    Shader();
-    Shader(const std::vector<GLuint>& shaders, const std::vector<ShaderVariable>& variables);
     ~Shader();
 
+    void LoadShader(const std::vector<GLuint>& shaders, const std::vector<ShaderVariable>& variables);
     void Use() const { glUseProgram(m_Program); }
 
     virtual void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) = 0;
-    virtual void SetPerEntity(const Entity* entity) = 0;
-    virtual void SetPerMaterial(const Components::Material* material) = 0;
+    virtual void SetPerRenderObject(const std::vector<const Entity*>& entities) = 0;
     virtual void Draw(const RenderBuffer* renderBuffer) = 0;
 
     GLuint GetProgram() const { return m_Program; }
     const std::vector<GLuint>& GetVariables() const { return m_Variables; }
 
 protected:
+    Shader();
     GLuint m_Program;
     std::vector<GLuint> m_Variables;
     std::vector<GLuint> m_Shaders;
 };
 
-class SolidColorShader : public Shader
-{
-public:
-    SolidColorShader();
-    void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override;
-    void SetPerEntity(const Entity* entity) override;
-    void SetPerMaterial(const Components::Material* material) override;
-    void Draw(const RenderBuffer* renderBuffer) override;
-};
-
-class SolidColorShaderInstanced : public Shader
-{
-public:
-    SolidColorShaderInstanced();
-    void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override;
-    void SetPerEntity(const Entity* entity) override;
-    void SetPerMaterial(const Components::Material* material) override;
-    void Draw(const RenderBuffer* renderBuffer) override;
-};
-
-class PixelColorShader : public Shader
-{
-public:
-    PixelColorShader();
-    void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override;
-    void SetPerEntity(const Entity* entity) override;
-    void SetPerMaterial(const Components::Material* material) override;
-    void Draw(const RenderBuffer* renderBuffer) override;
-};
-
-#define DEFINE_SHADER_ENUM_CLASS_LIST(MACRO) \
-    MACRO(SOLID_COLOR, SolidColorShader) \
+#define DEFINE_SHADER_ENUM_CLASS_LIST(MACRO)                \
+    MACRO(SOLID_COLOR, SolidColorShader)                    \
     MACRO(SOLID_COLOR_INSTANCED, SolidColorShaderInstanced) \
     MACRO(PIXEL_COLOR, PixelColorShader)
 
-#define GENERATE_ENUM_VALUE(name, func) name,
+#define GENERATE_ENUM_VALUE(name, className) name,
 enum class ShaderType
 {
     DEFINE_SHADER_ENUM_CLASS_LIST(GENERATE_ENUM_VALUE)
     COUNT
 };
 
+#define GENERATE_SUB_CLASSES(name, className)                                    \
+class className : public Shader {                                                \
+public:                                                                          \
+    className();                                                                 \
+    void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override; \
+    void SetPerRenderObject(const std::vector<const Entity*>& entities) override;      \
+    void Draw(const RenderBuffer* renderBuffer) override;                        \
+};
+DEFINE_SHADER_ENUM_CLASS_LIST(GENERATE_SUB_CLASSES)
+
+#define GENERATE_CASE_VALUE(name, className) case ShaderType::name: return new className();
+
 class ShaderManager
 {
 public:
     ShaderManager();
     ~ShaderManager();
-
-#define GENERATE_CASE_VALUE(name, func) case ShaderType::name: return new func();
 
     Shader* CreateShader(ShaderType type)
     {
@@ -182,5 +161,6 @@ private:
 };
 
 #undef GENERATE_ENUM_VALUE
+#undef GENERATE_SUB_CLASSES
 #undef GENERATE_CASE_VALUE
 #undef DEFINE_SHADER_ENUM_CLASS_LIST

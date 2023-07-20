@@ -108,10 +108,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 RenderObject ro;
                 ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(mesh->Type);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR);
-                ro.Entity = const_cast<Entity*>(&entity);
-                ro.Material = material;
-                ro.Mesh = mesh;
-                ro.Transform = &entity.GetComponent<Components::Transform>();
+                ro.Entities.push_back(const_cast<Entity*>(&entity));
                 m_RenderQueue.push_back(ro);
             }
             else if (material->Type == Components::MaterialType::PIXEL_COLOR && mesh->Type == Components::MeshType::AXIS)
@@ -119,10 +116,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 RenderObject ro;
                 ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::AXIS);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::PIXEL_COLOR);
-                ro.Entity = const_cast<Entity*>(&entity);
-                ro.Material = material;
-                ro.Mesh = mesh;
-                ro.Transform = &entity.GetComponent<Components::Transform>();
+                ro.Entities.push_back(const_cast<Entity*>(&entity));
                 m_RenderQueue.push_back(ro);
             }
         }
@@ -130,7 +124,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 
     for (const auto& kv : instancedMap)
     {
-        std::vector<glm::vec3> positions(kv.second.size());
+        std::vector<glm::vec3> positions;
 
         for (const auto& e : kv.second)
         {
@@ -141,24 +135,19 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         RenderObject ro;
         ro.RenderBuffer = m_RenderBufferManager.CreateInstancedBox(positions);
         ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR_INSTANCED);
-        // ro.Entity = const_cast<Entity*>();
-        // ro.Material = material;
-        // ro.Mesh = mesh;
-        // ro.Transform = &entity.GetComponent<Components::Transform>();
+        ro.Entities = kv.second;
         m_RenderQueue.push_back(ro);
     }
-    // Create instanced buffers
-    // Create shader
 
     std::sort(m_RenderQueue.begin(), m_RenderQueue.end(), [](RenderObject a, RenderObject b)
     {
-        if (a.Material->Type != b.Material->Type)
+        if (a.Shader == b.Shader)
         {
-            return a.Material->Type < b.Material->Type;
+            return a.RenderBuffer < b.RenderBuffer;
         }
         else
         {
-            return a.Mesh->Type < b.Mesh->Type;
+            return a.Shader < b.Shader;
         }
     });
 }
@@ -188,8 +177,6 @@ void Renderer::Render()
     for (RenderObject& ro : m_RenderQueue)
     {
         Shader* shader = ro.Shader;
-        Entity* entity = ro.Entity;
-        Components::Material* material = ro.Material;
         RenderBuffer* renderBuffer = ro.RenderBuffer;
 
         if (shader != currentShader)
@@ -216,14 +203,7 @@ void Renderer::Render()
             currentRenderBuffer = renderBuffer;
         }
 
-        shader->SetPerEntity(entity);
-
-        if (currentMaterial != material)
-        {
-            shader->SetPerMaterial(material);
-
-            currentMaterial = material;
-        }
+        shader->SetPerRenderObject(ro.Entities);
 
         if (m_IsDrawWireFrame)
         {

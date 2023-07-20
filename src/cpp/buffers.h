@@ -53,6 +53,7 @@ public:
     void Bind();
     void Unbind();
 
+    int GetCount() { return m_Count; }
     // int GetStride() { return m_Stride; }
     // int GetCount() { return m_Count; }
     // int GetPositionsOffset() { return 0; }
@@ -97,6 +98,7 @@ public:
     ~VertexArray();
 
     void AddVertexBuffer(VertexBuffer* vertexBuffer);
+    const std::vector<VertexBuffer*>& GetVertexBuffers() { return m_VertexBuffers; }
     void Bind();
     void Unbind();
 

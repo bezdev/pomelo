@@ -37,10 +37,7 @@ struct RenderObject
 {
     ::RenderBuffer* RenderBuffer;
     ::Shader* Shader;
-    ::Entity* Entity;
-    Components::Material* Material;
-    Components::Mesh* Mesh;
-    Components::Transform* Transform;
+    std::vector<const ::Entity*> Entities;
 };
 
 class Renderer
