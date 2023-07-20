@@ -1,5 +1,7 @@
 #include "buffers.h"
 
+#include "mesh.h"
+
 VertexBuffer::VertexBuffer(float* data, int size, int dataSize, int stride, int index)
 {
     size = size * dataSize;
@@ -94,4 +96,58 @@ void VertexArray::Unbind()
         glDisableVertexAttribArray(i);
     }
     glBindVertexArray(0);
+}
+
+RenderBufferManager::RenderBufferManager():
+    m_RenderBuffers(static_cast<size_t>(Components::MeshType::COUNT))
+{
+}
+
+RenderBufferManager::~RenderBufferManager()
+{
+    Cleanup();
+}
+
+RenderBuffer *RenderBufferManager::CreateBox()
+{
+    Mesh::Box box(1.f, 1.f, 1.f);
+    RenderBuffer* rb = new RenderBuffer();
+    rb->VAO = new VertexArray();
+    rb->VAO->Bind();
+    VertexBuffer* vb = new VertexBuffer(box.Vertices.data(), box.Vertices.size(), sizeof(float), 3, 0);
+    rb->VAO->AddVertexBuffer(vb);
+    rb->VAO->Unbind();
+
+    rb->IBO = new IndexBuffer(box.Indices.data(), box.Indices.size() * sizeof(unsigned short));
+
+    return rb;
+}
+
+RenderBuffer *RenderBufferManager::CreateAxis()
+{
+    Mesh::Axis axis(1.f, 1.f, 1.f);
+    RenderBuffer *rb = new RenderBuffer();
+    rb->VAO = new VertexArray();
+    rb->VAO->Bind();
+    rb->VAO->AddVertexBuffer(new VertexBuffer(axis.Vertices.data(), axis.Vertices.size(), sizeof(float), 3, 0));
+    rb->VAO->AddVertexBuffer(new VertexBuffer(axis.Colors.data(), axis.Colors.size(), sizeof(float), 4, 1));
+    rb->VAO->Unbind();
+
+    rb->IBO = new IndexBuffer(axis.Indices.data(), axis.Indices.size() * sizeof(unsigned short));
+
+    return rb;
+}
+
+RenderBuffer *RenderBufferManager::CreateSphere()
+{
+    Mesh::Sphere sphere(.5f, 8.f, 8.f);
+    RenderBuffer *rb = new RenderBuffer();
+    rb->VAO = new VertexArray();
+    rb->VAO->Bind();
+    rb->VAO->AddVertexBuffer(new VertexBuffer(sphere.Vertices.data(), sphere.Vertices.size(), sizeof(float), 3, 0));
+    rb->VAO->Unbind();
+
+    rb->IBO = new IndexBuffer(sphere.Indices.data(), sphere.Indices.size() * sizeof(unsigned short));
+
+    return rb;
 }

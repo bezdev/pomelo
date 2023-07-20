@@ -4,7 +4,7 @@
 #include "InputManager.h"
 
 #include "jniutil.h"
-
+#include "buffers.h"
 
 Renderer* Renderer::s_Instance = nullptr;
 
@@ -75,10 +75,10 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 
         if (material != nullptr && mesh != nullptr)
         {
-            if (material->Type == Components::MaterialType::SOLID_COLOR && mesh->Type == Components::MeshType::BOX)
+            if (material->Type == Components::MaterialType::SOLID_COLOR)
             {
                 RenderObject ro;
-                ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::BOX);
+                ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(mesh->Type);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR);
                 ro.Entity = const_cast<Entity*>(&entity);
                 ro.Material = material;
@@ -102,7 +102,14 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 
     std::sort(m_RenderQueue.begin(), m_RenderQueue.end(), [](RenderObject a, RenderObject b)
     {
-        return (a.Material->Type < b.Material->Type && a.Mesh->Type < b.Mesh->Type);
+        if (a.Material->Type != b.Material->Type)
+        {
+            return a.Material->Type < b.Material->Type;
+        }
+        else
+        {
+            return a.Mesh->Type < b.Mesh->Type;
+        }
     });
 }
 
@@ -180,14 +187,4 @@ void Renderer::Render()
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
     }
-}
-
-RenderBufferManager::RenderBufferManager():
-    m_RenderBuffers(static_cast<size_t>(Components::MeshType::COUNT))
-{
-}
-
-RenderBufferManager::~RenderBufferManager()
-{
-    Cleanup();
 }

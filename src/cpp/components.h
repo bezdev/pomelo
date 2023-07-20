@@ -37,8 +37,9 @@ namespace Components
 
     enum class MeshType
     {
-        BOX,
         AXIS,
+        BOX,
+        SPHERE,
         COUNT
     };
 

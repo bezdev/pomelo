@@ -4,9 +4,9 @@
 
 #include <glm/glm.hpp>
 
-#include "buffers.h"
+#include "util.h"
 
-namespace Meshes
+namespace Mesh
 {
     enum class PrimitiveType
     {
@@ -96,10 +96,10 @@ namespace Meshes
     {
         Sphere(float radius, int stacks, int slices)
         {
-            // std::vector<glm::vec3> vertices;
-
             // top
-            Vertices.push_back(glm::vec3(0, radius, 0));
+            Vertices.push_back(0);
+            Vertices.push_back(radius);
+            Vertices.push_back(0);
 
             // middle
             float phiStep = Constants::PI / stacks;
@@ -111,15 +111,16 @@ namespace Meshes
                 {
                     double theta = j * thetaStep;
 
-                    Vertices.push_back(glm::vec3(
-                        radius * std::sin(phi) * std::cos(theta),
-                        radius * std::cos(phi),
-                        radius * std::sin(phi) * std::sin(theta)));
+                    Vertices.push_back(radius * std::sin(phi) * std::cos(theta));
+                    Vertices.push_back(radius * std::cos(phi));
+                    Vertices.push_back(radius * std::sin(phi) * std::sin(theta));
                 }
             }
 
             // bottom
-            Vertices.push_back(glm::vec3(0, -radius, 0));
+            Vertices.push_back(0);
+            Vertices.push_back(-radius);
+            Vertices.push_back(0);
 
             // top
             for (int i = 1; i <= slices; i++)
@@ -155,32 +156,17 @@ namespace Meshes
                 Indices.push_back(baseIndex + i + 1);
             }
 
-            // float[] verticesArray = new float[vertices.size() * 3];
-            // Vertices(vertices.size() * 3);
-            // int index = 0;
-            // for (Vector3 v : vertices) {
-            //     verticesArray[index++] = v.x;
-            //     verticesArray[index++] = v.y;
-            //     verticesArray[index++] = v.z;
-            // }
-
-            // short[] indicesArray = new short[indices.size()];
-            // index = 0;
-            // for (Integer i : indices) {
-            //     indicesArray[index++] = (short)(int)i;
-            // }
-
-            // float[] normalsArray = new float[vertices.size() * 3];
-            // index = 0;
-            // for (Vector3 v : vertices) {
-            //     Vector3 n = v.normalize();
-            //     normalsArray[index++] = n.x;
-            //     normalsArray[index++] = n.y;
-            //     normalsArray[index++] = n.z;
-            // }
+            Normals = std::vector<float>(Vertices.size());
+            for (size_t i = 0; i < Vertices.size(); i+=3)
+            {
+                glm::vec3 n = glm::normalize(glm::vec3(Vertices[i], Vertices[i+1], Vertices[i+2]));
+                Normals[i] = n.x;
+                Normals[i+1] = n.y;
+                Normals[i+2] = n.z;
+            }
         }
 
-        std::vector<glm::vec3> Vertices;
+        std::vector<float> Vertices;
         std::vector<float> Normals;
         std::vector<unsigned short> Indices;
     };

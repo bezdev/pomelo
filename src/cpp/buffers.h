@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "ECS.h"
 #include "util.h"
 
 class VertexBuffer {
@@ -77,3 +78,56 @@ struct RenderBuffer
     VertexArray* VAO;
     IndexBuffer* IBO;
 };
+
+#define DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST(MACRO) \
+    MACRO(BOX, CreateBox) \
+    MACRO(AXIS, CreateAxis) \
+    MACRO(SPHERE, CreateSphere) \
+
+#define GENERATE_CASE_VALUE(name, func) case Components::MeshType::name: return func();
+
+class RenderBufferManager
+{
+public:
+    RenderBufferManager();
+    ~RenderBufferManager();
+
+    static RenderBuffer* CreateBox();
+    static RenderBuffer* CreateAxis();
+    static RenderBuffer* CreateSphere();
+
+    RenderBuffer* CreateRenderBuffer(Components::MeshType type)
+    {
+        switch(type)
+        {
+            DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST(GENERATE_CASE_VALUE)
+        }
+
+        return nullptr;
+    }
+
+    RenderBuffer* GetRenderBuffer(Components::MeshType type)
+    {
+        auto index = static_cast<size_t>(type);
+
+        if (m_RenderBuffers[index] == nullptr)
+        {
+            m_RenderBuffers[index] = CreateRenderBuffer(type);
+        }
+        return m_RenderBuffers[static_cast<size_t>(type)];
+    }
+
+    void Cleanup()
+    {
+        for (auto rb : m_RenderBuffers)
+        {
+            delete rb;
+        }
+    }
+
+private:
+    std::vector<RenderBuffer*> m_RenderBuffers;
+};
+
+#undef GENERATE_CASE_VALUE
+#undef DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST
