@@ -48,7 +48,7 @@ void LogToFile(std::string testName, std::vector<std::string> log)
 
     for (auto message : log)
     {
-        auto split = Util::StringSplit(message, std::string(" "));
+        auto split = Util::SplitString(message, std::string(" "));
         if (split.size() > 1 && split[1].compare(std::string("FPS:")) == 0)
         {
             count++;

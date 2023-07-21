@@ -24,13 +24,21 @@ include_directories(${TEST_FOLDER})
 
 #file(GLOB SOURCES CONFIGURE_DEPENDS "\\.cpp")
 
-set(ASSET_FOLDER ../src/assets)
-configure_file(${ASSET_FOLDER}/shaders/SolidColor.fs ${CMAKE_CURRENT_BINARY_DIR}/shaders/SolidColor.fs COPYONLY)
-configure_file(${ASSET_FOLDER}/shaders/SolidColor.vs ${CMAKE_CURRENT_BINARY_DIR}/shaders/SolidColor.vs COPYONLY)
-configure_file(${ASSET_FOLDER}/shaders/SolidColorInstanced.ps ${CMAKE_CURRENT_BINARY_DIR}/shaders/SolidColorInstanced.ps COPYONLY)
-configure_file(${ASSET_FOLDER}/shaders/SolidColorInstanced.vs ${CMAKE_CURRENT_BINARY_DIR}/shaders/SolidColorInstanced.vs COPYONLY)
-configure_file(${ASSET_FOLDER}/shaders/PixelColor.ps ${CMAKE_CURRENT_BINARY_DIR}/shaders/PixelColor.ps COPYONLY)
-configure_file(${ASSET_FOLDER}/shaders/PixelColor.vs ${CMAKE_CURRENT_BINARY_DIR}/shaders/PixelColor.vs COPYONLY)
+set(SHADER_FOLDER ../src/shaders)
+file(GLOB SHADER_FILES "${SHADER_FOLDER}/*")
+foreach(shader_file ${SHADER_FILES})
+    get_filename_component(shader_filename ${shader_file} NAME)
+    configure_file(${shader_file} ${CMAKE_CURRENT_BINARY_DIR}/shaders/${shader_filename} COPYONLY)
+endforeach()
+
+set(ASSET_FOLDER ../assets)
+file(GLOB ASSET_FILES "${ASSET_FOLDER}/*")
+file(GLOB EXCLUDED_FILES "${ASSET_FOLDER}/blender")
+list(REMOVE_ITEM ASSET_FILES ${EXCLUDED_FILES})
+foreach(asset_file ${ASSET_FILES})
+    get_filename_component(asset_filename ${asset_file} NAME)
+    configure_file(${asset_file} ${CMAKE_CURRENT_BINARY_DIR}/assets/${asset_filename} COPYONLY)
+endforeach()
 
 add_library(GLAD "glad.c")
 

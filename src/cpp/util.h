@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdio>
 #include <iostream>
+#include <sstream>
 #include <random>
 #include <cmath>
 
@@ -101,6 +102,5 @@ class Util
 {
 public:
     static std::vector<char> ReadFile(const char* filename);
-    static std::vector<std::string> StringSplit(std::string string, std::string delimiter);
-    static std::vector<std::string> StringSplit(const char* string, const char* delimiter);
+    static std::vector<std::string> SplitString(std::string string, std::string delimiter);
 };
