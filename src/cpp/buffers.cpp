@@ -117,6 +117,21 @@ RenderBufferManager::~RenderBufferManager()
     Cleanup();
 }
 
+RenderBuffer *RenderBufferManager::CreateFromOBJ(const char* filename)
+{
+    auto f = Util::ReadFile(filename);
+
+    Mesh::OBJData d;
+    Mesh::ParseOBJ(f, d);
+
+    RenderBuffer* rb = CreateRenderBuffer({
+        VertexBufferData { 0, d.Vertices.data(), (int)d.Vertices.size() * 3, sizeof(float), 3, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+    });
+    rb->IBO = new IndexBuffer(d.Indices.data(), d.Indices.size() * sizeof(unsigned short));
+
+    return rb;
+}
+
 RenderBuffer* RenderBufferManager::CreateBox()
 {
     Mesh::Box box(1.f, 1.f, 1.f);

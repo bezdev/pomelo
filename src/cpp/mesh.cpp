@@ -135,3 +135,68 @@ Mesh::Sphere::Sphere(float radius, int stacks, int slices)
         Normals[i+2] = n.z;
     }
 }
+
+void Mesh::ParseOBJ(const std::vector<char> &data, OBJData &result)
+{
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> texs;
+    std::unordered_map<OBJDataVertex, unsigned short> vertexToIndex;
+    std::unordered_map<int, std::list<int>> duplicateVertices;
+
+    std::stringstream ss(std::string(data.begin(), data.end()));
+    std::string line;
+    while (std::getline(ss, line))
+    {
+        std::stringstream lineStream(line);
+        std::string type;
+        lineStream >> type;
+
+        if (type == "v")
+        {
+            glm::vec3 vertex;
+            lineStream >> vertex.x >> vertex.y >> vertex.z;
+            vertices.push_back(vertex);
+        }
+        else if (type == "vn")
+        {
+            glm::vec3 normal;
+            lineStream >> normal.x >> normal.y >> normal.z;
+            normals.push_back(normal);
+        }
+        else if (type == "vt")
+        {
+            glm::vec2 tex;
+            lineStream >> tex.x >> tex.y;
+            texs.push_back(tex);
+        }
+        else if (type == "f")
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                unsigned int pIndex, nIndex, tIndex;
+                char slash;
+                lineStream >> pIndex >> slash >> tIndex >> slash >> nIndex;
+
+                OBJDataVertex d;
+                d.Position = vertices[--pIndex];
+                d.Normal = normals[--nIndex];
+                d.Tex = texs[--tIndex];
+
+                auto it = vertexToIndex.find(d);
+                if (it != vertexToIndex.end()) {
+                    // a duplicate vertex exists - reuse its index
+                    result.Indices.push_back(it->second);
+                } else {
+                    // this vertex doesn't exist - add it to vertices and record its index
+                    result.Vertices.push_back(d.Position);
+                    result.Normals.push_back(d.Normal);
+                    result.Tex.push_back(d.Tex);
+                    unsigned int index = result.Vertices.size() - 1;
+                    result.Indices.push_back(index);
+                    vertexToIndex[d] = index;
+                }
+            }
+        }
+    }
+}

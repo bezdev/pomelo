@@ -111,10 +111,12 @@ struct RenderBuffer
     IndexBuffer* IBO;
 };
 
-#define DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST(MACRO) \
-    MACRO(BOX, CreateBox) \
-    MACRO(AXIS, CreateAxis) \
-    MACRO(SPHERE, CreateSphere) \
+#define DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST(MACRO)                     \
+    MACRO(BOX, CreateBox)                                               \
+    MACRO(AXIS, CreateAxis)                                             \
+    MACRO(SPHERE, CreateSphere)                                         \
+    MACRO(BLENDER_AXIS, CreateBlenderAxis)                              \
+    MACRO(BLENDER_MONKEY, CreateBlenderMonkey)                          \
 
 #define GENERATE_CASE_VALUE(name, func) case Components::MeshType::name: return func();
 
@@ -127,8 +129,11 @@ public:
     static RenderBuffer* CreateBox();
     static RenderBuffer* CreateAxis();
     static RenderBuffer* CreateSphere();
-
     static RenderBuffer* CreateInstancedBox(std::vector<glm::vec3>& positions);
+    static RenderBuffer* CreateBlenderAxis() { return CreateFromOBJ("assets/unit_axis.obj"); }
+    static RenderBuffer* CreateBlenderMonkey() { return CreateFromOBJ("assets/monkey.obj"); }
+
+    static RenderBuffer* CreateFromOBJ(const char* filename);
 
     static RenderBuffer* CreateRenderBuffer(const std::vector<VertexBufferData>& bufferData)
     {

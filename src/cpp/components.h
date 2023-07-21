@@ -41,6 +41,8 @@ namespace Components
         BOX,
         SPHERE,
         INSTANCED_BOX,
+        BLENDER_AXIS,
+        BLENDER_MONKEY,
         COUNT
     };
 

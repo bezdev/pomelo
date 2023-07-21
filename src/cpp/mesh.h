@@ -2,7 +2,7 @@
 
 #include <functional>
 #include <vector>
-#include <unordered_set>
+#include <unordered_map>
 #include <iomanip>
 #include <string>
 
@@ -31,78 +31,13 @@ namespace Mesh
 
     struct OBJData
     {
-        std::vector<glm::vec3> Positions;
+        std::vector<glm::vec3> Vertices;
         std::vector<glm::vec3> Normals;
         std::vector<glm::vec2> Tex;
         std::vector<unsigned short> Indices;
     };
 
-    static void ParseOBJ(const std::vector<char>& data, OBJData& result)
-    {
-        std::vector<glm::vec3> temp_positions;
-        std::vector<glm::vec3> temp_normals;
-        std::vector<glm::vec2> temp_texCoords;
-        // std::unordered_map<Vertex, unsigned int> vertexToIndex;
-
-        std::stringstream ss(std::string(data.begin(), data.end()));
-        std::string line;
-        while (std::getline(ss, line))
-        {
-            std::stringstream lineStream(line);
-            std::string type;
-            lineStream >> type;
-
-            if (type == "v")
-            {
-                glm::vec3 vertex;
-                lineStream >> vertex.x >> vertex.y >> vertex.z;
-                temp_positions.push_back(vertex);
-            }
-            else if (type == "vn")
-            {
-                glm::vec3 normal;
-                lineStream >> normal.x >> normal.y >> normal.z;
-                temp_normals.push_back(normal);
-            }
-            else if (type == "vt")
-            {
-                glm::vec2 texCoord;
-                lineStream >> texCoord.x >> texCoord.y;
-                temp_texCoords.push_back(texCoord);
-            }
-            else if (type == "f")
-            {
-            }
-        }
-        //         for (int i = 0; i < 3; ++i) {
-        //             unsigned int posIndex, texIndex, normIndex;
-        //             char slash;
-        //             lineStream >> posIndex >> slash >> texIndex >> slash >> normIndex;
-
-        //             Vertex vertex;
-        //             vertex.position = temp_positions[posIndex - 1];
-        //             vertex.texCoords = temp_texCoords[texIndex - 1];
-        //             vertex.normal = temp_normals[normIndex - 1];
-
-        //             auto it = vertexToIndex.find(vertex);
-        //             if (it != vertexToIndex.end()) {
-        //                 // A duplicate vertex exists, reuse its index
-        //                 model.indices.push_back(it->second);
-        //             } else {
-        //                 // This vertex doesn't exist, add it to vertices and record its index
-        //                 model.vertices.push_back(vertex);
-        //                 unsigned int index = model.vertices.size() - 1;
-        //                 model.indices.push_back(index);
-        //                 vertexToIndex[vertex] = index;
-        //             }
-        //         }
-        //     }
-        // }
-
-        // return model;
-    }
-
-
+    void ParseOBJ(const std::vector<char>& data, OBJData& result);
 
     struct Box
     {

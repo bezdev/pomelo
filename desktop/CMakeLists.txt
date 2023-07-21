@@ -31,7 +31,7 @@ foreach(shader_file ${SHADER_FILES})
     configure_file(${shader_file} ${CMAKE_CURRENT_BINARY_DIR}/shaders/${shader_filename} COPYONLY)
 endforeach()
 
-set(ASSET_FOLDER ../assets)
+set(ASSET_FOLDER ../assets/obj)
 file(GLOB ASSET_FILES "${ASSET_FOLDER}/*")
 file(GLOB EXCLUDED_FILES "${ASSET_FOLDER}/blender")
 list(REMOVE_ITEM ASSET_FILES ${EXCLUDED_FILES})
