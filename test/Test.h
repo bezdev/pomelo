@@ -39,14 +39,14 @@ private:
 };
 
 #define TEST_BASE(name, isDisabled)                                                                      \
-class Test##_##name : public ITest {                                                    \
-public:                                                                                 \
-    static ITest* GetInstance() { static Test##_##name t; return &t; }                  \
+class Test##_##name : public ITest {                                                                     \
+public:                                                                                                  \
+    static ITest* GetInstance() { static Test##_##name t; return &t; }                                   \
     Test##_##name() { if (!isDisabled) TestSuite::GetInstance().AddTest(Test##_##name::GetInstance); }   \
-    void Run();                                                                         \
-    std::string GetName() { return std::string(#name); }                                \
-};                                                                                      \
-ITest* name = Test##_##name::GetInstance();                                             \
+    void Run();                                                                                          \
+    std::string GetName() { return std::string(#name); }                                                 \
+};                                                                                                       \
+ITest* name = Test##_##name::GetInstance();                                                              \
 void Test##_##name::Run()
 
 #define TEST(name) TEST_BASE(name, false)

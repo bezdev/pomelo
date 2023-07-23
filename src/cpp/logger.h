@@ -42,6 +42,9 @@ public:
         snprintf(buffer, sizeof(buffer), string, std::forward<Args>(args)...);
 
         std::basic_stringstream<char> ss;
+#ifdef BUILD_TEST
+        ss << "  ";
+#endif
         ss << m_Name << GetTag(level) << buffer << std::endl;
 
         std::string logString = ss.str();
@@ -57,9 +60,9 @@ public:
 
 private:
     const char* GetTag(Level level);
+    std::vector<std::string> m_Log;
     Level m_Level;
     const char* m_Name;
-    std::vector<std::string> m_Log;
 };
 
 #ifdef BUILD_DESKTOP

@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Test.h"
+#include "logger.h"
 
 TestSuite::TestSuite() { }
 
@@ -16,7 +17,7 @@ void TestSuite::Run()
         {
             auto test = m_Tests[i]();
             currentTestName = test->GetName();
-            printf("----- STARTED   [%s] -----\n", currentTestName.c_str());
+            printf("[%s]:\n", currentTestName.c_str());
             test->Run();
             isFail = false;
         }
@@ -28,7 +29,11 @@ void TestSuite::Run()
 
         if (!isFail)
         {
-            printf("----- SUCCEEDED [%s] -----\n", currentTestName.c_str());
+            printf("[%s]: PASS\n", currentTestName.c_str());
+        }
+        else
+        {
+            printf("[%s]: FAIL\n", currentTestName.c_str());
         }
     }
 

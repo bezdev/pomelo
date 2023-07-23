@@ -39,7 +39,7 @@ std::vector<char> Util::ReadFile(const char* filename)
     ifs.seekg(0, std::ios_base::end);
     int size = (int)ifs.tellg();
     ifs.seekg(0, std::ios_base::beg);
-    std::vector<char> data(size);
+    std::vector<char> data(static_cast<size_t>(size));
     ifs.read(&data[0], size);
     ifs.close();
 #endif

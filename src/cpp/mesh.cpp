@@ -82,7 +82,7 @@ Mesh::Sphere::Sphere(float radius, int stacks, int slices)
             double theta = j * thetaStep;
 
             Vertices.push_back(radius * std::sin(phi) * std::cos(theta));
-            Vertices.push_back(radius * std::cos(phi));
+            Vertices.push_back(radius * static_cast<float>(std::cos(phi)));
             Vertices.push_back(radius * std::sin(phi) * std::sin(theta));
         }
     }
@@ -93,7 +93,7 @@ Mesh::Sphere::Sphere(float radius, int stacks, int slices)
     Vertices.push_back(0);
 
     // top
-    for (int i = 1; i <= slices; i++)
+    for (unsigned short i = 1; i <= slices; i++)
     {
         Indices.push_back(0);
         Indices.push_back(i + 1);
