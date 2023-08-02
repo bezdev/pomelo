@@ -135,7 +135,14 @@ void PixelColorShader::SetPerRenderObject(const std::vector<const Entity*>& enti
 
 void PixelColorShader::Draw(const RenderBuffer* renderBuffer)
 {
-    glDrawElements(GL_LINES, renderBuffer->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
+    if (renderBuffer->IBO == nullptr)
+    {
+        glDrawArrays(GL_LINES, 0, renderBuffer->VAO->GetVertexBuffers()[0]->GetCount());
+    }
+    else
+    {
+        glDrawElements(GL_LINES, renderBuffer->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
+    }
 }
 
 ShaderManager::ShaderManager():

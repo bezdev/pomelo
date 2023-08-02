@@ -74,6 +74,8 @@ void Renderer::Cleanup()
 
 void Renderer::LoadEntities(const std::vector<Entity>& entities)
 {
+    ScopeTimer s("LoadEntities");
+
     m_ShaderManager.Cleanup();
     m_RenderBufferManager.Cleanup();
     m_RenderQueue.clear();
@@ -94,7 +96,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         {
             mesh = &entity.GetComponent<Components::Mesh>();
 
-            if (mesh->Type == Components::MeshType::INSTANCED_BOX)
+            if (mesh->Type == Components::MeshType::INSTANCED_BOX || mesh->Type == Components::MeshType::LINE )
             {
                 instancedMap[mesh->Type].push_back(&entity);
                 continue;
@@ -122,11 +124,11 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         }
     }
 
-    for (const auto& kv : instancedMap)
+    if (instancedMap.find(Components::MeshType::INSTANCED_BOX) != instancedMap.end())
     {
         std::vector<glm::vec3> positions;
 
-        for (const auto& e : kv.second)
+        for (const auto& e : instancedMap[Components::MeshType::INSTANCED_BOX])
         {
             auto& position = e->GetComponent<Components::Transform>();
             positions.push_back(position.Position);
@@ -135,7 +137,16 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         RenderObject ro;
         ro.RenderBuffer = m_RenderBufferManager.CreateInstancedBox(positions);
         ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR_INSTANCED);
-        ro.Entities = kv.second;
+        ro.Entities = instancedMap[Components::MeshType::INSTANCED_BOX];
+        m_RenderQueue.push_back(ro);
+    }
+
+    if (instancedMap.find(Components::MeshType::LINE) != instancedMap.end())
+    {
+        RenderObject ro;
+        ro.RenderBuffer = m_RenderBufferManager.CreateInstancedLines(instancedMap[Components::MeshType::LINE]);
+        ro.Shader = m_ShaderManager.GetShader(ShaderType::PIXEL_COLOR);
+        ro.Entities = instancedMap[Components::MeshType::LINE];
         m_RenderQueue.push_back(ro);
     }
 
@@ -200,7 +211,10 @@ void Renderer::Render()
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
             ro.RenderBuffer->VAO->Bind();
-            ro.RenderBuffer->IBO->Bind();
+            if (ro.RenderBuffer->IBO != nullptr)
+            {
+                ro.RenderBuffer->IBO->Bind();
+            }
 
             currentRenderBuffer = renderBuffer;
         }

@@ -121,5 +121,5 @@ ScopeTimer::ScopeTimer(const char* name):
 
 ScopeTimer::~ScopeTimer()
 {
-    LOGD("ScopeTimerEnd   [%s]: %f", m_Name, m_Timer.GetTotalTime());
+    LOGD("ScopeTimerEnd   [%s]: %f seconds", m_Name, m_Timer.GetTotalTime());
 }

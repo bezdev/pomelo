@@ -130,6 +130,7 @@ public:
     static RenderBuffer* CreateAxis();
     static RenderBuffer* CreateSphere();
     static RenderBuffer* CreateInstancedBox(std::vector<glm::vec3>& positions);
+    static RenderBuffer* CreateInstancedLines(const std::vector<const Entity*>& entities);
     static RenderBuffer* CreateBlenderAxis() { return CreateFromOBJ("assets/unit_axis.obj"); }
     static RenderBuffer* CreateBlenderMonkey() { return CreateFromOBJ("assets/monkey.obj"); }
 

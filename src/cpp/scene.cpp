@@ -23,7 +23,12 @@ void SceneManager::CreateSandboxScene()
 
         glm::vec3 p(0.f, 0.f, 0.f);
 
-        // EntityFactory::CreateAxis(p, glm::vec3(0.f, 2.f, 0.f));
+        EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
+        EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
+        EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
+
+        EntityFactory::CreateAxis(glm::vec3(1.f, 0.f, 0.f));
+
         s.CreateEntity()
             .AddComponent<Components::Transform>(p)
             .AddComponent<Components::Mesh>(Components::MeshType::BOX)
@@ -41,10 +46,10 @@ void SceneManager::CreateSandboxScene()
         //     .AddComponent<Components::Mesh>(Components::MeshType::INSTANCED_BOX)
         //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.0f, 1.f, 0.f, 1.0f));
 
-        s.CreateEntity()
-            .AddComponent<Components::Transform>(p)
-            .AddComponent<Components::Mesh>(Components::MeshType::BLENDER_AXIS)
-            .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.0f, 1.f, 0.f, 1.0f));
+        // s.CreateEntity()
+        //     .AddComponent<Components::Transform>(p)
+        //     .AddComponent<Components::Mesh>(Components::MeshType::BLENDER_AXIS)
+        //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.0f, 1.f, 0.f, 1.0f));
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 10.f), glm::vec3(0.f, 0.f, 0.f));
         s.Load();

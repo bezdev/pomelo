@@ -49,18 +49,18 @@ void LogToFile(std::string testName, std::vector<std::string> log)
     for (auto message : log)
     {
         auto split = Util::SplitString(message, std::string(" "));
-        if (split.size() > 1 && split[1].compare(std::string("FPS:")) == 0)
+        if (split.size() > 4 && split[3].compare(std::string("FPS:")) == 0)
         {
             count++;
 
-            float current = std::stof(split[2]);
+            float current = std::stof(split[4]);
             total += current;
             if (current < min) min = current;
             if (current > max) max = current;
         }
-        else if (split.size() > 2 && split[1].compare(std::string("App::UpdateWindowSize")) == 0)
+        else if (split.size() > 4 && split[3].compare(std::string("App::UpdateWindowSize")) == 0)
         {
-            resolution = std::string(split[2]);
+            resolution = std::string(split[4]);
         }
     }
 
