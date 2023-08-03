@@ -142,11 +142,11 @@ public:
     std::vector<Entity*> GetEntitiesWithComponents()
     {
         std::vector<Entity*> entities;
-        for (Entity entity : m_Entities)
+        for (Entity& entity : m_Entities)
         {
             if (entity.HasComponents<Ts...>())
             {
-                entities.push_back(&m_Entities[entity.GetID()]);
+                entities.push_back(&entity);
             }
         }
         return entities;
