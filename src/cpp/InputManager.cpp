@@ -5,7 +5,8 @@ InputManager::InputManager():
     m_Y(0.f),
     m_DX(0.f),
     m_DY(0.f),
-    m_KeyDownVector(static_cast<size_t>(InputEvent::COUNT))
+    m_KeyDownVector(static_cast<size_t>(InputEvent::COUNT)),
+    m_InputData(static_cast<size_t>(InputEvent::COUNT))
 {}
 
 void InputManager::RegisterCallback(InputEvent event, InputCallback callback)
@@ -29,6 +30,7 @@ void InputManager::OnEvent(InputEvent event, InputData data)
         m_DY = data.DY = m_Y - PY;
     }
 
+    m_InputData[static_cast<size_t>(event)] = data;
     // if (data.Action != InputAction::MOVE) LOGD("InputManager::OnEvent: event: %d, data: { %d, %f, %f, %f, %f }", static_cast<int>(event), data.Action, data.X, data.Y, data.DX, data.DY);
 
     for (auto& callback : m_Callbacks[event])

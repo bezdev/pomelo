@@ -49,6 +49,8 @@ void App::Run() {
 
     PhysicsEngine::GetInstance()->UpdateMotions(m_GlobalTimer->GetDelta());
 
+    Camera::GetInstance()->Update(m_GlobalTimer->GetDelta());
+
     m_Renderer->Render();
 
     LogFPS();

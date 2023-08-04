@@ -7,6 +7,12 @@
 
 #include "util.h"
 
+enum class CameraType
+{
+    FREE_LOOK,
+    ORBIT
+};
+
 class Camera
 {
 public:
@@ -28,20 +34,29 @@ public:
 
     Camera();
 
+    void Update(float delta);
+
     glm::mat4 GetViewMatrix() { return m_ViewMatrix; }
     glm::mat4 GetProjectionMatrix() { return m_ProjectionMatrix; }
 
-    void SetLookAt(glm::vec3 position, glm::vec3 target);
+    void SetCameraType(CameraType type) { m_CameraType = type; }
+    void SetLookAt(glm::vec3& position, glm::vec3& target);
+    void SetYawPitch(float yaw, float pitch);
     void UpdateViewSize(int width, int height);
 private:
     static Camera* s_Instance;
 
+    CameraType m_CameraType;
+    float m_ScreenX;
+    float m_ScreenY;
     float m_Height;
     float m_Width;
     float m_Ratio;
     float m_NearPlane;
     float m_FarPlane;
     float m_LookAtDistance;
+    float m_Pitch;
+    float m_Yaw;
 
     glm::vec3 m_Position;
     glm::vec3 m_Target;

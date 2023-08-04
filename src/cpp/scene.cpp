@@ -23,9 +23,14 @@ void SceneManager::CreateSandboxScene()
 
         glm::vec3 p(0.f, 0.f, 0.f);
 
-        EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
-        EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
-        EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
+        glm::vec3 a (1.f, 0.f, 0.f);
+        glm::vec3 b (0.f, 1.f, 0.f);
+        EntityFactory::CreateLine(p, a, glm::vec4(1.f, 1.f, 0.f, 1.f));
+        EntityFactory::CreateLine(p, b, glm::vec4(1.f, 1.f, 0.f, 1.f));
+        EntityFactory::CreateLine(p, a + b, glm::vec4(1.f, 0.f, 0.f, 1.f));
+        // EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
+        // EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
+        // EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
 
         EntityFactory::CreateAxis(glm::vec3(1.f, 0.f, 0.f));
 
@@ -52,5 +57,6 @@ void SceneManager::CreateSandboxScene()
         //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.0f, 1.f, 0.f, 1.0f));
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 10.f), glm::vec3(0.f, 0.f, 0.f));
+        Camera::GetInstance()->SetCameraType(CameraType::FREE_LOOK);
         s.Load();
 }

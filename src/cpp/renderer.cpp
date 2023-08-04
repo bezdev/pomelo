@@ -14,7 +14,7 @@ Renderer::Renderer():
     m_ScreenHeight(0),
     m_IsDrawWireFrame(false)
 {
-    InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_W, [&](InputEvent event, InputData data) {
+    InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_N, [&](InputEvent event, InputData data) {
         if (data.Action == InputAction::UP)
         {
             m_IsDrawWireFrame = !m_IsDrawWireFrame;

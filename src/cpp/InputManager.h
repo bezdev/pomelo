@@ -144,6 +144,10 @@ enum class InputAction
 class InputData
 {
 public:
+    InputData():
+        InputData(InputAction::UP, -1.f, -1.f, 0.f, 0.f)
+    {}
+
     InputData(InputAction action):
         InputData(action, -1.f, -1.f, 0.f, 0.f)
     {}
@@ -166,7 +170,6 @@ public:
     float DX;
     float DY;
 private:
-    InputData() {};
 };
 
 using InputCallback = std::function<void(InputEvent, InputData)>;
@@ -185,8 +188,10 @@ public:
     void RegisterCallback(InputEvent event, InputCallback callback);
     void OnEvent(InputEvent event, InputData data);
     bool IsKeyDown(InputEvent event) { return m_KeyDownVector[static_cast<size_t>(event)]; }
+    InputData GetData(InputEvent event) { return m_InputData[static_cast<size_t>(event)]; }
 private:
     std::vector<bool> m_KeyDownVector;
+    std::vector<InputData> m_InputData;
     std::map<InputEvent, std::vector<InputCallback>> m_Callbacks;
 
     float m_X;
