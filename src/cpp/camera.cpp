@@ -53,7 +53,7 @@ void Camera::Update(float delta)
     if (m_CameraType == CameraType::FREE_LOOK)
     {
         float mouseSensitivity = .25f;
-        float velocity = 5.f / 1000 * delta;
+        float velocity = CAMERA_SPEED / 1000 * delta;
 
         glm::vec3 direction = glm::normalize(m_Target - m_Position);
 

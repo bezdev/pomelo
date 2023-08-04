@@ -36,6 +36,11 @@ void SceneManager::CreateSandboxScene()
 
         s.CreateEntity()
             .AddComponent<Components::Transform>(p)
+            .AddComponent<Components::Mesh>(Components::MeshType::PLANE)
+            .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 0.f, 0.f, 1.0f));
+
+        s.CreateEntity()
+            .AddComponent<Components::Transform>(p)
             .AddComponent<Components::Mesh>(Components::MeshType::BOX)
             .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 0.f, 0.f, 1.0f))
             .AddComponent<Components::Motion>(Components::MotionType::ORBIT, glm::vec3(-10.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), 5000);
@@ -56,7 +61,7 @@ void SceneManager::CreateSandboxScene()
         //     .AddComponent<Components::Mesh>(Components::MeshType::BLENDER_AXIS)
         //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.0f, 1.f, 0.f, 1.0f));
 
-        Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 10.f), glm::vec3(0.f, 0.f, 0.f));
+        Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 15.f), glm::vec3(0.f, 0.f, 0.f));
         Camera::GetInstance()->SetCameraType(CameraType::FREE_LOOK);
         s.Load();
 }

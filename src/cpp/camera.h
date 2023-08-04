@@ -19,6 +19,7 @@ public:
     static constexpr float MIN_PHI = -Constants::PI / 2 + .087;
     static constexpr float MAX_PHI = Constants::PI / 2 - .087;
     static constexpr float MOVE_SCALE = .0025f;
+    static constexpr float CAMERA_SPEED = 10.f;
 
     static Camera* GetInstance()
     {

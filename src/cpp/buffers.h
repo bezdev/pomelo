@@ -114,6 +114,7 @@ struct RenderBuffer
 #define DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST(MACRO)                     \
     MACRO(BOX, CreateBox)                                               \
     MACRO(AXIS, CreateAxis)                                             \
+    MACRO(PLANE, CreatePlane)                                           \
     MACRO(SPHERE, CreateSphere)                                         \
     MACRO(BLENDER_AXIS, CreateBlenderAxis)                              \
     MACRO(BLENDER_MONKEY, CreateBlenderMonkey)                          \
@@ -128,6 +129,7 @@ public:
 
     static RenderBuffer* CreateBox();
     static RenderBuffer* CreateAxis();
+    static RenderBuffer* CreatePlane();
     static RenderBuffer* CreateSphere();
     static RenderBuffer* CreateInstancedBox(std::vector<glm::vec3>& positions);
     static RenderBuffer* CreateInstancedLines(const std::vector<const Entity*>& entities);

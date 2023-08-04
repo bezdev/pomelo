@@ -9,6 +9,7 @@ namespace Components
 {
     struct Transform
     {
+    // public:
         Transform() {}
 
         Transform(glm::vec3 position):
@@ -29,16 +30,29 @@ namespace Components
             MM[3] = glm::vec4(Position, 1.f);
         }
 
+        void SetRotation(const glm::quat& rotation)
+        {
+
+        }
+
+        void SetScale(const glm::vec3& scale)
+        {
+
+        }
+
+    // private:
         glm::vec3 Position;
-        // glm::vec3 Rotation;
+        glm::vec4 Rotation;
         glm::vec3 Scale;
         glm::mat4 MM;
+        bool IsStale;
     };
 
     enum class MeshType
     {
         LINE,
         AXIS,
+        PLANE,
         BOX,
         SPHERE,
         INSTANCED_BOX,

@@ -7,7 +7,6 @@
 #include <string>
 
 #include <glm/glm.hpp>
-
 #include "util.h"
 
 namespace Mesh
@@ -62,6 +61,15 @@ namespace Mesh
         Sphere(float radius, int stacks, int slices);
 
         std::vector<float> Vertices;
+        std::vector<float> Normals;
+        std::vector<unsigned short> Indices;
+    };
+
+    struct Plane
+    {
+        Plane(float width, float height, int stacks, int slices);
+
+        std::vector<glm::vec3> Vertices;
         std::vector<float> Normals;
         std::vector<unsigned short> Indices;
     };

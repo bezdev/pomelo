@@ -136,6 +136,41 @@ Mesh::Sphere::Sphere(float radius, int stacks, int slices)
     }
 }
 
+Mesh::Plane::Plane(float width, float height, int stacks, int slices)
+{
+    float x = -width / 2.f;
+    float y = -height / 2.f;
+
+    float stackStep = width / stacks;
+    float sliceStep = height / slices;
+
+    for (int i = 0; i <= stacks; i++)
+    {
+        for (int j = 0; j <= slices; j++)
+        {
+            Vertices.push_back(glm::vec3(x + stackStep * i, y + sliceStep * j, 0.f));
+        }
+    }
+
+    for (size_t i = 0; i < Vertices.size(); i++)
+    {
+        int stack = i / (stacks + 1);
+        int slice = i % (stacks + 1);
+        if (stack == stacks) continue;
+        if (slice == slices) continue;
+
+        // LOGD("v: %f,%f,%f stack: %d, slice: %d, i: %d, c: %d", Vertices[i].x, Vertices[i].y, Vertices[i].z, stack, slice, i, stack * (slices + 1) + slice);
+
+        Indices.push_back(stack * (slices + 1) + slice);
+        Indices.push_back((stack + 1) * (slices + 1) + slice + 1);
+        Indices.push_back(stack * (slices + 1) + slice + 1);
+
+        Indices.push_back(stack * (slices + 1) + slice);
+        Indices.push_back((stack + 1) * (slices + 1) + slice);
+        Indices.push_back((stack + 1) * (slices + 1) + slice + 1);
+    }
+}
+
 void Mesh::ParseOBJ(const std::vector<char> &data, OBJData &result)
 {
     std::vector<glm::vec3> vertices;

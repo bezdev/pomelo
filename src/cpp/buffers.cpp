@@ -157,6 +157,19 @@ RenderBuffer* RenderBufferManager::CreateAxis()
     return rb;
 }
 
+RenderBuffer *RenderBufferManager::CreatePlane()
+{
+    Mesh::Plane p(10.f, 10.f, 10, 10);
+
+    RenderBuffer* rb = CreateRenderBuffer({
+        VertexBufferData { 0, p.Vertices.data(), (int)p.Vertices.size() * 3, sizeof(float), 3, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+    });
+
+    rb->IBO = new IndexBuffer(p.Indices.data(), p.Indices.size() * sizeof(unsigned short));
+
+    return rb;
+}
+
 RenderBuffer* RenderBufferManager::CreateSphere()
 {
     Mesh::Sphere sphere(.5f, 8.f, 8.f);
