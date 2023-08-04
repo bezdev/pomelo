@@ -26,6 +26,7 @@ set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/ECS.cpp
     ${SOURCES_BASE_PATH}/logger.cpp
     ${SOURCES_BASE_PATH}/util.cpp
+    ${SOURCES_BASE_PATH}/util/Math.cpp
 )
 
 if(DEFINED BUILD_ANDROID)

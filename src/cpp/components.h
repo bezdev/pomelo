@@ -1,7 +1,6 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "util/Math.h"
 
 class Entity;
 
@@ -12,8 +11,8 @@ namespace Components
     // public:
         Transform() {}
 
-        Transform(glm::vec3 position):
-            Transform(position, glm::vec3(1.f))
+        Transform(glm::vec3& position):
+            Transform(position, VEC3(1.f))
         {}
 
         Transform(glm::vec3 position, glm::vec3 scale):

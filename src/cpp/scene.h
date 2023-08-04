@@ -4,13 +4,14 @@
 #include "camera.h"
 #include "renderer.h"
 
+#include "util/Math.h"
+
 // TODO: change to enum
 #define SCENE_SANDBOX 0
 #define SCENE_CUBE 1
 #define SCENE_MANY_CUBE 2
 #define SCENE_MANY_CUBE_INSTANCED 3
 #define SCENE_MANY_CUBE_AXIS 4
-
 
 class Scene
 {

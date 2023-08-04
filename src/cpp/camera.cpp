@@ -102,7 +102,7 @@ void Camera::SetLookAt(glm::vec3& position, glm::vec3& target)
     // LOGD("position: x,y,z: %f,%f,%f", position.x, position.y, position.z);
     // LOGD("target: x,y,z: %f,%f,%f", target.x, target.y, target.z);
     // LOGD("m_LookAt: x,y,z: %f,%f,%f", m_LookAt.x, m_LookAt.y, m_LookAt.z);
-    m_ViewMatrix = glm::lookAt(m_Position, m_Target, glm::vec3(0.f, 1.f, 0.f));
+    m_ViewMatrix = glm::lookAt(m_Position, m_Target, V_UP);
 }
 
 void Camera::SetYawPitch(float yaw, float pitch)
