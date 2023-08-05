@@ -1,50 +1,80 @@
 #pragma once
 
+#include "util.h"
 #include "util/Math.h"
 
 class Entity;
 
 namespace Components
 {
-    struct Transform
+    class Transform
     {
-    // public:
-        Transform() {}
+    public:
+        Transform():
+            Transform(V_ORIGIN)
+        {}
 
-        Transform(glm::vec3& position):
+
+        Transform(VEC3& position):
             Transform(position, VEC3(1.f))
         {}
 
-        Transform(glm::vec3 position, glm::vec3 scale):
-            Position(position),
-            Scale(scale)
+        Transform(VEC3& position, VEC3& scale):
+            Transform(position, Q_DEFAULT, scale)
         {
-            MM = glm::translate(glm::mat4(1.f), Position);
-            MM = glm::scale(MM, Scale);
         }
 
-        void SetPosition(const glm::vec3& position)
+        Transform(VEC3& position, QUAT& rotation, VEC3& scale):
+            m_Position(position),
+            m_Rotation(rotation),
+            m_Scale(scale),
+            m_MM(MAT4(1.f)),
+            m_IsStale(false)
         {
-            Position = position;
-            MM[3] = glm::vec4(Position, 1.f);
+            ComputeMM();
         }
 
-        void SetRotation(const glm::quat& rotation)
+        void SetPosition(VEC3& position)
         {
-
+            m_Position = position;
+            m_MM[3] = VEC4(m_Position, 1.f);
         }
 
-        void SetScale(const glm::vec3& scale)
+        void SetRotation(QUAT& rotation)
         {
-
+            m_Rotation = rotation;
+            m_IsStale = true;
         }
 
-    // private:
-        glm::vec3 Position;
-        glm::vec4 Rotation;
-        glm::vec3 Scale;
-        glm::mat4 MM;
-        bool IsStale;
+        void SetScale(VEC3& scale)
+        {
+            m_Scale = scale;
+            m_IsStale = true;
+        }
+
+        VEC3& GetPosition() { return m_Position; }
+        VEC3& GetScale() { return m_Scale; }
+
+        MAT4& GetMM()
+        {
+            if (m_IsStale) ComputeMM();
+            return m_MM;
+        }
+
+    private:
+        void ComputeMM()
+        {
+            m_MM = glm::translate(MAT4(1.f), m_Position);
+            m_MM *= glm::mat4_cast(m_Rotation);
+            m_MM = glm::scale(m_MM, m_Scale);
+            m_IsStale = false;
+        }
+
+        VEC3 m_Position;
+        QUAT m_Rotation;
+        VEC3 m_Scale;
+        MAT4 m_MM;
+        bool m_IsStale;
     };
 
     enum class MeshType
@@ -95,8 +125,8 @@ namespace Components
 
     struct Physics
     {
-        glm::vec3 Velocity;
-        glm::vec3 Acceleration;
+        VEC3 Velocity;
+        VEC3 Acceleration;
     };
 
     enum class MotionType
@@ -110,7 +140,7 @@ namespace Components
     {
         Motion() {};
 
-        Motion(MotionType type, glm::vec3 start, glm::vec3 target, float time):
+        Motion(MotionType type, VEC3 start, VEC3 target, float time):
             Type(type),
             Start(start),
             Target(target),
@@ -119,8 +149,8 @@ namespace Components
         {}
 
         MotionType Type;
-        glm::vec3 Start;
-        glm::vec3 Target;
+        VEC3 Start;
+        VEC3 Target;
         float Step;
         float Time;
     };

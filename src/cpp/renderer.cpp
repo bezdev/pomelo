@@ -131,7 +131,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         for (const auto& e : instancedMap[Components::MeshType::INSTANCED_BOX])
         {
             auto& position = e->GetComponent<Components::Transform>();
-            positions.push_back(position.Position);
+            positions.push_back(position.GetPosition());
         }
 
         RenderObject ro;

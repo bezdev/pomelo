@@ -51,7 +51,7 @@ void SolidColorShader::SetPerRenderObject(const std::vector<const Entity*>& enti
 {
     auto transform = entities.back()->GetComponent<Components::Transform>();
     auto material = entities.back()->GetComponent<Components::Material>();
-    glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.MM));
+    glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
     glUniform4f(m_Variables[1], material.Color.r, material.Color.g, material.Color.b, material.Color.a);
 }
 
@@ -92,7 +92,7 @@ void SolidColorShaderInstanced::SetPerRenderObject(const std::vector<const Entit
     transform.SetPosition(glm::vec3(0,0,0));
     auto material = entities.back()->GetComponent<Components::Material>();
     glUniform4f(m_Variables[2], material.Color.r, material.Color.g, material.Color.b, material.Color.a);
-    glUniformMatrix4fv(m_Variables[3], 1, GL_FALSE, glm::value_ptr(transform.MM));
+    glUniformMatrix4fv(m_Variables[3], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
 }
 
 void SolidColorShaderInstanced::Draw(const RenderBuffer* renderBuffer)
@@ -129,7 +129,7 @@ void PixelColorShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMat
 void PixelColorShader::SetPerRenderObject(const std::vector<const Entity*>& entities)
 {
     auto transform = entities.back()->GetComponent<Components::Transform>();
-    glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.MM));
+    glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
     glLineWidth(3);
 }
 

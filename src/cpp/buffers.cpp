@@ -204,8 +204,8 @@ RenderBuffer *RenderBufferManager::CreateInstancedLines(const std::vector<const 
     for (const Entity* e : entities)
     {
         auto& transform = e->GetComponent<Components::Transform>();
-        vertices.push_back(transform.Position);
-        vertices.push_back(transform.Position + transform.Scale);
+        vertices.push_back(transform.GetPosition());
+        vertices.push_back(transform.GetPosition() + transform.GetScale());
 
         auto& material = e->GetComponent<Components::Material>();
         colors.push_back(material.Color);

@@ -13,7 +13,7 @@ namespace EntityFactory
             .AddComponent<Components::Transform>(position)
             .AddComponent<Components::Mesh>(Components::MeshType::LINE)
             .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, color);
-        e.GetComponent<Components::Transform>().Scale = target;
+        e.GetComponent<Components::Transform>().SetScale(target);
 
         return e;
     }

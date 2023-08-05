@@ -58,7 +58,7 @@ void PhysicsEngine::UpdateOrbit(Entity* entity, Components::Motion* motion, floa
     float deltaAngle = delta  * angularSpeed;
 
     // Calculate position relative to target
-    glm::vec3 direction = (motion->Step == 0.f ? motion->Start : transform.Position) - motion->Target;
+    glm::vec3 direction = (motion->Step == 0.f ? motion->Start : transform.GetPosition()) - motion->Target;
     float distance = glm::length(direction);
     direction = glm::normalize(direction);
 
