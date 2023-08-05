@@ -88,7 +88,7 @@ void Camera::Update(float delta)
     }
 }
 
-void Camera::SetLookAt(glm::vec3& position, glm::vec3& target)
+void Camera::SetLookAt(const VEC3& position, const VEC3& target)
 {
     m_Position = position;
     m_Target = target;

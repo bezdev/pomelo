@@ -15,16 +15,16 @@ namespace Components
         {}
 
 
-        Transform(VEC3& position):
+        Transform(const VEC3& position):
             Transform(position, VEC3(1.f))
         {}
 
-        Transform(VEC3& position, VEC3& scale):
+        Transform(const VEC3& position, const VEC3& scale):
             Transform(position, Q_DEFAULT, scale)
         {
         }
 
-        Transform(VEC3& position, QUAT& rotation, VEC3& scale):
+        Transform(const VEC3& position, const QUAT& rotation, const VEC3& scale):
             m_Position(position),
             m_Rotation(rotation),
             m_Scale(scale),
@@ -34,19 +34,19 @@ namespace Components
             ComputeMM();
         }
 
-        void SetPosition(VEC3& position)
+        void SetPosition(const VEC3& position)
         {
             m_Position = position;
             m_MM[3] = VEC4(m_Position, 1.f);
         }
 
-        void SetRotation(QUAT& rotation)
+        void SetRotation(const QUAT& rotation)
         {
             m_Rotation = rotation;
             m_IsStale = true;
         }
 
-        void SetScale(VEC3& scale)
+        void SetScale(const VEC3& scale)
         {
             m_Scale = scale;
             m_IsStale = true;

@@ -37,7 +37,7 @@ public:
     glm::mat4 GetProjectionMatrix() { return m_ProjectionMatrix; }
 
     void SetCameraType(CameraType type) { m_CameraType = type; }
-    void SetLookAt(glm::vec3& position, glm::vec3& target);
+    void SetLookAt(const VEC3& position, const VEC3& target);
     void SetYawPitch(float yaw, float pitch);
     void UpdateViewSize(int width, int height);
 private:

@@ -27,7 +27,7 @@ class SceneManager
 public:
     static void LoadScene(int sceneId)
     {
-        // sceneId = 4;
+        sceneId = 0;
         LOGE("LoadScene: %d", sceneId);
         if (sceneId == SCENE_SANDBOX) CreateSandboxScene();
         else if (sceneId == SCENE_CUBE) CreateCubeScene();

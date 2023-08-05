@@ -1,13 +1,13 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include "util/Math.h"
 #include "ECS.h"
 
 namespace EntityFactory
 {
     static Entity& CreateEntity() { return ECS::GetInstance()->CreateEntity(); };
 
-    static Entity& CreateLine(glm::vec3& position, glm::vec3& target, glm::vec4& color)
+    static Entity& CreateLine(const VEC3& position, const VEC3& target, const VEC4& color)
     {
         auto& e = CreateEntity()
             .AddComponent<Components::Transform>(position)
@@ -18,7 +18,7 @@ namespace EntityFactory
         return e;
     }
 
-    static void CreateAxis(glm::vec3& position, glm::vec3& axis)
+    static void CreateAxis(const VEC3& position, const VEC3& axis)
     {
         CreateEntity()
             .AddComponent<Components::Transform>(position)
@@ -41,7 +41,7 @@ namespace EntityFactory
             .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.0f, 1.f, 0.f, 1.0f));
     }
 
-    static void CreateAxis(glm::vec3& position)
+    static void CreateAxis(const VEC3& position)
     {
         glm::vec3 axis = glm::vec3(0.f, 0.f, 0.f);
         CreateAxis(position, axis);

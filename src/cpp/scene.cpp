@@ -59,7 +59,7 @@ void SceneManager::CreateSandboxScene()
         //     .AddComponent<Components::Mesh>(Components::MeshType::BLENDER_AXIS)
         //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.0f, 1.f, 0.f, 1.0f));
 
-        Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 15.f), V_ORIGIN);
+        Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 10.f, 15.f), V_ORIGIN);
         Camera::GetInstance()->SetCameraType(CameraType::FREE_LOOK);
         s.Load();
 }
