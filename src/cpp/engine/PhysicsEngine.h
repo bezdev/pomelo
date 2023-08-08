@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ECS.h"
-#include "logger.h"
+#include "engine/ECS.h"
+#include "util/Logger.h"
 
 class PhysicsEngine
 {

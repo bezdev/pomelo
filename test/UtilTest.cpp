@@ -1,7 +1,7 @@
 #include "Test.h"
 
-#include "util.h"
-#include "timer.h"
+#include "util/Util.h"
+#include "util/Timer.h"
 
 std::vector<std::string> StringSplit(const char* string, const char* delimiter)
 {

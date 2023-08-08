@@ -1,6 +1,6 @@
 #include "Test.h"
 
-#include "logger.h"
+#include "util/Logger.h"
 
 TEST(BasicLoggerTest)
 {

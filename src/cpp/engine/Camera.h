@@ -1,7 +1,7 @@
 #pragma once
 
 #include "util/Math.h"
-#include "util.h"
+#include "util/Util.h"
 
 enum class CameraType
 {

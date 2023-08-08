@@ -1,10 +1,10 @@
 #pragma once
 
-#include "InputManager.h"
-#include "camera.h"
-#include "renderer.h"
-#include "timer.h"
-#include "util.h"
+#include "engine/InputManager.h"
+#include "engine/Camera.h"
+#include "render/Renderer.h"
+#include "util/Timer.h"
+#include "util/Util.h"
 
 #define DEBUG 1
 

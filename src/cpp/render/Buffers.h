@@ -11,8 +11,8 @@
 
 #include <memory>
 
-#include "ECS.h"
-#include "util.h"
+#include "engine/ECS.h"
+#include "util/Util.h"
 
 struct VertexBufferData
 {

@@ -1,7 +1,7 @@
 #include <fstream>
 
-#include "util.h"
-#include "app.h"
+#include "app/App.h"
+#include "util/Util.h"
 
 #ifdef BUILD_ANDROID
 #include "AndroidApp.h"

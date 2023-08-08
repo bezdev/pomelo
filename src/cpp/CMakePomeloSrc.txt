@@ -13,33 +13,33 @@ endif()
 set(SOURCES_BASE_PATH ${CMAKE_CURRENT_LIST_DIR})
 
 set(SOURCE_FILES
-    ${SOURCES_BASE_PATH}/app.cpp
-    ${SOURCES_BASE_PATH}/InputManager.cpp
-    ${SOURCES_BASE_PATH}/PhysicsEngine.cpp
-    ${SOURCES_BASE_PATH}/renderer.cpp
-    ${SOURCES_BASE_PATH}/shader.cpp
-    ${SOURCES_BASE_PATH}/buffers.cpp
-    ${SOURCES_BASE_PATH}/timer.cpp
-    ${SOURCES_BASE_PATH}/camera.cpp
-    ${SOURCES_BASE_PATH}/mesh.cpp
-    ${SOURCES_BASE_PATH}/scene.cpp
-    ${SOURCES_BASE_PATH}/ECS.cpp
-    ${SOURCES_BASE_PATH}/logger.cpp
-    ${SOURCES_BASE_PATH}/util.cpp
+    ${SOURCES_BASE_PATH}/app/App.cpp
+    ${SOURCES_BASE_PATH}/engine/InputManager.cpp
+    ${SOURCES_BASE_PATH}/engine/PhysicsEngine.cpp
+    ${SOURCES_BASE_PATH}/render/Renderer.cpp
+    ${SOURCES_BASE_PATH}/render/Shader.cpp
+    ${SOURCES_BASE_PATH}/render/Buffers.cpp
+    ${SOURCES_BASE_PATH}/util/Timer.cpp
+    ${SOURCES_BASE_PATH}/engine/Camera.cpp
+    ${SOURCES_BASE_PATH}/engine/Mesh.cpp
+    ${SOURCES_BASE_PATH}/engine/Scene.cpp
+    ${SOURCES_BASE_PATH}/engine/ECS.cpp
+    ${SOURCES_BASE_PATH}/util/Logger.cpp
+    ${SOURCES_BASE_PATH}/util/Util.cpp
     ${SOURCES_BASE_PATH}/util/Math.cpp
 )
 
 if(DEFINED BUILD_ANDROID)
     set(SOURCE_FILES
         ${SOURCE_FILES}
-        ${SOURCES_BASE_PATH}/AndroidApp.cpp
-        ${SOURCES_BASE_PATH}/jniutil.cpp
+        ${SOURCES_BASE_PATH}/app/AndroidApp.cpp
+        ${SOURCES_BASE_PATH}/util/jniutil.cpp
     )
 endif()
 
 if(DEFINED BUILD_DESKTOP)
     set(SOURCE_FILES
         ${SOURCE_FILES}
-        ${SOURCES_BASE_PATH}/GLFWApp.cpp
+        ${SOURCES_BASE_PATH}/app/GLFWApp.cpp
     )
 endif()

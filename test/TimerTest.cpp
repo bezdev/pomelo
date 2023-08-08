@@ -2,8 +2,8 @@
 
 #include "Test.h"
 
-#include "timer.h"
-#include "logger.h"
+#include "util/Timer.h"
+#include "util/Logger.h"
 
 #ifdef _WIN32
 #define DELTA 0.02f

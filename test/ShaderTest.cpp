@@ -1,7 +1,7 @@
 #include "Test.h"
 
-#include "mesh.h"
-#include "util.h"
+#include "engine/Mesh.h"
+#include "util/Util.h"
 
 TEST(ShaderParseOBJ)
 {

@@ -15,9 +15,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "ECS.h"
-#include "buffers.h"
-#include "util.h"
+#include "engine/ECS.h"
+#include "render/Buffers.h"
+#include "util/Util.h"
 
 enum ShaderVariableType
 {

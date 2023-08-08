@@ -8,7 +8,7 @@
 #include <string>
 
 #include <glm/glm.hpp>
-#include "util.h"
+#include "util/Util.h"
 
 namespace Mesh
 {

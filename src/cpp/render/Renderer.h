@@ -14,13 +14,13 @@
 #endif
 
 
-#include "app.h"
-#include "ECS.h"
-#include "shader.h"
-#include "mesh.h"
-#include "buffers.h"
-#include "scene.h"
-#include "util.h"
+#include "app/App.h"
+#include "engine/ECS.h"
+#include "render/Shader.h"
+#include "engine/Mesh.h"
+#include "render/Buffers.h"
+#include "engine/Scene.h"
+#include "util/Util.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"

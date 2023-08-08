@@ -1,6 +1,6 @@
 ﻿#include <memory>
 
-#include "GLFWApp.h"
+#include "app/GLFWApp.h"
 
 int main()
 {

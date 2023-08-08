@@ -3,7 +3,7 @@
 #include "glm/glm.hpp"
 
 #include "Test.h"
-#include "logger.h"
+#include "util/Logger.h"
 
 void PrintVector(const glm::vec3& v)
 {

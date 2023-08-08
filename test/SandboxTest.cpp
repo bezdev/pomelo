@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "logger.h"
-#include "timer.h"
-#include "util.h"
+#include "util/Logger.h"
+#include "util/Timer.h"
+#include "util/Util.h"
 
 class A
 {

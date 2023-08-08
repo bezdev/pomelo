@@ -2,7 +2,7 @@
 
 #include <time.h>
 
-#include "util.h"
+#include "util/Util.h"
 
 #ifdef _WIN32
 #include <Windows.h>

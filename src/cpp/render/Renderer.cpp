@@ -1,10 +1,9 @@
 #include "renderer.h"
 #include "shader.h"
 
-#include "InputManager.h"
+#include "engine/InputManager.h"
 
-#include "jniutil.h"
-#include "buffers.h"
+#include "render/Buffers.h"
 
 Renderer* Renderer::s_Instance = nullptr;
 

@@ -1,7 +1,7 @@
 #include "Test.h"
 
-#include "ObjectPool.h"
-#include "logger.h"
+#include "util/ObjectPool.h"
+#include "util/Logger.h"
 
 struct StructA
 {

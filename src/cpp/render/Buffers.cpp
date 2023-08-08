@@ -1,7 +1,7 @@
 #include "buffers.h"
 
-#include "renderer.h"
-#include "mesh.h"
+#include "render/Renderer.h"
+#include "engine/Mesh.h"
 
 VertexBuffer::VertexBuffer(int index, void* data, int count, int dataSize, int stride, int offset, int type, int usage, int divisor)
 {

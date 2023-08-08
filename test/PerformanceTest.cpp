@@ -9,9 +9,9 @@
 
 #include "Test.h"
 
-#include "GLFWApp.h"
+#include "app/GLFWApp.h"
 #include "config.h"
-#include "logger.h"
+#include "util/Logger.h"
 
 #ifdef WIN32
 #define PERF_RESULTS_OUTPUT_PATH "..\\..\\..\\PerformanceResults.csv"

@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Test.h"
-#include "logger.h"
+#include "util/Logger.h"
 
 TestSuite::TestSuite() { }
 

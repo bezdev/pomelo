@@ -3,9 +3,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "app.h"
-#include "util.h"
-#include "timer.h"
+#include "app/App.h"
+#include "util/Util.h"
+#include "util/Timer.h"
 
 #define NATIVE_ACTIVITY_CLASS_NAME "android/app/NativeActivity"
 
