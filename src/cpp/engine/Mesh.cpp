@@ -118,7 +118,7 @@ Mesh::Sphere::Sphere(float radius, int stacks, int slices)
     }
 
     // bot
-    int southPoleIndex = Vertices.size() - 1;
+    int southPoleIndex = Vertices.size() / 3 - 1;
     baseIndex = southPoleIndex - ringVertexCount;
     for (int i = 0; i < slices; i++) {
         Indices.push_back(southPoleIndex);

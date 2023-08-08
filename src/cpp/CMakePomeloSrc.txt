@@ -27,6 +27,7 @@ set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/util/Logger.cpp
     ${SOURCES_BASE_PATH}/util/Util.cpp
     ${SOURCES_BASE_PATH}/util/Math.cpp
+    ${SOURCES_BASE_PATH}/util/Color.cpp
 )
 
 if(DEFINED BUILD_ANDROID)

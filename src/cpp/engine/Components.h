@@ -123,12 +123,6 @@ namespace Components
         glm::vec4 Color;
     };
 
-    struct Physics
-    {
-        VEC3 Velocity;
-        VEC3 Acceleration;
-    };
-
     enum class MotionType
     {
         PATH,
@@ -153,5 +147,27 @@ namespace Components
         VEC3 Target;
         float Step;
         float Time;
+    };
+
+    enum PhysicsType
+    {
+        NONE = 0,
+        GRAVITY = 1 << 0
+    };
+
+    struct Physics
+    {
+        Physics():
+            Velocity(VEC3(0.f, 0.f, 0.f)),
+            Force(VEC3(0.f, 0.f, 0.f))
+        {}
+
+        Physics(PhysicsType type):
+            Physics()
+        {
+            if (type & GRAVITY) Force += VEC3(0.f, -9.81f, 0.f);
+        }
+        VEC3 Velocity;
+        VEC3 Force;
     };
 }

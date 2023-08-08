@@ -176,11 +176,11 @@ void Renderer::Render()
 {
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
-    // glDepthFunc(GL_LESS);
+    glDepthFunc(GL_LESS);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_CULL_FACE);
     // glFrontFace(GL_CW);
-    glCullFace(GL_BACK);
+    // glCullFace(GL_BACK);
 
     Shader* currentShader = nullptr;
     Components::Material* currentMaterial = nullptr;

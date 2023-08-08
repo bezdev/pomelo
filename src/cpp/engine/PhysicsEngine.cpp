@@ -1,6 +1,3 @@
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "PhysicsEngine.h"
 
 #include "util/Util.h"
@@ -9,6 +6,27 @@ PhysicsEngine* PhysicsEngine::s_Instance = nullptr;
 
 PhysicsEngine::PhysicsEngine()
 {
+}
+
+void PhysicsEngine::UpdatePhysics(float delta)
+{
+    delta /= 1000.f;
+
+    for (auto e : m_PhysicsEntities)
+    {
+        Components::Physics& physics = e->GetComponent<Components::Physics>();
+        Components::Transform& transform = e->GetComponent<Components::Transform>();
+
+        physics.Velocity += physics.Force * delta;
+        transform.SetPosition(transform.GetPosition() + physics.Velocity * delta);
+
+        // TODO: make generic collision detection
+        if (transform.GetPosition().y < 0)
+        {
+            physics.Velocity *= -1;
+            transform.SetPosition(V_ORIGIN);
+        }
+    }
 }
 
 void PhysicsEngine::UpdateMotions(float delta)
