@@ -170,6 +170,27 @@ RenderBuffer *RenderBufferManager::CreatePlane()
     return rb;
 }
 
+RenderBuffer *RenderBufferManager::CreatePlaneMap()
+{
+    Mesh::Plane p(100.f, 100.f, 100, 100);
+
+    auto heights = Generator::RandomAverageHeightMap(100, 100);
+
+    int i = 0;
+    for (float height : heights)
+    {
+        p.Vertices[i++].z = height;
+    }
+
+    RenderBuffer* rb = CreateRenderBuffer({
+        VertexBufferData { 0, p.Vertices.data(), (int)p.Vertices.size() * 3, sizeof(float), 3, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+    });
+
+    rb->IBO = new IndexBuffer(p.Indices.data(), p.Indices.size() * sizeof(unsigned short));
+
+    return rb;
+}
+
 RenderBuffer* RenderBufferManager::CreateSphere()
 {
     Mesh::Sphere sphere(.5f, 8.f, 8.f);

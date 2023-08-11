@@ -39,7 +39,7 @@ void SceneManager::CreateSandboxScene()
 
         s.CreateEntity()
             .AddComponent<Components::Transform>(V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(10.f))
-            .AddComponent<Components::Mesh>(Components::MeshType::PLANE)
+            .AddComponent<Components::Mesh>(Components::MeshType::PLANE_MAP)
             .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
 
         // s.CreateEntity()

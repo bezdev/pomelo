@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <string>
 
-#include <glm/glm.hpp>
+#include "util/Math.h"
 #include "util/Util.h"
 
 namespace Mesh
@@ -69,9 +69,10 @@ namespace Mesh
     struct Plane
     {
         Plane(float width, float height, int stacks, int slices);
-
-        std::vector<glm::vec3> Vertices;
-        std::vector<float> Normals;
+        std::vector<VEC3> Vertices;
+        std::vector<VEC3> Normals;
+        std::vector<VEC3> Tangents;
+        std::vector<VEC2> TexCoords;
         std::vector<unsigned short> Indices;
     };
 

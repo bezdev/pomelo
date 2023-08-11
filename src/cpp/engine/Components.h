@@ -82,6 +82,7 @@ namespace Components
         LINE,
         AXIS,
         PLANE,
+        PLANE_MAP,
         BOX,
         SPHERE,
         INSTANCED_BOX,
@@ -96,8 +97,14 @@ namespace Components
         Mesh(MeshType type):
             Type(type)
         {}
+        Mesh(MeshType type, const char* filename):
+            Type(type),
+            Filename(filename)
+        {}
 
         MeshType Type;
+        const char* Filename;
+        int Seed;
     };
 
     enum class MaterialType

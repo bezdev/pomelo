@@ -138,36 +138,53 @@ Mesh::Sphere::Sphere(float radius, int stacks, int slices)
 
 Mesh::Plane::Plane(float width, float height, int stacks, int slices)
 {
-    float x = -width / 2.f;
-    float y = -height / 2.f;
+    unsigned int vertexCount = stacks * slices;
+    unsigned int faceCount   = (stacks - 1) * (slices - 1) * 2;
 
-    float stackStep = width / stacks;
-    float sliceStep = height / slices;
+    float halfWidth = 0.5f * width;
+    float halfHeight = 0.5f * height;
 
-    for (int i = 0; i <= stacks; i++)
+    float dx = width / (stacks - 1);
+    float dy = height / (slices - 1);
+
+    float du = 1.0f / (stacks - 1);
+    float dv = 1.0f / (slices - 1);
+
+    Vertices.resize(vertexCount);
+    Normals.resize(vertexCount);
+    Tangents.resize(vertexCount);
+    TexCoords.resize(vertexCount);
+    for(int i = 0; i < slices; ++i)
     {
-        for (int j = 0; j <= slices; j++)
+        float y = halfHeight- i*dy;
+        for(unsigned int j = 0; j < stacks; ++j)
         {
-            Vertices.push_back(glm::vec3(x + stackStep * i, y + sliceStep * j, 0.f));
+            float x = -halfWidth + j*dx;
+
+            Vertices[i*stacks+j] = VEC3(x, y, 0.f);
+            Normals[i*stacks+j] = VEC3(0.0f, 1.0f, 0.0f);
+            Tangents[i*stacks+j] = VEC3(1.0f, 0.0f, 0.0f);
+            TexCoords[i*stacks+j] = VEC2(j*du, i*dv);
         }
     }
 
-    for (size_t i = 0; i < Vertices.size(); i++)
+    Indices.resize(faceCount*3);
+
+    unsigned int k = 0;
+    for(int i = 0; i < slices - 1; ++i)
     {
-        int stack = i / (stacks + 1);
-        int slice = i % (stacks + 1);
-        if (stack == stacks) continue;
-        if (slice == slices) continue;
+        for(int j = 0; j < stacks - 1; ++j)
+        {
+            Indices[k]   = i*stacks+j;
+            Indices[k+1] = (i+1)*stacks+j;
+            Indices[k+2] = i*stacks+j+1;
 
-        // LOGD("v: %f,%f,%f stack: %d, slice: %d, i: %d, c: %d", Vertices[i].x, Vertices[i].y, Vertices[i].z, stack, slice, i, stack * (slices + 1) + slice);
+            Indices[k+3] = (i+1)*stacks+j;
+            Indices[k+4] = (i+1)*stacks+j+1;
+            Indices[k+5] = i*stacks+j+1;
 
-        Indices.push_back(stack * (slices + 1) + slice);
-        Indices.push_back((stack + 1) * (slices + 1) + slice + 1);
-        Indices.push_back(stack * (slices + 1) + slice + 1);
-
-        Indices.push_back(stack * (slices + 1) + slice);
-        Indices.push_back((stack + 1) * (slices + 1) + slice);
-        Indices.push_back((stack + 1) * (slices + 1) + slice + 1);
+            k += 6;
+        }
     }
 }
 

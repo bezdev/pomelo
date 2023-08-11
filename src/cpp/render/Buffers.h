@@ -10,8 +10,10 @@
 #endif
 
 #include <memory>
+#include <random>
 
 #include "engine/ECS.h"
+#include "util/Math.h"
 #include "util/Util.h"
 
 struct VertexBufferData
@@ -115,6 +117,7 @@ struct RenderBuffer
     MACRO(BOX, CreateBox)                                               \
     MACRO(AXIS, CreateAxis)                                             \
     MACRO(PLANE, CreatePlane)                                           \
+    MACRO(PLANE_MAP, CreatePlaneMap)                                    \
     MACRO(SPHERE, CreateSphere)                                         \
     MACRO(BLENDER_AXIS, CreateBlenderAxis)                              \
     MACRO(BLENDER_MONKEY, CreateBlenderMonkey)                          \
@@ -133,8 +136,9 @@ public:
     static RenderBuffer* CreateSphere();
     static RenderBuffer* CreateInstancedBox(std::vector<glm::vec3>& positions);
     static RenderBuffer* CreateInstancedLines(const std::vector<const Entity*>& entities);
-    static RenderBuffer* CreateBlenderAxis() { return CreateFromOBJ("assets/unit_axis.obj"); }
-    static RenderBuffer* CreateBlenderMonkey() { return CreateFromOBJ("assets/monkey.obj"); }
+    static RenderBuffer* CreateBlenderAxis() { return CreateFromOBJ("assets/obj/unit_axis.obj"); }
+    static RenderBuffer* CreateBlenderMonkey() { return CreateFromOBJ("assets/obj/monkey.obj"); }
+    static RenderBuffer* CreatePlaneMap();
 
     static RenderBuffer* CreateFromOBJ(const char* filename);
 
@@ -171,6 +175,12 @@ public:
             m_RenderBuffers[index] = CreateRenderBuffer(type);
         }
         return m_RenderBuffers[static_cast<size_t>(type)];
+    }
+
+    // TODO:
+    RenderBuffer* GetRenderBuffer(const Components::Mesh& mesh)
+    {
+        return nullptr;
     }
 
     void Cleanup()
