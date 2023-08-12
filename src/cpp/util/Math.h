@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <random>
 
 #include <glm/glm.hpp>
@@ -18,20 +19,49 @@ extern QUAT Q_DEFAULT;
 
 namespace Generator
 {
-    static std::vector<float> RandomAverageHeightMap(int x, int y)
+    static float GetAverageHeightMapHeight(const std::vector<float>& heightMap, int width, int height, int x, int y)
     {
-        std::vector<float> heights(x * y);
+        float avg = 0.0f;
+        float num = 0.0f;
+
+        for(int m = x - 1; m <= x + 1; ++m)
+        {
+            for(int n = y - 1; n <= y + 1; ++n)
+            {
+                if (m < 0 || m >= width || n < 0 || n >= height) continue;
+
+                avg += heightMap[m * width + n];
+                num += 1.0f;
+            }
+        }
+
+        return avg / num;
+    }
+
+    static std::vector<float> RandomAverageHeightMap(int width, int height)
+    {
+        std::vector<float> heights(width * height);
 
         std::mt19937 rand;
         unsigned int seed = 69;
         rand.seed(seed);
         std::uniform_real_distribution<float> dist(-1.f, 1.f);
 
-        for (size_t i = 0; i < x * y; i++)
+        for (size_t i = 0; i < width * height; i++)
         {
             heights[i] = dist(rand);
         }
 
-        return heights;
+        std::vector<float> averageHeights;
+        averageHeights.resize(width * height);
+        for (int i = 0; i < height; ++i)
+        {
+            for (int j = 0; j < width; ++j)
+            {
+                averageHeights[i * width + j] = GetAverageHeightMapHeight(heights, width, height, i, j);
+            }
+        }
+
+        return averageHeights;
     }
 }

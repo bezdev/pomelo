@@ -172,14 +172,14 @@ RenderBuffer *RenderBufferManager::CreatePlane()
 
 RenderBuffer *RenderBufferManager::CreatePlaneMap()
 {
-    Mesh::Plane p(100.f, 100.f, 100, 100);
+    Mesh::Plane p(500.f, 500.f, 100, 100);
 
     auto heights = Generator::RandomAverageHeightMap(100, 100);
 
     int i = 0;
     for (float height : heights)
     {
-        p.Vertices[i++].z = height;
+        p.Vertices[i++].z = 10 * height;
     }
 
     RenderBuffer* rb = CreateRenderBuffer({

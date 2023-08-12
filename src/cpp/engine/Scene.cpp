@@ -29,6 +29,7 @@ void SceneManager::CreateSandboxScene()
         glm::vec3 a (1.f, 0.f, 0.f);
         glm::vec3 b (0.f, 1.f, 0.f);
         EntityFactory::CreateLine(V_ORIGIN, a, V_YELLOW);
+
         EntityFactory::CreateLine(V_ORIGIN, b, V_YELLOW);
         EntityFactory::CreateLine(V_ORIGIN, a + b, V_BLUE);
         // EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
@@ -38,7 +39,7 @@ void SceneManager::CreateSandboxScene()
         EntityFactory::CreateAxis(V_ORIGIN);
 
         s.CreateEntity()
-            .AddComponent<Components::Transform>(V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(10.f))
+            .AddComponent<Components::Transform>(V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f))
             .AddComponent<Components::Mesh>(Components::MeshType::PLANE_MAP)
             .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
 
