@@ -83,6 +83,7 @@ namespace Components
         AXIS,
         PLANE,
         PLANE_MAP,
+        PLANE_TEXTURE,
         BOX,
         SPHERE,
         INSTANCED_BOX,
@@ -111,12 +112,14 @@ namespace Components
     {
         SOLID_COLOR,
         PIXEL_COLOR,
+        TEXTURE,
         COUNT
     };
 
     struct Material
     {
         Material() {}
+
         Material(MaterialType type):
             Type(type)
         {}
@@ -126,8 +129,15 @@ namespace Components
             Color(color)
         {}
 
+        Material(MaterialType type, glm::vec4 color, const char* filename):
+            Type(type),
+            Color(color),
+            TextureFilename(filename)
+        {}
+
         MaterialType Type;
         glm::vec4 Color;
+        const char* TextureFilename;
     };
 
     enum class MotionType

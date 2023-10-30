@@ -2,7 +2,8 @@
 
 #include "util/Math.h"
 
-extern VEC4 V_RED;
-extern VEC4 V_GREEN;
-extern VEC4 V_BLUE;
-extern VEC4 V_YELLOW;
+extern VEC4 V_COLOR_RED;
+extern VEC4 V_COLOR_GREEN;
+extern VEC4 V_COLOR_BLUE;
+extern VEC4 V_COLOR_YELLOW;
+extern VEC4 V_COLOR_WHITE;

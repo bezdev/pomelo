@@ -116,7 +116,8 @@ protected:
 #define DEFINE_SHADER_ENUM_CLASS_LIST(MACRO)                \
     MACRO(SOLID_COLOR, SolidColorShader)                    \
     MACRO(SOLID_COLOR_INSTANCED, SolidColorShaderInstanced) \
-    MACRO(PIXEL_COLOR, PixelColorShader)
+    MACRO(PIXEL_COLOR, PixelColorShader)                    \
+    MACRO(TEXTURE, TextureShader)
 
 #define GENERATE_ENUM_VALUE(name, className) name,
 enum class ShaderType

@@ -145,6 +145,49 @@ void PixelColorShader::Draw(const RenderBuffer* renderBuffer)
     }
 }
 
+TextureShader::TextureShader():
+    Shader()
+{
+        LoadShader(
+        {
+            Shader::CompileShader(Util::ReadFile("shaders/Texture.vs"), GL_VERTEX_SHADER),
+            Shader::CompileShader(Util::ReadFile("shaders/Texture.fs"), GL_FRAGMENT_SHADER)
+        },
+        {
+            { ShaderVariableType::ATTRIBUTE, "aPosition" },
+            { ShaderVariableType::ATTRIBUTE, "aTexCoord" },
+            { ShaderVariableType::UNIFORM, "modelMatrix" },
+            { ShaderVariableType::UNIFORM, "viewMatrix" },
+            { ShaderVariableType::UNIFORM, "projectionMatrix" },
+            { ShaderVariableType::UNIFORM, "textureSampler" },
+        }
+    );
+}
+
+void TextureShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix)
+{
+    glUniformMatrix4fv(m_Variables[3], 1, GL_FALSE, viewMatrix);
+    glUniformMatrix4fv(m_Variables[4], 1, GL_FALSE, projectionMatrix);
+}
+
+void TextureShader::SetPerRenderObject(const std::vector<const Entity*>& entities)
+{
+    auto transform = entities.back()->GetComponent<Components::Transform>();
+    auto material = entities.back()->GetComponent<Components::Material>();
+    glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
+
+    // TODO: set texture and add that to a per material method
+    // TODO: get texture from material map or texture loader
+    glUniform1i(m_Variables[5], 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 1);
+}
+
+void TextureShader::Draw(const RenderBuffer* renderBuffer)
+{
+    glDrawElements(GL_TRIANGLES, renderBuffer->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
+}
+
 ShaderManager::ShaderManager():
     m_Shaders(static_cast<size_t>(ShaderType::COUNT))
 {

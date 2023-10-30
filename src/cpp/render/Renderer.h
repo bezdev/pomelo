@@ -25,6 +25,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+
 inline void CHECK_GL_ERROR(const char* label)
 {
     for (GLint error = glGetError(); error; error = glGetError())

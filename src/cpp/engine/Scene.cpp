@@ -28,20 +28,20 @@ void SceneManager::CreateSandboxScene()
 
         glm::vec3 a (1.f, 0.f, 0.f);
         glm::vec3 b (0.f, 1.f, 0.f);
-        EntityFactory::CreateLine(V_ORIGIN, a, V_YELLOW);
+        // EntityFactory::CreateLine(V_ORIGIN, a, V_YELLOW);
 
-        EntityFactory::CreateLine(V_ORIGIN, b, V_YELLOW);
-        EntityFactory::CreateLine(V_ORIGIN, a + b, V_BLUE);
+        // EntityFactory::CreateLine(V_ORIGIN, b, V_YELLOW);
+        EntityFactory::CreateLine(V_ORIGIN, a + b, V_COLOR_BLUE);
         // EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
         // EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
         // EntityFactory::CreateLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec4(1.0f, 1.f, 0.f, 1.0f));
 
         EntityFactory::CreateAxis(V_ORIGIN);
 
-        s.CreateEntity()
-            .AddComponent<Components::Transform>(V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f))
-            .AddComponent<Components::Mesh>(Components::MeshType::PLANE_MAP)
-            .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
+        // s.CreateEntity()
+        //     .AddComponent<Components::Transform>(V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f))
+        //     .AddComponent<Components::Mesh>(Components::MeshType::PLANE_MAP)
+        //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
 
         // s.CreateEntity()
         //     .AddComponent<Components::Transform>(V_ORIGIN)
@@ -58,9 +58,13 @@ void SceneManager::CreateSandboxScene()
         s.CreateEntity()
             .AddComponent<Components::Transform>(V_ORIGIN + VEC3(0.f, 10.f, 0.f))
             .AddComponent<Components::Mesh>(Components::MeshType::SPHERE)
-            .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_BLUE)
+            .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_COLOR_BLUE)
             .AddComponent<Components::Physics>(Components::GRAVITY);
 
+        s.CreateEntity()
+            .AddComponent<Components::Transform>(V_ORIGIN)
+            .AddComponent<Components::Mesh>(Components::MeshType::PLANE)
+            .AddComponent<Components::Material>(Components::MaterialType::TEXTURE, V_COLOR_WHITE, "assets/fonts/default.png");
         // s.CreateEntity()
         //     .AddComponent<Components::Transform>(p)
         //     .AddComponent<Components::Mesh>(Components::MeshType::INSTANCED_BOX)

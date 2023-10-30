@@ -118,6 +118,7 @@ struct RenderBuffer
     MACRO(AXIS, CreateAxis)                                             \
     MACRO(PLANE, CreatePlane)                                           \
     MACRO(PLANE_MAP, CreatePlaneMap)                                    \
+    MACRO(PLANE_TEXTURE, CreatePlaneTexture)                            \
     MACRO(SPHERE, CreateSphere)                                         \
     MACRO(BLENDER_AXIS, CreateBlenderAxis)                              \
     MACRO(BLENDER_MONKEY, CreateBlenderMonkey)                          \
@@ -139,6 +140,7 @@ public:
     static RenderBuffer* CreateBlenderAxis() { return CreateFromOBJ("assets/obj/unit_axis.obj"); }
     static RenderBuffer* CreateBlenderMonkey() { return CreateFromOBJ("assets/obj/monkey.obj"); }
     static RenderBuffer* CreatePlaneMap();
+    static RenderBuffer* CreatePlaneTexture();
 
     static RenderBuffer* CreateFromOBJ(const char* filename);
 
