@@ -22,35 +22,25 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/inc)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../src/cpp)
 include_directories(${TEST_FOLDER})
 
-#file(GLOB SOURCES CONFIGURE_DEPENDS "\\.cpp")
-
 set(SHADER_FOLDER ../src/shaders)
-file(GLOB SHADER_FILES "${SHADER_FOLDER}/*")
-foreach(shader_file ${SHADER_FILES})
-    get_filename_component(shader_filename ${shader_file} NAME)
-    configure_file(${shader_file} ${CMAKE_CURRENT_BINARY_DIR}/shaders/${shader_filename} COPYONLY)
-endforeach()
+set(DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/shaders")
+get_filename_component(SHADER_FOLDER_ABSOLUTE "${SHADER_FOLDER}" ABSOLUTE)
+add_custom_target(CopyShaders ALL)
+add_custom_command(
+    TARGET CopyShaders
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${SHADER_FOLDER_ABSOLUTE} ${DESTINATION}
+)
 
-# TODO: change this to build action
 set(ASSET_FOLDER "../assets/")
 set(DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/assets")
 get_filename_component(ASSET_FOLDER_ABSOLUTE "${ASSET_FOLDER}" ABSOLUTE)
-# message(STATUS "ASSET_FOLDER_ABSOLUTE = ${ASSET_FOLDER_ABSOLUTE}")
-file(GLOB_RECURSE ASSET_FILES "${ASSET_FOLDER_ABSOLUTE}/*")
-file(GLOB_RECURSE EXCLUDED_FILES "${ASSET_FOLDER_ABSOLUTE}/blender/*")
-list(REMOVE_ITEM ASSET_FILES ${EXCLUDED_FILES})
-# message(STATUS "ASSET_FILES= ${ASSET_FILES}")
-
-foreach(asset_file ${ASSET_FILES})
-    get_filename_component(RELATIVE_PATH "${asset_file}" DIRECTORY)
-    file(RELATIVE_PATH RELATIVE_DIR "${ASSET_FOLDER_ABSOLUTE}" "${RELATIVE_PATH}")
-    get_filename_component(FILE_NAME "${asset_file}" NAME)
-    set(DESTINATION_FILE "${DESTINATION}/${RELATIVE_DIR}/${FILE_NAME}")
-    get_filename_component(DESTINATION_DIR "${DESTINATION_FILE}" DIRECTORY)
-    message(STATUS "DESTINATION_DIR for ${asset_file} = ${DESTINATION_DIR}")
-    file(MAKE_DIRECTORY "${DESTINATION_DIR}")
-    configure_file(${asset_file} ${DESTINATION_FILE} COPYONLY)
-endforeach()
+add_custom_target(CopyAssets ALL)
+add_custom_command(
+    TARGET CopyAssets
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSET_FOLDER_ABSOLUTE} ${DESTINATION}
+)
 
 add_library(GLAD "glad.c")
 
