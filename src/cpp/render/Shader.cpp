@@ -176,11 +176,10 @@ void TextureShader::SetPerRenderObject(const std::vector<const Entity*>& entitie
     auto material = entities.back()->GetComponent<Components::Material>();
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
 
-    // TODO: set texture and add that to a per material method
-    // TODO: get texture from material map or texture loader
+    // TODO: add to a per material method
     glUniform1i(m_Variables[5], 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, 1);
+    glBindTexture(GL_TEXTURE_2D, TextureManager::GetInstance()->GetTextureID(entities.back()->GetID()));
 }
 
 void TextureShader::Draw(const RenderBuffer* renderBuffer)

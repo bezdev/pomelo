@@ -17,6 +17,7 @@
 
 #include "engine/ECS.h"
 #include "render/Buffers.h"
+#include "render/Textures.h"
 #include "util/Util.h"
 
 enum ShaderVariableType

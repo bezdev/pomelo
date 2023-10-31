@@ -5,9 +5,6 @@
 
 #include "render/Buffers.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
-
 Renderer* Renderer::s_Instance = nullptr;
 
 Renderer::Renderer():
@@ -125,37 +122,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             }
             else if (material->Type == Components::MaterialType::TEXTURE) // TODO: add meshtype check
             {
-                // TODO: add texture loader
-                GLuint textureId;
-                glGenTextures(1, &textureId);
-                glBindTexture(GL_TEXTURE_2D, textureId);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-                auto fileData = Util::ReadFile(material->TextureFilename);
-                int width, height, channelsCount;
-                int channels = 0;
-                unsigned char* data = stbi_load_from_memory(
-                    reinterpret_cast<const unsigned char*>(fileData.data()),
-                    static_cast<int>(fileData.size()),
-                    &width,
-                    &height,
-                    &channelsCount,
-                    channels
-                );
-                // unsigned char *data = stbi_load().c_str(), &width, &height, &channels_couunt, 0);
-                if (data)
-                {
-                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-                    LOGD("textureId: %d", textureId);
-                }
-                else
-                {
-                    LOGE("Failed to load texture");
-                }
-                stbi_image_free(data);
+                TextureManager::GetInstance()->AddTexture(entity.GetID(), material);
 
                 RenderObject ro;
                 ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::PLANE_TEXTURE);
@@ -192,6 +159,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         m_RenderQueue.push_back(ro);
     }
 
+    // TODO: also sort by material type and maybe texture id
     std::sort(m_RenderQueue.begin(), m_RenderQueue.end(), [](RenderObject a, RenderObject b)
     {
         if (a.Shader == b.Shader)

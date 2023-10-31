@@ -19,6 +19,7 @@ set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/render/Renderer.cpp
     ${SOURCES_BASE_PATH}/render/Shader.cpp
     ${SOURCES_BASE_PATH}/render/Buffers.cpp
+    ${SOURCES_BASE_PATH}/render/Textures.cpp
     ${SOURCES_BASE_PATH}/util/Timer.cpp
     ${SOURCES_BASE_PATH}/engine/Camera.cpp
     ${SOURCES_BASE_PATH}/engine/Mesh.cpp

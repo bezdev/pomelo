@@ -65,6 +65,7 @@ void SceneManager::CreateSandboxScene()
             .AddComponent<Components::Transform>(V_ORIGIN)
             .AddComponent<Components::Mesh>(Components::MeshType::PLANE)
             .AddComponent<Components::Material>(Components::MaterialType::TEXTURE, V_COLOR_WHITE, "assets/fonts/default.png");
+
         // s.CreateEntity()
         //     .AddComponent<Components::Transform>(p)
         //     .AddComponent<Components::Mesh>(Components::MeshType::INSTANCED_BOX)

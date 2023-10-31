@@ -19,6 +19,7 @@
 #include "render/Shader.h"
 #include "engine/Mesh.h"
 #include "render/Buffers.h"
+#include "render/Textures.h"
 #include "engine/Scene.h"
 #include "util/Util.h"
 
