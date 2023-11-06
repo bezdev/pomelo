@@ -118,7 +118,8 @@ protected:
     MACRO(SOLID_COLOR, SolidColorShader)                    \
     MACRO(SOLID_COLOR_INSTANCED, SolidColorShaderInstanced) \
     MACRO(PIXEL_COLOR, PixelColorShader)                    \
-    MACRO(TEXTURE, TextureShader)
+    MACRO(TEXTURE, TextureShader)                           \
+    MACRO(FONT, FontShader)
 
 #define GENERATE_ENUM_VALUE(name, className) name,
 enum class ShaderType

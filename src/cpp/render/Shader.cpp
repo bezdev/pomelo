@@ -150,8 +150,9 @@ TextureShader::TextureShader():
 {
         LoadShader(
         {
-            Shader::CompileShader(Util::ReadFile("shaders/Texture.vs"), GL_VERTEX_SHADER),
-            Shader::CompileShader(Util::ReadFile("shaders/Texture.fs"), GL_FRAGMENT_SHADER)
+            // TODO: change this back to Texture shader
+            Shader::CompileShader(Util::ReadFile("shaders/Font.vs"), GL_VERTEX_SHADER),
+            Shader::CompileShader(Util::ReadFile("shaders/Font.fs"), GL_FRAGMENT_SHADER)
         },
         {
             { ShaderVariableType::ATTRIBUTE, "aPosition" },
@@ -183,6 +184,48 @@ void TextureShader::SetPerRenderObject(const std::vector<const Entity*>& entitie
 }
 
 void TextureShader::Draw(const RenderBuffer* renderBuffer)
+{
+    glDrawElements(GL_TRIANGLES, renderBuffer->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
+}
+
+FontShader::FontShader():
+    Shader()
+{
+        LoadShader(
+        {
+            Shader::CompileShader(Util::ReadFile("shaders/Font.vs"), GL_VERTEX_SHADER),
+            Shader::CompileShader(Util::ReadFile("shaders/Font.fs"), GL_FRAGMENT_SHADER)
+        },
+        {
+            { ShaderVariableType::ATTRIBUTE, "aPosition" },
+            { ShaderVariableType::ATTRIBUTE, "aTexCoord" },
+            { ShaderVariableType::UNIFORM, "modelMatrix" },
+            { ShaderVariableType::UNIFORM, "viewMatrix" },
+            { ShaderVariableType::UNIFORM, "projectionMatrix" },
+            { ShaderVariableType::UNIFORM, "textureSampler" },
+        }
+    );
+}
+
+void FontShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix)
+{
+    glUniformMatrix4fv(m_Variables[3], 1, GL_FALSE, viewMatrix);
+    glUniformMatrix4fv(m_Variables[4], 1, GL_FALSE, projectionMatrix);
+}
+
+void FontShader::SetPerRenderObject(const std::vector<const Entity*>& entities)
+{
+    auto transform = entities.back()->GetComponent<Components::Transform>();
+    auto material = entities.back()->GetComponent<Components::Material>();
+    glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
+
+    // TODO: add to a per material method
+    glUniform1i(m_Variables[5], 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, TextureManager::GetInstance()->GetTextureID(entities.back()->GetID()));
+}
+
+void FontShader::Draw(const RenderBuffer* renderBuffer)
 {
     glDrawElements(GL_TRIANGLES, renderBuffer->IBO->GetCount(), GL_UNSIGNED_SHORT, 0);
 }
