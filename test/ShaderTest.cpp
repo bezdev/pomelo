@@ -5,7 +5,7 @@
 
 TEST(ShaderParseOBJ)
 {
-    auto f = Util::ReadFile("assets/unit_axis.obj");
+    auto f = Util::ReadFile("assets/obj/unit_axis.obj");
 
     Mesh::OBJData d;
     Mesh::ParseOBJ(f, d);
