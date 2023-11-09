@@ -1,7 +1,8 @@
 #include "engine/Font.h"
-#include "Font.h"
 
-Font::Font(){}
+FontManager* FontManager::s_Instance = nullptr;
+
+Font::Font() {}
 
 void Font::AddGlyph(char c, Glyph glyph)
 {
@@ -18,8 +19,6 @@ void Font::CreateFromFile(const char *filename)
 
     while (std::getline(dataStream, line)) {
         std::vector<std::string> split = Util::SplitString(line, std::string(","));
-
-        LOGD("%d: %s", split.size(), line.c_str());
 
         m_Glyphs.emplace(
             static_cast<char>(std::stoi(split[0])),

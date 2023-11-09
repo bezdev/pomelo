@@ -16,11 +16,12 @@
 
 #include "app/App.h"
 #include "engine/ECS.h"
-#include "render/Shader.h"
+#include "engine/Font.h"
 #include "engine/Mesh.h"
-#include "render/Buffers.h"
-#include "render/Textures.h"
 #include "engine/Scene.h"
+#include "render/Buffers.h"
+#include "render/Shader.h"
+#include "render/Textures.h"
 #include "util/Util.h"
 
 #include "glm/gtc/matrix_transform.hpp"

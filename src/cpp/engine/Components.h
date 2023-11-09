@@ -86,6 +86,7 @@ namespace Components
         PLANE_TEXTURE,
         BOX,
         SPHERE,
+        TEXT,
         INSTANCED_BOX,
         BLENDER_AXIS,
         BLENDER_MONKEY,
@@ -98,13 +99,13 @@ namespace Components
         Mesh(MeshType type):
             Type(type)
         {}
-        Mesh(MeshType type, const char* filename):
+        Mesh(MeshType type, const char* name):
             Type(type),
-            Filename(filename)
+            Name(name)
         {}
 
         MeshType Type;
-        const char* Filename;
+        const char* Name;
         int Seed;
     };
 
@@ -113,6 +114,7 @@ namespace Components
         SOLID_COLOR,
         PIXEL_COLOR,
         TEXTURE,
+        FONT,
         COUNT
     };
 
@@ -129,15 +131,15 @@ namespace Components
             Color(color)
         {}
 
-        Material(MaterialType type, glm::vec4 color, const char* filename):
+        Material(MaterialType type, glm::vec4 color, const char* name):
             Type(type),
             Color(color),
-            TextureFilename(filename)
+            Name(name)
         {}
 
         MaterialType Type;
         glm::vec4 Color;
-        const char* TextureFilename;
+        const char* Name;
     };
 
     enum class MotionType

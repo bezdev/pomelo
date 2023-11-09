@@ -68,7 +68,8 @@ int Renderer::Initialize()
 
 void Renderer::Cleanup()
 {
-
+    TextureManager::DestroyInstance();
+    FontManager::DestroyInstance();
 }
 
 void Renderer::LoadEntities(const std::vector<Entity>& entities)
@@ -127,6 +128,19 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 RenderObject ro;
                 ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::PLANE_TEXTURE);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::TEXTURE);
+                ro.Entities.push_back(const_cast<Entity*>(&entity));
+                m_RenderQueue.push_back(ro);
+            }
+            else if (material->Type == Components::MaterialType::FONT && mesh->Type == Components::MeshType::TEXT)
+            {
+                // TODO: figure out where to put this text
+                // TODO: don't use material type and mesh -> just create a new Text component
+                Font* f = FontManager::GetInstance()->CreateFont("assets/fonts/default.csv");
+
+                // TODO: fix this render buffer text generation
+                RenderObject ro;
+                ro.RenderBuffer = m_RenderBufferManager.CreateText(mesh->Name, f);
+                ro.Shader = m_ShaderManager.GetShader(ShaderType::FONT);
                 ro.Entities.push_back(const_cast<Entity*>(&entity));
                 m_RenderQueue.push_back(ro);
             }

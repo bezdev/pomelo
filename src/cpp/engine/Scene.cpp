@@ -61,10 +61,15 @@ void SceneManager::CreateSandboxScene()
             .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_COLOR_BLUE)
             .AddComponent<Components::Physics>(Components::GRAVITY);
 
+        // s.CreateEntity()
+        //     .AddComponent<Components::Transform>(V_ORIGIN)
+        //     .AddComponent<Components::Mesh>(Components::MeshType::PLANE)
+        //     .AddComponent<Components::Material>(Components::MaterialType::TEXTURE, V_COLOR_WHITE, "assets/fonts/default.png");
+
         s.CreateEntity()
             .AddComponent<Components::Transform>(V_ORIGIN)
-            .AddComponent<Components::Mesh>(Components::MeshType::PLANE)
-            .AddComponent<Components::Material>(Components::MaterialType::TEXTURE, V_COLOR_WHITE, "assets/fonts/default.png");
+            .AddComponent<Components::Mesh>(Components::MeshType::TEXT, "bezroukov")
+            .AddComponent<Components::Material>(Components::MaterialType::FONT, V_COLOR_RED, "assets/fonts/default.png");
 
         // s.CreateEntity()
         //     .AddComponent<Components::Transform>(p)

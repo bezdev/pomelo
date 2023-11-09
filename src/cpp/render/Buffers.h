@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <random>
+
 #ifdef BUILD_ANDROID
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
@@ -9,10 +12,8 @@
 #include <glad/glad.h>
 #endif
 
-#include <memory>
-#include <random>
-
 #include "engine/ECS.h"
+#include "engine/Font.h"
 #include "util/Math.h"
 #include "util/Util.h"
 
@@ -141,6 +142,7 @@ public:
     static RenderBuffer* CreateBlenderMonkey() { return CreateFromOBJ("assets/obj/monkey.obj"); }
     static RenderBuffer* CreatePlaneMap();
     static RenderBuffer* CreatePlaneTexture();
+    static RenderBuffer* CreateText(const char* text, Font* font);
 
     static RenderBuffer* CreateFromOBJ(const char* filename);
 

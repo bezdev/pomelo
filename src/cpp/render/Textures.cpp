@@ -19,7 +19,7 @@ void TextureManager::AddTexture(EntityID id, Components::Material* material)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    auto fileData = Util::ReadFile(material->TextureFilename);
+    auto fileData = Util::ReadFile(material->Name);
     int width, height, channelsCount;
     int channels = 0;
     unsigned char* data = stbi_load_from_memory(

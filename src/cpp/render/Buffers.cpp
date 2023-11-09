@@ -201,6 +201,7 @@ struct GlyphMetrics {
     float u1, v1, u2, v2;
 };
 
+// TODO: remove glyph logic from here
 RenderBuffer *RenderBufferManager::CreatePlaneTexture()
 {
     Mesh::Plane p(10.f, 10.f, 2, 2);
@@ -226,6 +227,46 @@ RenderBuffer *RenderBufferManager::CreatePlaneTexture()
     float y0 = 0.f;
     float x1 = 10.f;
     float y1 = 10.f;
+
+    gm.v1 = 1.f - gm.v1;
+    gm.v2 = 1.f - gm.v2;
+    std::vector<float> vertices = {
+        x0, y0, 0.0f, // Bottom left
+        x1, y0, 0.0f, // Bottom right
+        x0, y1, 0.0f, // Top left
+        x1, y1, 0.0f  // Top right
+    };
+
+    std::vector<float> texCoords = {
+        gm.u1, gm.v1, // Bottom left corner of the glyph in the texture
+        gm.u2, gm.v1, // Bottom right corner of the glyph in the texture
+        gm.u1, gm.v2, // Top left corner of the glyph in the texture
+        gm.u2, gm.v2  // Top right corner of the glyph in the texture
+    };
+
+    std::vector<unsigned short> indices = {
+        0, 1, 2, // First triangle
+        2, 1, 3  // Second triangle
+    };
+
+    RenderBuffer* rb = CreateRenderBuffer({
+        VertexBufferData { 0, vertices.data(), (int)vertices.size() * 3, sizeof(float), 3, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+        VertexBufferData { 1, texCoords.data(), (int)texCoords.size() * 2, sizeof(float), 2, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+    });
+
+    rb->IBO = new IndexBuffer(indices.data(), indices.size() * sizeof(unsigned short));
+
+    return rb;
+}
+
+RenderBuffer *RenderBufferManager::CreateText(const char* text, Font* font)
+{
+    float x0 = 0.f;
+    float y0 = 0.f;
+    float x1 = 10.f;
+    float y1 = 10.f;
+
+    Glyph gm = font->GetGlyph('b');
 
     gm.v1 = 1.f - gm.v1;
     gm.v2 = 1.f - gm.v2;
