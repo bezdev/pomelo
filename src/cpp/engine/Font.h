@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "engine/ECS.h"
+#include "engine/Components.h"
 #include "util/Util.h"
 
 struct Glyph
@@ -53,20 +55,20 @@ public:
             delete pair.second;
         }
         m_Fonts.clear();
-    };
+    }
 
-    Font* CreateFont(const char* filename)
+    Font* AddFont(Components::FontType fontType)
     {
-        if (m_Fonts.find(filename) != m_Fonts.end()) return m_Fonts[filename];
+        if (m_Fonts.find(Components::FontType::DEFAULT) != m_Fonts.end()) return m_Fonts[Components::FontType::DEFAULT];
 
         Font* f = new Font();
-        f->CreateFromFile(filename);
-        m_Fonts[filename] = f;
+        f->CreateFromFile("assets/fonts/default.csv");
+        m_Fonts[Components::FontType::DEFAULT] = f;
 
         return f;
     }
 private:
     static FontManager* s_Instance;
 
-    std::map<const char*, Font*> m_Fonts;
+    std::map<Components::FontType, Font*> m_Fonts;
 };

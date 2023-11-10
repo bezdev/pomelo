@@ -86,7 +86,6 @@ namespace Components
         PLANE_TEXTURE,
         BOX,
         SPHERE,
-        TEXT,
         INSTANCED_BOX,
         BLENDER_AXIS,
         BLENDER_MONKEY,
@@ -114,7 +113,6 @@ namespace Components
         SOLID_COLOR,
         PIXEL_COLOR,
         TEXTURE,
-        FONT,
         COUNT
     };
 
@@ -188,5 +186,24 @@ namespace Components
         }
         VEC3 Velocity;
         VEC3 Force;
+    };
+
+    enum FontType
+    {
+        DEFAULT = 0
+    };
+
+    struct Text
+    {
+        Text() {}
+        Text(char* data, FontType fontType, VEC4 color):
+            Data(data),
+            FontType(fontType),
+            Color(color)
+        {}
+
+        char* Data;
+        FontType FontType;
+        VEC4 Color;
     };
 }

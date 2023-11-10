@@ -31,6 +31,7 @@ public:
 
     TextureManager();
     void AddTexture(EntityID id, Components::Material* material);
+    void CreateTexture(EntityID id, const char* filename);
     GLuint GetTextureID(EntityID id) { return m_TextureMap[id]; }
 
 private:

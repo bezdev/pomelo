@@ -216,7 +216,6 @@ void FontShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix)
 void FontShader::SetPerRenderObject(const std::vector<const Entity*>& entities)
 {
     auto transform = entities.back()->GetComponent<Components::Transform>();
-    auto material = entities.back()->GetComponent<Components::Material>();
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
 
     // TODO: add to a per material method

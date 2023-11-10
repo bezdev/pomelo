@@ -86,6 +86,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
     {
         Components::Material* material = nullptr;
         Components::Mesh* mesh = nullptr;
+        Components::Text* text = nullptr;
 
         if (entity.HasComponent<Components::Material>())
         {
@@ -101,6 +102,11 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 instancedMap[mesh->Type].push_back(&entity);
                 continue;
             }
+        }
+
+        if (entity.HasComponent<Components::Text>())
+        {
+            text = &entity.GetComponent<Components::Text>();
         }
 
         if (material != nullptr && mesh != nullptr)
@@ -131,19 +137,21 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 ro.Entities.push_back(const_cast<Entity*>(&entity));
                 m_RenderQueue.push_back(ro);
             }
-            else if (material->Type == Components::MaterialType::FONT && mesh->Type == Components::MeshType::TEXT)
-            {
-                // TODO: figure out where to put this text
-                // TODO: don't use material type and mesh -> just create a new Text component
-                Font* f = FontManager::GetInstance()->CreateFont("assets/fonts/default.csv");
+        }
 
-                // TODO: fix this render buffer text generation
-                RenderObject ro;
-                ro.RenderBuffer = m_RenderBufferManager.CreateText(mesh->Name, f);
-                ro.Shader = m_ShaderManager.GetShader(ShaderType::FONT);
-                ro.Entities.push_back(const_cast<Entity*>(&entity));
-                m_RenderQueue.push_back(ro);
-            }
+        if (text != nullptr)
+        {
+            // TODO: figure out where to put this text
+            // TODO: don't use material type and mesh -> just create a new Text component
+            Font* f = FontManager::GetInstance()->AddFont(text->FontType);
+            TextureManager::GetInstance()->CreateTexture(entity.GetID(), "assets/fonts/default.png");
+
+            // TODO: fix this render buffer text generation
+            RenderObject ro;
+            ro.RenderBuffer = m_RenderBufferManager.CreateText(text->Data, f);
+            ro.Shader = m_ShaderManager.GetShader(ShaderType::FONT);
+            ro.Entities.push_back(const_cast<Entity*>(&entity));
+            m_RenderQueue.push_back(ro);
         }
     }
 
