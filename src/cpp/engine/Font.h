@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <sstream>
@@ -27,9 +28,11 @@ public:
     void CreateFromFile(const char* filename);
     void AddGlyph(char c, Glyph glyph);
     const Glyph& GetGlyph(char c) { return m_Glyphs[c]; }
+    float GetMaxHeight() { return m_MaxHeight; }
 
 private:
     std::map<char, Glyph> m_Glyphs;
+    float m_MaxHeight;
 };
 
 class FontManager

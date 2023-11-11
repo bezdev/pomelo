@@ -2,7 +2,9 @@
 
 FontManager* FontManager::s_Instance = nullptr;
 
-Font::Font() {}
+Font::Font():
+    m_MaxHeight(0.f)
+{}
 
 void Font::AddGlyph(char c, Glyph glyph)
 {
@@ -34,5 +36,7 @@ void Font::CreateFromFile(const char *filename)
                 std::stof(split[9]),
             }
         );
+
+        m_MaxHeight = std::max(m_MaxHeight, std::stof(split[5]));
     }
 }

@@ -142,7 +142,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         if (text != nullptr)
         {
             // TODO: memory leaky
-            Text* t = new Text(entity.GetID(), "bezroukov");
+            Text* t = new Text(entity.GetID(), text->Data);
 
             RenderObject ro;
             ro.RenderBuffer = m_RenderBufferManager.CreateText(t);

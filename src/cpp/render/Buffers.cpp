@@ -218,39 +218,39 @@ RenderBuffer *RenderBufferManager::CreatePlaneTexture()
 
 RenderBuffer *RenderBufferManager::CreateText(Text* text)
 {
-    float advance = 10.f;
-
     std::vector<VEC3> vertices;
     std::vector<VEC2> texCoords;
     std::vector<unsigned short> indices;
 
+    float scale = 1.f / text->GetFont()->GetMaxHeight();
+    float advance = 0.f;
     int i = 0;
-    for (char* p = text->GetText(); *p != '\0'; ++p) {
-        char c = *p;
-        float x0 = 0.f + i * advance;
-        float y0 = 0.f;
-        float x1 = 10.f + i * advance;
-        float y1 = 10.f;
+    for (char* p = text->GetText(); *p != '\0'; ++p)
+    {
+        Glyph g = text->GetFont()->GetGlyph(*p);
 
-        Glyph gm = text->GetFont()->GetGlyph(c);
+        float x0 = (g.BitmapLeft + advance) * scale;
+        float y0 = g.BitmapTop * scale;
+        float x1 = (g.Width + advance) * scale;
+        float y1 = g.Height * scale;
 
-        gm.u1 /= text->GetTexture()->GetWidth();
-        gm.u2 /= text->GetTexture()->GetWidth();
-        gm.v1 /= text->GetTexture()->GetHeight();
-        gm.v2 /= text->GetTexture()->GetHeight();
+        g.u1 /= text->GetTexture()->GetWidth();
+        g.u2 /= text->GetTexture()->GetWidth();
+        g.v1 /= text->GetTexture()->GetHeight();
+        g.v2 /= text->GetTexture()->GetHeight();
 
-        gm.v1 = 1.f - gm.v1;
-        gm.v2 = 1.f - gm.v2;
+        g.v1 = 1.f - g.v1;
+        g.v2 = 1.f - g.v2;
 
         vertices.push_back(VEC3(x0, y0, 0.0f));
         vertices.push_back(VEC3(x1, y0, 0.0f));
         vertices.push_back(VEC3(x0, y1, 0.0f));
         vertices.push_back(VEC3(x1, y1, 0.0f));
 
-        texCoords.push_back(VEC2(gm.u1, gm.v1));
-        texCoords.push_back(VEC2(gm.u2, gm.v1));
-        texCoords.push_back(VEC2(gm.u1, gm.v2));
-        texCoords.push_back(VEC2(gm.u2, gm.v2));
+        texCoords.push_back(VEC2(g.u1, g.v1));
+        texCoords.push_back(VEC2(g.u2, g.v1));
+        texCoords.push_back(VEC2(g.u1, g.v2));
+        texCoords.push_back(VEC2(g.u2, g.v2));
 
         indices.push_back(0 + i * 4);
         indices.push_back(1 + i * 4);
@@ -259,6 +259,7 @@ RenderBuffer *RenderBufferManager::CreateText(Text* text)
         indices.push_back(1 + i * 4);
         indices.push_back(3 + i * 4);
 
+        advance += g.Advance;
         i++;
     }
 
