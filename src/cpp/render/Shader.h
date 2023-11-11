@@ -16,9 +16,9 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include "engine/ECS.h"
+#include "render/RenderBuffer.h"
 #include "render/RenderObject.h"
-#include "render/Buffers.h"
-#include "render/Textures.h"
+#include "render/Texture.h"
 #include "util/Util.h"
 
 enum ShaderVariableType

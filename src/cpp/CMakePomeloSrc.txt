@@ -18,8 +18,8 @@ set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/engine/PhysicsEngine.cpp
     ${SOURCES_BASE_PATH}/render/Renderer.cpp
     ${SOURCES_BASE_PATH}/render/Shader.cpp
-    ${SOURCES_BASE_PATH}/render/Buffers.cpp
-    ${SOURCES_BASE_PATH}/render/Textures.cpp
+    ${SOURCES_BASE_PATH}/render/RenderBuffer.cpp
+    ${SOURCES_BASE_PATH}/render/Texture.cpp
     ${SOURCES_BASE_PATH}/render/Text.cpp
     ${SOURCES_BASE_PATH}/util/Timer.cpp
     ${SOURCES_BASE_PATH}/engine/Camera.cpp

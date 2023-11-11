@@ -3,16 +3,8 @@
 #include "engine/Components.h"
 #include "engine/ECS.h"
 #include "engine/Font.h"
-#include "render/Textures.h"
+#include "render/Texture.h"
 #include "util/Util.h"
-
-#ifdef BUILD_ANDROID
-#include <EGL/egl.h>
-#include <GLES3/gl3.h>
-#endif
-#ifdef BUILD_DESKTOP
-#include <glad/glad.h>
-#endif
 
 struct FontFiles
 {

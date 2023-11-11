@@ -1,9 +1,4 @@
 #include "renderer.h"
-#include "shader.h"
-
-#include "engine/InputManager.h"
-
-#include "render/Buffers.h"
 
 Renderer* Renderer::s_Instance = nullptr;
 
