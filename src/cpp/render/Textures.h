@@ -14,6 +14,20 @@
 
 #include <map>
 
+class Texture
+{
+public:
+    Texture(const char* filename);
+    GLuint GetTextureID() { return m_TextureID; }
+    int GetWidth() { return m_Width; }
+    int GetHeight() { return m_Height; }
+private:
+    Texture();
+    GLuint m_TextureID;
+    int m_Width;
+    int m_Height;
+};
+
 class TextureManager
 {
 public:
@@ -29,13 +43,13 @@ public:
         s_Instance = nullptr;
     }
 
-    TextureManager();
-    void AddTexture(EntityID id, Components::Material* material);
-    void CreateTexture(EntityID id, const char* filename);
-    GLuint GetTextureID(EntityID id) { return m_TextureMap[id]; }
+    Texture* CreateTexture(EntityID id, const char* filename);
+    Texture* GetTextureID(EntityID id) { return m_EntityToTextureMap[id]; }
 
 private:
+    TextureManager() {};
     static TextureManager* s_Instance;
 
-    std::map<EntityID, GLuint> m_TextureMap;
+    std::map<EntityID, Texture*> m_EntityToTextureMap;
+    std::map<const char*, Texture*> m_TextureMap;
 };

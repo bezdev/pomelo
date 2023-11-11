@@ -22,6 +22,7 @@
 #include "render/Buffers.h"
 #include "render/Shader.h"
 #include "render/Textures.h"
+#include "render/Text.h"
 #include "util/Util.h"
 
 #include "glm/gtc/matrix_transform.hpp"

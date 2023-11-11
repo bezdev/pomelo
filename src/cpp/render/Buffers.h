@@ -13,7 +13,7 @@
 #endif
 
 #include "engine/ECS.h"
-#include "engine/Font.h"
+#include "render/Text.h"
 #include "util/Math.h"
 #include "util/Util.h"
 
@@ -142,7 +142,7 @@ public:
     static RenderBuffer* CreateBlenderMonkey() { return CreateFromOBJ("assets/obj/monkey.obj"); }
     static RenderBuffer* CreatePlaneMap();
     static RenderBuffer* CreatePlaneTexture();
-    static RenderBuffer* CreateText(const char* text, Font* font);
+    static RenderBuffer* CreateText(Text* text);
 
     static RenderBuffer* CreateFromOBJ(const char* filename);
 

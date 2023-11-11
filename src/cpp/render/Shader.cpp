@@ -150,9 +150,8 @@ TextureShader::TextureShader():
 {
         LoadShader(
         {
-            // TODO: change this back to Texture shader
-            Shader::CompileShader(Util::ReadFile("shaders/Font.vs"), GL_VERTEX_SHADER),
-            Shader::CompileShader(Util::ReadFile("shaders/Font.fs"), GL_FRAGMENT_SHADER)
+            Shader::CompileShader(Util::ReadFile("shaders/Texture.vs"), GL_VERTEX_SHADER),
+            Shader::CompileShader(Util::ReadFile("shaders/Texture.fs"), GL_FRAGMENT_SHADER)
         },
         {
             { ShaderVariableType::ATTRIBUTE, "aPosition" },
@@ -180,7 +179,7 @@ void TextureShader::SetPerRenderObject(const std::vector<const Entity*>& entitie
     // TODO: add to a per material method
     glUniform1i(m_Variables[5], 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, TextureManager::GetInstance()->GetTextureID(entities.back()->GetID()));
+    glBindTexture(GL_TEXTURE_2D, TextureManager::GetInstance()->GetTextureID(entities.back()->GetID())->GetTextureID());
 }
 
 void TextureShader::Draw(const RenderBuffer* renderBuffer)
@@ -221,7 +220,7 @@ void FontShader::SetPerRenderObject(const std::vector<const Entity*>& entities)
     // TODO: add to a per material method
     glUniform1i(m_Variables[5], 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, TextureManager::GetInstance()->GetTextureID(entities.back()->GetID()));
+    glBindTexture(GL_TEXTURE_2D, TextureManager::GetInstance()->GetTextureID(entities.back()->GetID())->GetTextureID());
 }
 
 void FontShader::Draw(const RenderBuffer* renderBuffer)

@@ -129,7 +129,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             }
             else if (material->Type == Components::MaterialType::TEXTURE) // TODO: add meshtype check
             {
-                TextureManager::GetInstance()->AddTexture(entity.GetID(), material);
+                TextureManager::GetInstance()->CreateTexture(entity.GetID(), material->Name);
 
                 RenderObject ro;
                 ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::PLANE_TEXTURE);
@@ -141,14 +141,11 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 
         if (text != nullptr)
         {
-            // TODO: figure out where to put this text
-            // TODO: don't use material type and mesh -> just create a new Text component
-            Font* f = FontManager::GetInstance()->AddFont(text->FontType);
-            TextureManager::GetInstance()->CreateTexture(entity.GetID(), "assets/fonts/default.png");
+            // TODO: memory leaky
+            Text* t = new Text(entity.GetID(), "bezroukov");
 
-            // TODO: fix this render buffer text generation
             RenderObject ro;
-            ro.RenderBuffer = m_RenderBufferManager.CreateText(text->Data, f);
+            ro.RenderBuffer = m_RenderBufferManager.CreateText(t);
             ro.Shader = m_ShaderManager.GetShader(ShaderType::FONT);
             ro.Entities.push_back(const_cast<Entity*>(&entity));
             m_RenderQueue.push_back(ro);

@@ -57,18 +57,18 @@ public:
         m_Fonts.clear();
     }
 
-    Font* AddFont(Components::FontType fontType)
+    Font* CreateFont(const char* filename)
     {
-        if (m_Fonts.find(Components::FontType::DEFAULT) != m_Fonts.end()) return m_Fonts[Components::FontType::DEFAULT];
+        if (m_Fonts.find(filename) != m_Fonts.end()) return m_Fonts[filename];
 
         Font* f = new Font();
-        f->CreateFromFile("assets/fonts/default.csv");
-        m_Fonts[Components::FontType::DEFAULT] = f;
+        f->CreateFromFile(filename);
+        m_Fonts[filename] = f;
 
         return f;
     }
 private:
     static FontManager* s_Instance;
 
-    std::map<Components::FontType, Font*> m_Fonts;
+    std::map<const char*, Font*> m_Fonts;
 };
