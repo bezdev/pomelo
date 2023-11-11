@@ -19,6 +19,7 @@
 #include "engine/Font.h"
 #include "engine/Mesh.h"
 #include "engine/Scene.h"
+#include "render/RenderObject.h"
 #include "render/Buffers.h"
 #include "render/Shader.h"
 #include "render/Textures.h"
@@ -36,13 +37,6 @@ inline void CHECK_GL_ERROR(const char* label)
         LOGE("%s: glError: (0x%x)\n", label, error);
     }
 }
-
-struct RenderObject
-{
-    ::RenderBuffer* RenderBuffer;
-    ::Shader* Shader;
-    std::vector<const ::Entity*> Entities;
-};
 
 class Renderer
 {

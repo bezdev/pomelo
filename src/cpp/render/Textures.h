@@ -43,13 +43,11 @@ public:
         s_Instance = nullptr;
     }
 
-    Texture* CreateTexture(EntityID id, const char* filename);
-    Texture* GetTextureID(EntityID id) { return m_EntityToTextureMap[id]; }
+    Texture* CreateTexture(const char* filename);
 
 private:
     TextureManager() {};
     static TextureManager* s_Instance;
 
-    std::map<EntityID, Texture*> m_EntityToTextureMap;
     std::map<const char*, Texture*> m_TextureMap;
 };

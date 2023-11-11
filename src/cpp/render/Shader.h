@@ -16,6 +16,7 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include "engine/ECS.h"
+#include "render/RenderObject.h"
 #include "render/Buffers.h"
 #include "render/Textures.h"
 #include "util/Util.h"
@@ -101,7 +102,7 @@ public:
     void Use() const { glUseProgram(m_Program); }
 
     virtual void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) = 0;
-    virtual void SetPerRenderObject(const std::vector<const Entity*>& entities) = 0;
+    virtual void SetPerRenderObject(const RenderObject* renderObject) = 0;
     virtual void Draw(const RenderBuffer* renderBuffer) = 0;
 
     GLuint GetProgram() const { return m_Program; }
@@ -133,7 +134,7 @@ class className : public Shader {                                               
 public:                                                                          \
     className();                                                                 \
     void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override; \
-    void SetPerRenderObject(const std::vector<const Entity*>& entities) override;      \
+    void SetPerRenderObject(const RenderObject* renderObject) override;          \
     void Draw(const RenderBuffer* renderBuffer) override;                        \
 };
 DEFINE_SHADER_ENUM_CLASS_LIST(GENERATE_SUB_CLASSES)

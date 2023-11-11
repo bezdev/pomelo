@@ -129,11 +129,10 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             }
             else if (material->Type == Components::MaterialType::TEXTURE) // TODO: add meshtype check
             {
-                TextureManager::GetInstance()->CreateTexture(entity.GetID(), material->Name);
-
                 RenderObject ro;
                 ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::PLANE_TEXTURE);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::TEXTURE);
+                ro.Texture = TextureManager::GetInstance()->CreateTexture(material->Name);
                 ro.Entities.push_back(const_cast<Entity*>(&entity));
                 m_RenderQueue.push_back(ro);
             }
@@ -142,11 +141,12 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         if (text != nullptr)
         {
             // TODO: memory leaky
-            Text* t = new Text(entity.GetID(), text->Data);
+            Text* t = new Text(text->Data);
 
             RenderObject ro;
             ro.RenderBuffer = m_RenderBufferManager.CreateText(t);
             ro.Shader = m_ShaderManager.GetShader(ShaderType::FONT);
+            ro.Texture = t->GetTexture();
             ro.Entities.push_back(const_cast<Entity*>(&entity));
             m_RenderQueue.push_back(ro);
         }
@@ -248,7 +248,7 @@ void Renderer::Render()
             currentRenderBuffer = renderBuffer;
         }
 
-        shader->SetPerRenderObject(ro.Entities);
+        shader->SetPerRenderObject(&ro);
 
         if (m_IsDrawWireFrame)
         {

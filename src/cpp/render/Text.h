@@ -23,7 +23,7 @@ struct FontFiles
 class Text
 {
 public:
-    Text(EntityID entityID, char *text);
+    Text(char *text);
     char* GetText() { return m_Text; }
     Font* GetFont() { return m_Font; }
     Texture* GetTexture() { return m_Texture; }

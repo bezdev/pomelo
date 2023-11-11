@@ -191,17 +191,6 @@ RenderBuffer *RenderBufferManager::CreatePlaneMap()
     return rb;
 }
 
-// TODO: move this to font class
-struct GlyphMetrics {
-    float advance;
-    float bitmapLeft;
-    float bitmapTop;
-    float width;
-    float height;
-    float u1, v1, u2, v2;
-};
-
-// TODO: remove glyph logic from here
 RenderBuffer *RenderBufferManager::CreatePlaneTexture()
 {
     Mesh::Plane p(10.f, 10.f, 2, 2);

@@ -47,10 +47,10 @@ void SolidColorShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMat
     glUniformMatrix4fv(m_Variables[4], 1, GL_FALSE, projectionMatrix);
 }
 
-void SolidColorShader::SetPerRenderObject(const std::vector<const Entity*>& entities)
+void SolidColorShader::SetPerRenderObject(const RenderObject* renderObject)
 {
-    auto transform = entities.back()->GetComponent<Components::Transform>();
-    auto material = entities.back()->GetComponent<Components::Material>();
+    auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
+    auto material = renderObject->Entities.back()->GetComponent<Components::Material>();
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
     glUniform4f(m_Variables[1], material.Color.r, material.Color.g, material.Color.b, material.Color.a);
 }
@@ -85,12 +85,12 @@ void SolidColorShaderInstanced::SetVPMatrix(glm::f32* viewMatrix, glm::f32* proj
     glUniformMatrix4fv(m_Variables[5], 1, GL_FALSE, projectionMatrix);
 }
 
-void SolidColorShaderInstanced::SetPerRenderObject(const std::vector<const Entity*>& entities)
+void SolidColorShaderInstanced::SetPerRenderObject(const RenderObject* renderObject)
 {
     // TODO: fix this hack
-    auto transform = entities.back()->GetComponent<Components::Transform>();
+    auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
     transform.SetPosition(glm::vec3(0,0,0));
-    auto material = entities.back()->GetComponent<Components::Material>();
+    auto material = renderObject->Entities.back()->GetComponent<Components::Material>();
     glUniform4f(m_Variables[2], material.Color.r, material.Color.g, material.Color.b, material.Color.a);
     glUniformMatrix4fv(m_Variables[3], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
 }
@@ -126,9 +126,9 @@ void PixelColorShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMat
     glUniformMatrix4fv(m_Variables[4], 1, GL_FALSE, projectionMatrix);
 }
 
-void PixelColorShader::SetPerRenderObject(const std::vector<const Entity*>& entities)
+void PixelColorShader::SetPerRenderObject(const RenderObject* renderObject)
 {
-    auto transform = entities.back()->GetComponent<Components::Transform>();
+    auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
     glLineWidth(3);
 }
@@ -170,16 +170,16 @@ void TextureShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix
     glUniformMatrix4fv(m_Variables[4], 1, GL_FALSE, projectionMatrix);
 }
 
-void TextureShader::SetPerRenderObject(const std::vector<const Entity*>& entities)
+void TextureShader::SetPerRenderObject(const RenderObject* renderObject)
 {
-    auto transform = entities.back()->GetComponent<Components::Transform>();
-    auto material = entities.back()->GetComponent<Components::Material>();
+    auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
+    auto material = renderObject->Entities.back()->GetComponent<Components::Material>();
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
 
     // TODO: add to a per material method
     glUniform1i(m_Variables[5], 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, TextureManager::GetInstance()->GetTextureID(entities.back()->GetID())->GetTextureID());
+    glBindTexture(GL_TEXTURE_2D, renderObject->Texture->GetTextureID());
 }
 
 void TextureShader::Draw(const RenderBuffer* renderBuffer)
@@ -212,15 +212,15 @@ void FontShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix)
     glUniformMatrix4fv(m_Variables[4], 1, GL_FALSE, projectionMatrix);
 }
 
-void FontShader::SetPerRenderObject(const std::vector<const Entity*>& entities)
+void FontShader::SetPerRenderObject(const RenderObject* renderObject)
 {
-    auto transform = entities.back()->GetComponent<Components::Transform>();
+    auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
 
     // TODO: add to a per material method
     glUniform1i(m_Variables[5], 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, TextureManager::GetInstance()->GetTextureID(entities.back()->GetID())->GetTextureID());
+    glBindTexture(GL_TEXTURE_2D, renderObject->Texture->GetTextureID());
 }
 
 void FontShader::Draw(const RenderBuffer* renderBuffer)

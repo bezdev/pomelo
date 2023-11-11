@@ -43,13 +43,12 @@ Texture::Texture(const char* filename)
     m_Height = height;
 }
 
-Texture* TextureManager::CreateTexture(EntityID id, const char* filename)
+Texture* TextureManager::CreateTexture(const char* filename)
 {
     if (m_TextureMap.find(filename) != m_TextureMap.end()) return m_TextureMap[filename];
 
     Texture* texture = new Texture(filename);
     m_TextureMap[filename] = texture;
-    m_EntityToTextureMap[id] = texture;
 
     return texture;
 }

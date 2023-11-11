@@ -162,7 +162,7 @@ public:
 
     RenderBuffer* CreateRenderBuffer(Components::MeshType type)
     {
-        switch(type)
+        switch (type)
         {
             DEFINE_RENDER_BUFFER_ENUM_CLASS_LIST(GENERATE_CASE_VALUE)
         }
