@@ -3,8 +3,6 @@
 #include "util/Util.h"
 #include "util/Math.h"
 
-class Entity;
-
 namespace Components
 {
     class Transform
@@ -196,14 +194,10 @@ namespace Components
     struct Text
     {
         Text() {}
-        Text(char* data, FontType fontType, VEC4 color):
-            Data(data),
-            FontType(fontType),
-            Color(color)
+        Text(int id):
+            ID(id)
         {}
 
-        char* Data;
-        FontType FontType;
-        VEC4 Color;
+        int ID;
     };
 }

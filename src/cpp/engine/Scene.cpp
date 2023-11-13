@@ -38,10 +38,10 @@ void SceneManager::CreateSandboxScene()
 
         EntityFactory::CreateAxis(V_ORIGIN);
 
-        // s.CreateEntity()
-        //     .AddComponent<Components::Transform>(V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f))
-        //     .AddComponent<Components::Mesh>(Components::MeshType::PLANE_MAP)
-        //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
+        s.CreateEntity()
+            .AddComponent<Components::Transform>(V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f))
+            .AddComponent<Components::Mesh>(Components::MeshType::PLANE_MAP)
+            .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
 
         // s.CreateEntity()
         //     .AddComponent<Components::Transform>(V_ORIGIN)
@@ -67,10 +67,9 @@ void SceneManager::CreateSandboxScene()
             .AddComponent<Components::Material>(Components::MaterialType::TEXTURE, V_COLOR_WHITE, "assets/fonts/default.png");
 
         // char* t = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
-        char* t = "bezdev";
         s.CreateEntity()
             .AddComponent<Components::Transform>(V_ORIGIN, VEC3(10.f, 10.f, 10.f))
-            .AddComponent<Components::Text>(t, Components::FontType::DEFAULT, V_COLOR_RED);
+            .AddComponent<Components::Text>(TextManager::GetInstance()->AddText(std::string("bezdev")));
 
         // s.CreateEntity()
         //     .AddComponent<Components::Transform>(p)

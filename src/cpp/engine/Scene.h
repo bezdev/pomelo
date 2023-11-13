@@ -1,10 +1,9 @@
 #pragma once
 
-#include "ECS.h"
-#include "camera.h"
-
+#include "engine/ECS.h"
+#include "engine/Camera.h"
 #include "render/Renderer.h"
-
+#include "render/Text.h"
 #include "util/Math.h"
 #include "util/Color.h"
 
@@ -29,7 +28,7 @@ class SceneManager
 public:
     static void LoadScene(int sceneId)
     {
-        // sceneId = 0;
+        sceneId = 0;
         LOGE("LoadScene: %d", sceneId);
         if (sceneId == SCENE_SANDBOX) CreateSandboxScene();
         else if (sceneId == SCENE_CUBE) CreateCubeScene();

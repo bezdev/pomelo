@@ -214,9 +214,9 @@ RenderBuffer *RenderBufferManager::CreateText(Text* text)
     float scale = 1.f / text->GetFont()->GetMaxHeight();
     float advance = 0.f;
     int i = 0;
-    for (char* p = text->GetText(); *p != '\0'; ++p)
+    for (auto it = text->GetText().begin(); it != text->GetText().end(); ++it)
     {
-        Glyph g = text->GetFont()->GetGlyph(*p);
+        Glyph g = text->GetFont()->GetGlyph(*it);
 
         float x0 = (g.BitmapLeft + advance) * scale;
         float y0 = g.BitmapTop * scale;

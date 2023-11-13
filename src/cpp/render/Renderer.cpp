@@ -65,6 +65,7 @@ void Renderer::Cleanup()
 {
     TextureManager::DestroyInstance();
     FontManager::DestroyInstance();
+    TextureManager::DestroyInstance();
 }
 
 void Renderer::LoadEntities(const std::vector<Entity>& entities)
@@ -135,9 +136,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 
         if (text != nullptr)
         {
-            // TODO: memory leaky
-            Text* t = new Text(text->Data);
-
+            Text* t = TextManager::GetInstance()->GetText(text->ID);
             RenderObject ro;
             ro.RenderBuffer = m_RenderBufferManager.CreateText(t);
             ro.Shader = m_ShaderManager.GetShader(ShaderType::FONT);
@@ -204,6 +203,8 @@ void Renderer::Render()
     glDepthFunc(GL_LESS);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_CULL_FACE);
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // glFrontFace(GL_CW);
     // glCullFace(GL_BACK);
 
