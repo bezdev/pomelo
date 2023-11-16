@@ -17,6 +17,8 @@
 #include "util/Math.h"
 #include "util/Util.h"
 
+class Text;
+
 struct VertexBufferData
 {
     int Index;
@@ -129,6 +131,18 @@ struct RenderBuffer
 class RenderBufferManager
 {
 public:
+    static RenderBufferManager* GetInstance()
+    {
+        if (!s_Instance) s_Instance = new RenderBufferManager();
+        return s_Instance;
+    }
+
+    static void DestroyInstance()
+    {
+        delete s_Instance;
+        s_Instance = nullptr;
+    }
+
     RenderBufferManager();
     ~RenderBufferManager();
 
@@ -196,6 +210,7 @@ public:
     }
 
 private:
+    static RenderBufferManager* s_Instance;
     std::vector<RenderBuffer*> m_RenderBuffers;
 };
 

@@ -6,7 +6,10 @@
 #include "engine/ECS.h"
 #include "engine/Font.h"
 #include "render/Texture.h"
+#include "render/RenderBuffer.h"
 #include "util/Util.h"
+
+class RenderBuffer;
 
 struct FontFiles
 {
@@ -21,6 +24,7 @@ public:
     const std::string& GetText() { return m_Text; }
     Font* GetFont() { return m_Font; }
     Texture* GetTexture() { return m_Texture; }
+    RenderBuffer* GetRenderBuffer() { return m_RenderBuffer; }
 private:
     static FontFiles s_FONT_FILE_MAP[];
 
@@ -28,6 +32,7 @@ private:
     std::string m_Text;
     Font* m_Font;
     Texture* m_Texture;
+    RenderBuffer* m_RenderBuffer;
 };
 
 class TextManager

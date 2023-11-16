@@ -63,17 +63,19 @@ int Renderer::Initialize()
 
 void Renderer::Cleanup()
 {
+    RenderBufferManager::DestroyInstance();
     TextureManager::DestroyInstance();
     FontManager::DestroyInstance();
-    TextureManager::DestroyInstance();
+    TextManager::DestroyInstance();
 }
 
 void Renderer::LoadEntities(const std::vector<Entity>& entities)
 {
     ScopeTimer s("LoadEntities");
 
+    RenderBufferManager* renderBufferManager = RenderBufferManager::GetInstance();
+    renderBufferManager->Cleanup();
     m_ShaderManager.Cleanup();
-    m_RenderBufferManager.Cleanup();
     m_RenderQueue.clear();
 
     std::map<Components::MeshType, std::vector<const Entity*>> instancedMap;
@@ -110,7 +112,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             if (material->Type == Components::MaterialType::SOLID_COLOR)
             {
                 RenderObject ro;
-                ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(mesh->Type);
+                ro.RenderBuffer = renderBufferManager->GetRenderBuffer(mesh->Type);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR);
                 ro.Entities.push_back(const_cast<Entity*>(&entity));
                 m_RenderQueue.push_back(ro);
@@ -118,7 +120,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             else if (material->Type == Components::MaterialType::PIXEL_COLOR && mesh->Type == Components::MeshType::AXIS)
             {
                 RenderObject ro;
-                ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::AXIS);
+                ro.RenderBuffer = renderBufferManager->GetRenderBuffer(Components::MeshType::AXIS);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::PIXEL_COLOR);
                 ro.Entities.push_back(const_cast<Entity*>(&entity));
                 m_RenderQueue.push_back(ro);
@@ -126,7 +128,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             else if (material->Type == Components::MaterialType::TEXTURE) // TODO: add meshtype check
             {
                 RenderObject ro;
-                ro.RenderBuffer = m_RenderBufferManager.GetRenderBuffer(Components::MeshType::PLANE_TEXTURE);
+                ro.RenderBuffer = renderBufferManager->GetRenderBuffer(Components::MeshType::PLANE_TEXTURE);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::TEXTURE);
                 ro.Texture = TextureManager::GetInstance()->CreateTexture(material->Name);
                 ro.Entities.push_back(const_cast<Entity*>(&entity));
@@ -138,7 +140,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         {
             Text* t = TextManager::GetInstance()->GetText(text->ID);
             RenderObject ro;
-            ro.RenderBuffer = m_RenderBufferManager.CreateText(t);
+            ro.RenderBuffer = t->GetRenderBuffer();
             ro.Shader = m_ShaderManager.GetShader(ShaderType::FONT);
             ro.Texture = t->GetTexture();
             ro.Entities.push_back(const_cast<Entity*>(&entity));
@@ -157,7 +159,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         }
 
         RenderObject ro;
-        ro.RenderBuffer = m_RenderBufferManager.CreateInstancedBox(positions);
+        ro.RenderBuffer = renderBufferManager->CreateInstancedBox(positions);
         ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR_INSTANCED);
         ro.Entities = instancedMap[Components::MeshType::INSTANCED_BOX];
         m_RenderQueue.push_back(ro);
@@ -166,7 +168,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
     if (instancedMap.find(Components::MeshType::LINE) != instancedMap.end())
     {
         RenderObject ro;
-        ro.RenderBuffer = m_RenderBufferManager.CreateInstancedLines(instancedMap[Components::MeshType::LINE]);
+        ro.RenderBuffer = renderBufferManager->CreateInstancedLines(instancedMap[Components::MeshType::LINE]);
         ro.Shader = m_ShaderManager.GetShader(ShaderType::PIXEL_COLOR);
         ro.Entities = instancedMap[Components::MeshType::LINE];
         m_RenderQueue.push_back(ro);
@@ -221,8 +223,8 @@ void Renderer::Render()
         {
             shader->Use();
 
-            glm::mat4 viewMatrix = Camera::GetInstance()->GetViewMatrix();
-            glm::mat4 projectionMatrix = Camera::GetInstance()->GetProjectionMatrix();
+            glm::mat4 viewMatrix = shader->GetType() == ShaderType::FONT ? glm::mat4(1.f) : Camera::GetInstance()->GetViewMatrix();
+            glm::mat4 projectionMatrix = shader->GetType() == ShaderType::FONT ? glm::ortho(0.0f, static_cast<float>(m_ScreenWidth), 0.0f, static_cast<float>(m_ScreenHeight)) : Camera::GetInstance()->GetProjectionMatrix();
             shader->SetVPMatrix(
                 glm::value_ptr(viewMatrix),
                 glm::value_ptr(projectionMatrix));

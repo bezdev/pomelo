@@ -71,7 +71,6 @@ private:
     int m_ScreenHeight;
 
     ShaderManager m_ShaderManager;
-    RenderBufferManager m_RenderBufferManager;
 
     std::vector<RenderObject> m_RenderQueue;
 

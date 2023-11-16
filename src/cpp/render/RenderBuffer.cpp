@@ -3,6 +3,8 @@
 #include "render/Renderer.h"
 #include "engine/Mesh.h"
 
+RenderBufferManager* RenderBufferManager::s_Instance = nullptr;
+
 VertexBuffer::VertexBuffer(int index, void* data, int count, int dataSize, int stride, int offset, int type, int usage, int divisor)
 {
     int size = count * dataSize;

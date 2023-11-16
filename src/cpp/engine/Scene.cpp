@@ -38,10 +38,10 @@ void SceneManager::CreateSandboxScene()
 
         EntityFactory::CreateAxis(V_ORIGIN);
 
-        s.CreateEntity()
-            .AddComponent<Components::Transform>(V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f))
-            .AddComponent<Components::Mesh>(Components::MeshType::PLANE_MAP)
-            .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
+        // s.CreateEntity()
+        //     .AddComponent<Components::Transform>(V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f))
+        //     .AddComponent<Components::Mesh>(Components::MeshType::PLANE_MAP)
+        //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
 
         // s.CreateEntity()
         //     .AddComponent<Components::Transform>(V_ORIGIN)
@@ -68,7 +68,7 @@ void SceneManager::CreateSandboxScene()
 
         // char* t = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
         s.CreateEntity()
-            .AddComponent<Components::Transform>(V_ORIGIN, VEC3(10.f, 10.f, 10.f))
+            .AddComponent<Components::Transform>(VEC3(10.f, 10.f, 0), VEC3(100.f, 100.f, 100.f))
             .AddComponent<Components::Text>(TextManager::GetInstance()->AddText(std::string("bezdev")));
 
         // s.CreateEntity()

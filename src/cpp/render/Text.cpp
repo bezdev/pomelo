@@ -11,6 +11,7 @@ Text::Text(std::string text)
     m_Text = std::move(text);
     m_Font = FontManager::GetInstance()->CreateFont(s_FONT_FILE_MAP[Components::FontType::DEFAULT].Glyph);
     m_Texture = TextureManager::GetInstance()->CreateTexture(s_FONT_FILE_MAP[Components::FontType::DEFAULT].Atlas);
+    m_RenderBuffer = RenderBufferManager::GetInstance()->CreateText(this);
 }
 
 TextManager::TextManager()

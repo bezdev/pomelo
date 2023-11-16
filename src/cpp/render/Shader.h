@@ -21,6 +21,20 @@
 #include "render/Texture.h"
 #include "util/Util.h"
 
+#define DEFINE_SHADER_ENUM_CLASS_LIST(MACRO)                \
+    MACRO(SOLID_COLOR, SolidColorShader)                    \
+    MACRO(SOLID_COLOR_INSTANCED, SolidColorShaderInstanced) \
+    MACRO(PIXEL_COLOR, PixelColorShader)                    \
+    MACRO(TEXTURE, TextureShader)                           \
+    MACRO(FONT, FontShader)
+
+#define GENERATE_ENUM_VALUE(name, className) name,
+enum class ShaderType
+{
+    DEFINE_SHADER_ENUM_CLASS_LIST(GENERATE_ENUM_VALUE)
+    COUNT
+};
+
 enum ShaderVariableType
 {
     ATTRIBUTE = 0,
@@ -104,6 +118,7 @@ public:
     virtual void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) = 0;
     virtual void SetPerRenderObject(const RenderObject* renderObject) = 0;
     virtual void Draw(const RenderBuffer* renderBuffer) = 0;
+    virtual ShaderType GetType() = 0;
 
     GLuint GetProgram() const { return m_Program; }
     const std::vector<GLuint>& GetVariables() const { return m_Variables; }
@@ -115,20 +130,6 @@ protected:
     std::vector<GLuint> m_Shaders;
 };
 
-#define DEFINE_SHADER_ENUM_CLASS_LIST(MACRO)                \
-    MACRO(SOLID_COLOR, SolidColorShader)                    \
-    MACRO(SOLID_COLOR_INSTANCED, SolidColorShaderInstanced) \
-    MACRO(PIXEL_COLOR, PixelColorShader)                    \
-    MACRO(TEXTURE, TextureShader)                           \
-    MACRO(FONT, FontShader)
-
-#define GENERATE_ENUM_VALUE(name, className) name,
-enum class ShaderType
-{
-    DEFINE_SHADER_ENUM_CLASS_LIST(GENERATE_ENUM_VALUE)
-    COUNT
-};
-
 #define GENERATE_SUB_CLASSES(name, className)                                    \
 class className : public Shader {                                                \
 public:                                                                          \
@@ -136,6 +137,7 @@ public:                                                                         
     void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) override; \
     void SetPerRenderObject(const RenderObject* renderObject) override;          \
     void Draw(const RenderBuffer* renderBuffer) override;                        \
+    ShaderType GetType() override { return ShaderType::name; }                   \
 };
 DEFINE_SHADER_ENUM_CLASS_LIST(GENERATE_SUB_CLASSES)
 
