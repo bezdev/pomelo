@@ -80,6 +80,8 @@ void App::LogFPS()
 
         // Log
         LOGI("FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
+
+        m_Renderer->UpdateFPS(std::to_string(fps));
 #if 0
         static char buffer[100];
         sprintf(buffer, "FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);

@@ -9,8 +9,6 @@
 #include "render/RenderBuffer.h"
 #include "util/Util.h"
 
-class RenderBuffer;
-
 struct FontFiles
 {
     const char* Atlas;
@@ -21,6 +19,9 @@ class Text
 {
 public:
     Text(std::string text);
+
+    void UpdateText(std::string text);
+
     const std::string& GetText() { return m_Text; }
     Font* GetFont() { return m_Font; }
     Texture* GetTexture() { return m_Texture; }
@@ -29,6 +30,8 @@ private:
     static FontFiles s_FONT_FILE_MAP[];
 
     Text() {};
+    void CreateData(std::vector<VEC3>& vertices, std::vector<VEC2>& texCoords, std::vector<unsigned short>& indices);
+
     std::string m_Text;
     Font* m_Font;
     Texture* m_Texture;

@@ -33,6 +33,15 @@ VertexBuffer::VertexBuffer(int index, void* data, int count, int dataSize, int s
     Unbind();
 }
 
+void VertexBuffer::UpdateBufferData(void *data, int count, int dataSize)
+{
+    Bind();
+
+    glBufferSubData(GL_ARRAY_BUFFER, 0, count * dataSize, data);
+
+    Unbind();
+}
+
 void VertexBuffer::Bind()
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -49,13 +58,19 @@ VertexBuffer::~VertexBuffer()
     m_VBO = 0;
 }
 
-IndexBuffer::IndexBuffer(unsigned short* data, int size)
+IndexBuffer::IndexBuffer(unsigned short* data, int size):
+    IndexBuffer(data, size, GL_STATIC_DRAW)
 {
+}
+
+IndexBuffer::IndexBuffer(unsigned short *data, int size, int usage)
+{
+    // TODO: fix caller to pass in count instead
     m_Count = size / sizeof(unsigned short);
 
     glGenBuffers(1, &m_IBO);
     Bind();
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, usage);
     Unbind();
 }
 
@@ -63,6 +78,15 @@ IndexBuffer::~IndexBuffer()
 {
     glDeleteBuffers(1, &m_IBO);
     m_IBO = 0;
+}
+
+void IndexBuffer::Update(unsigned short *data, int size)
+{
+    Bind();
+
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
+
+    Unbind();
 }
 
 void IndexBuffer::Bind()
@@ -119,7 +143,7 @@ RenderBufferManager::~RenderBufferManager()
     Cleanup();
 }
 
-RenderBuffer *RenderBufferManager::CreateFromOBJ(const char* filename)
+RenderBuffer* RenderBufferManager::CreateFromOBJ(const char* filename)
 {
     auto f = Util::ReadFile(filename);
 
@@ -159,7 +183,7 @@ RenderBuffer* RenderBufferManager::CreateAxis()
     return rb;
 }
 
-RenderBuffer *RenderBufferManager::CreatePlane()
+RenderBuffer* RenderBufferManager::CreatePlane()
 {
     Mesh::Plane p(10.f, 10.f, 10, 10);
 
@@ -172,7 +196,7 @@ RenderBuffer *RenderBufferManager::CreatePlane()
     return rb;
 }
 
-RenderBuffer *RenderBufferManager::CreatePlaneMap()
+RenderBuffer* RenderBufferManager::CreatePlaneMap()
 {
     Mesh::Plane p(500.f, 500.f, 100, 100);
 
@@ -193,7 +217,7 @@ RenderBuffer *RenderBufferManager::CreatePlaneMap()
     return rb;
 }
 
-RenderBuffer *RenderBufferManager::CreatePlaneTexture()
+RenderBuffer* RenderBufferManager::CreatePlaneTexture()
 {
     Mesh::Plane p(10.f, 10.f, 2, 2);
 
@@ -207,61 +231,28 @@ RenderBuffer *RenderBufferManager::CreatePlaneTexture()
     return rb;
 }
 
-RenderBuffer *RenderBufferManager::CreateText(Text* text)
+RenderBuffer *RenderBufferManager::CreateText(std::vector<VEC3> &vertices, std::vector<VEC2> &texCoords, std::vector<unsigned short> &indices)
 {
-    std::vector<VEC3> vertices;
-    std::vector<VEC2> texCoords;
-    std::vector<unsigned short> indices;
-
-    float scale = 1.f / text->GetFont()->GetMaxHeight();
-    float advance = 0.f;
-    int i = 0;
-    for (auto it = text->GetText().begin(); it != text->GetText().end(); ++it)
-    {
-        Glyph g = text->GetFont()->GetGlyph(*it);
-
-        float x0 = (g.BitmapLeft + advance) * scale;
-        float y0 = g.BitmapTop * scale;
-        float x1 = (g.Width + advance) * scale;
-        float y1 = g.Height * scale;
-
-        g.u1 /= text->GetTexture()->GetWidth();
-        g.u2 /= text->GetTexture()->GetWidth();
-        g.v1 /= text->GetTexture()->GetHeight();
-        g.v2 /= text->GetTexture()->GetHeight();
-
-        g.v1 = 1.f - g.v1;
-        g.v2 = 1.f - g.v2;
-
-        vertices.push_back(VEC3(x0, y0, 0.0f));
-        vertices.push_back(VEC3(x1, y0, 0.0f));
-        vertices.push_back(VEC3(x0, y1, 0.0f));
-        vertices.push_back(VEC3(x1, y1, 0.0f));
-
-        texCoords.push_back(VEC2(g.u1, g.v1));
-        texCoords.push_back(VEC2(g.u2, g.v1));
-        texCoords.push_back(VEC2(g.u1, g.v2));
-        texCoords.push_back(VEC2(g.u2, g.v2));
-
-        indices.push_back(0 + i * 4);
-        indices.push_back(1 + i * 4);
-        indices.push_back(2 + i * 4);
-        indices.push_back(2 + i * 4);
-        indices.push_back(1 + i * 4);
-        indices.push_back(3 + i * 4);
-
-        advance += g.Advance;
-        i++;
-    }
-
     RenderBuffer* rb = CreateRenderBuffer({
-        VertexBufferData { 0, vertices.data(), (int)vertices.size() * 3, sizeof(float), 3, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
-        VertexBufferData { 1, texCoords.data(), (int)texCoords.size() * 2, sizeof(float), 2, 0, GL_FLOAT, GL_STATIC_DRAW, 0 },
+        VertexBufferData { 0, vertices.data(), (int)vertices.size() * 3, sizeof(float), 3, 0, GL_FLOAT, GL_DYNAMIC_DRAW, 0 },
+        VertexBufferData { 1, texCoords.data(), (int)texCoords.size() * 2, sizeof(float), 2, 0, GL_FLOAT, GL_DYNAMIC_DRAW, 0 },
     });
 
-    rb->IBO = new IndexBuffer(indices.data(), indices.size() * sizeof(unsigned short));
+    rb->IBO = new IndexBuffer(indices.data(), indices.size() * sizeof(unsigned short), GL_DYNAMIC_DRAW);
 
     return rb;
+}
+
+void RenderBufferManager::UpdateText(RenderBuffer *renderBuffer, std::vector<VEC3> &vertices, std::vector<VEC2> &texCoords, std::vector<unsigned short> &indices)
+{
+    const std::vector<VertexBuffer*>& vbs = renderBuffer->VAO->GetVertexBuffers();
+    vbs[0]->UpdateBufferData(reinterpret_cast<void*>(vertices.data()), (int)vertices.size() * 3, sizeof(float));
+    vbs[1]->UpdateBufferData(reinterpret_cast<void*>(texCoords.data()), (int)texCoords.size() * 2, sizeof(float));
+    renderBuffer->IBO->Update(indices.data(), indices.size() * sizeof(unsigned short));
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+   CHECK_GL_ERROR("RenderBufferManager::UpdateText");
 }
 
 RenderBuffer* RenderBufferManager::CreateSphere()

@@ -6,7 +6,8 @@ Renderer::Renderer():
     m_IsInitialized(false),
     m_ScreenWidth(0),
     m_ScreenHeight(0),
-    m_IsDrawWireFrame(false)
+    m_IsDrawWireFrame(false),
+    m_FPSText(nullptr)
 {
     InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_N, [&](InputEvent event, InputData data) {
         if (data.Action == InputAction::UP)
@@ -145,6 +146,9 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             ro.Texture = t->GetTexture();
             ro.Entities.push_back(const_cast<Entity*>(&entity));
             m_RenderQueue.push_back(ro);
+
+            // big hack
+            m_FPSText = t;
         }
     }
 
@@ -264,4 +268,10 @@ void Renderer::Render()
 #endif
         }
     }
+}
+
+void Renderer::UpdateFPS(const std::string &fps)
+{
+    if (!m_FPSText) return;
+    m_FPSText->UpdateText(fps);
 }

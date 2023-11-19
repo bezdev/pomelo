@@ -13,11 +13,8 @@
 #endif
 
 #include "engine/ECS.h"
-#include "render/Text.h"
 #include "util/Math.h"
 #include "util/Util.h"
-
-class Text;
 
 struct VertexBufferData
 {
@@ -53,25 +50,11 @@ public:
     VertexBuffer(int index, void* data, int count, int dataSize, int stride, int offset, int type, int usage, int divisor);
     ~VertexBuffer();
 
+    void UpdateBufferData(void* data, int count, int dataSize);
     void Bind();
     void Unbind();
 
     int GetCount() { return m_Count; }
-    // int GetStride() { return m_Stride; }
-    // int GetCount() { return m_Count; }
-    // int GetPositionsOffset() { return 0; }
-
-    // bool HasColors() { return mColorsOffset > 0; }
-    // int GetColorsOffset() { return mColorsOffset; }
-    // void SetColorsOffset(int offset) { mColorsOffset = offset; }
-
-    // bool HasTexCoords() { return mTexCoordsOffset > 0; }
-    // void SetTexCoordsOffset(int offset) { mTexCoordsOffset = offset; }
-    // int GetTexCoordsOffset() { return mTexCoordsOffset; }
-
-    // GLenum GetPrimitive() { return m_Primitive; }
-    // void SetPrimitive(GLenum primitive) { m_Primitive = primitive; }
-
 private:
     GLuint m_VBO;
     int m_Stride;
@@ -83,8 +66,10 @@ class IndexBuffer
 {
 public:
     IndexBuffer(unsigned short* data, int size);
+    IndexBuffer(unsigned short* data, int size, int usage);
     ~IndexBuffer();
 
+    void Update(unsigned short* data, int size);
     void Bind();
     void Unbind();
     int GetCount() { return m_Count; }
@@ -156,7 +141,8 @@ public:
     static RenderBuffer* CreateBlenderMonkey() { return CreateFromOBJ("assets/obj/monkey.obj"); }
     static RenderBuffer* CreatePlaneMap();
     static RenderBuffer* CreatePlaneTexture();
-    static RenderBuffer* CreateText(Text* text);
+    static RenderBuffer* CreateText(std::vector<VEC3>& vertices, std::vector<VEC2>& texCoords, std::vector<unsigned short>& indices);
+    static void UpdateText(RenderBuffer* renderBuffer,  std::vector<VEC3>& vertices,  std::vector<VEC2>& texCoords, std::vector<unsigned short>& indices);
 
     static RenderBuffer* CreateFromOBJ(const char* filename);
 
