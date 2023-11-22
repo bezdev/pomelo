@@ -1,7 +1,6 @@
-#include "scene.h"
-
-#include "PhysicsEngine.h"
-#include "EntityFactory.h"
+#include "engine/EntityFactory.h"
+#include "engine/PhysicsEngine.h"
+#include "engine/Scene.h"
 
 Scene::Scene()
 {

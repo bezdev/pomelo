@@ -6,7 +6,7 @@
 #include <memory>
 #include <iostream>
 
-#include "components.h"
+#include "engine/Components.h"
 
 using EntityID = std::size_t;
 using ComponentTypeID = std::size_t;

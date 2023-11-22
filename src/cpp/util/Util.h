@@ -10,7 +10,7 @@
 
 #include <assert.h>
 
-#include "logger.h"
+#include "util/Logger.h"
 
 #ifdef BUILD_TEST
 #include "Test.h"

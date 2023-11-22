@@ -1,6 +1,5 @@
-#include "camera.h"
-
-#include "InputManager.h"
+#include "engine/Camera.h"
+#include "engine/InputManager.h"
 
 Camera* Camera::s_Instance = nullptr;
 
