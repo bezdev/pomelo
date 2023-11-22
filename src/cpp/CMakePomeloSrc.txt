@@ -17,6 +17,7 @@ set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/engine/InputManager.cpp
     ${SOURCES_BASE_PATH}/engine/PhysicsEngine.cpp
     ${SOURCES_BASE_PATH}/render/Renderer.cpp
+    ${SOURCES_BASE_PATH}/render/GUI.cpp
     ${SOURCES_BASE_PATH}/render/Shader.cpp
     ${SOURCES_BASE_PATH}/render/RenderBuffer.cpp
     ${SOURCES_BASE_PATH}/render/Texture.cpp
