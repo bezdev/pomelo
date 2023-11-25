@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <memory>
 
 #ifdef BUILD_ANDROID
 #include <EGL/egl.h>
@@ -18,6 +19,7 @@
 #include "engine/Font.h"
 #include "engine/Mesh.h"
 #include "engine/Scene.h"
+#include "render/GUI.h"
 #include "render/RenderBuffer.h"
 #include "render/RenderObject.h"
 #include "render/Shader.h"
@@ -72,6 +74,7 @@ private:
     int m_ScreenHeight;
 
     ShaderManager m_ShaderManager;
+    std::shared_ptr<GUI::GUI> m_GUI;
 
     std::vector<RenderObject> m_RenderQueue;
 

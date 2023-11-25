@@ -130,7 +130,7 @@ void PixelColorShader::SetPerRenderObject(const RenderObject* renderObject)
 {
     auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
-    glLineWidth(3);
+    // glLineWidth(3);
 }
 
 void PixelColorShader::Draw(const RenderBuffer* renderBuffer)

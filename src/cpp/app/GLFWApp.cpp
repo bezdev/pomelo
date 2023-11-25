@@ -6,8 +6,8 @@ GLFWApp* GLFWApp::s_Instance = nullptr;
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 #else
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 450
+#define SCREEN_WIDTH 1600 
+#define SCREEN_HEIGHT 900
 #endif
 
 void glfwOnError(int error, const char* description)

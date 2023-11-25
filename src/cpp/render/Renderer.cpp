@@ -7,7 +7,8 @@ Renderer::Renderer():
     m_ScreenWidth(0),
     m_ScreenHeight(0),
     m_IsDrawWireFrame(false),
-    m_FPSText(nullptr)
+    m_FPSText(nullptr),
+    m_GUI(std::make_shared<GUI::GUI>())
 {
     InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_N, [&](InputEvent event, InputData data) {
         if (data.Action == InputAction::UP)
@@ -15,6 +16,8 @@ Renderer::Renderer():
             m_IsDrawWireFrame = !m_IsDrawWireFrame;
         }
     });
+
+    // m_GUI = std::make_shared<GUI>();
 }
 
 Renderer::~Renderer()
@@ -268,6 +271,8 @@ void Renderer::Render()
 #endif
         }
     }
+
+    CHECK_GL_ERROR("Renderer::Render");
 }
 
 void Renderer::UpdateFPS(const std::string &fps)
