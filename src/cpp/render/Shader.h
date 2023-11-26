@@ -110,19 +110,21 @@ public:
         return program;
     }
 
-    ~Shader();
-
-    void LoadShader(const std::vector<GLuint>& shaders, const std::vector<ShaderVariable>& variables);
-    void Use() const { glUseProgram(m_Program); }
-
     virtual void SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix) = 0;
     virtual void SetPerRenderObject(const RenderObject* renderObject) = 0;
     virtual void Draw(const RenderBuffer* renderBuffer) = 0;
     virtual ShaderType GetType() = 0;
 
+    void LoadShader(const std::vector<GLuint>& shaders, const std::vector<ShaderVariable>& variables);
+    void Use() const { glUseProgram(m_Program); }
+    void SetUniformMatrix4(GLint location, const GLfloat *value);
+    void SetUniform1i(GLint location, GLint v0);
+    void BindTexture(GLuint textureID);
+
     GLuint GetProgram() const { return m_Program; }
     const std::vector<GLuint>& GetVariables() const { return m_Variables; }
 
+    ~Shader();
 protected:
     Shader();
     GLuint m_Program;

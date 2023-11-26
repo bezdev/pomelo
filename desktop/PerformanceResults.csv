@@ -169,3 +169,11 @@ time,OS,resolution,name,average,min,max
 2023-11-18 23-10-58,windows,1920x1080,ManyCubePerformanceTest,45.2624,33.4391,80.6012
 2023-11-18 23-11-03,windows,1920x1080,ManyCubeInstancedPerformanceTest,1802.7,1271.82,1936.73
 2023-11-18 23-11-08,windows,1920x1080,ManyCubeAxisPerformanceTest,81.599,16.3735,211.849
+2023-11-24 22-03-28,macOS,1600x900,SingleCubePerformanceTest,1639.72,1620.25,1647.48
+2023-11-24 22-03-33,macOS,1600x900,ManyCubePerformanceTest,392.595,16.5444,1519.79
+2023-11-24 22-03-38,macOS,1600x900,ManyCubeInstancedPerformanceTest,374.444,53.9624,455.025
+2023-11-24 22-03-43,macOS,1600x900,ManyCubeAxisPerformanceTest,109.472,8.7245,310.397
+2023-11-24 22-04-03,macOS,1600x900,SingleCubePerformanceTest,1617.29,1575.99,1632.38
+2023-11-24 22-04-08,macOS,1600x900,ManyCubePerformanceTest,386.223,16.6969,1493.84
+2023-11-24 22-04-13,macOS,1600x900,ManyCubeInstancedPerformanceTest,373.682,63.9802,451.577
+2023-11-24 22-04-18,macOS,1600x900,ManyCubeAxisPerformanceTest,106.777,8.7639,302.316

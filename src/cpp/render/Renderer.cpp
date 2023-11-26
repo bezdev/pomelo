@@ -1,4 +1,5 @@
 #include "render/Renderer.h"
+#include "Renderer.h"
 
 Renderer* Renderer::s_Instance = nullptr;
 
@@ -7,6 +8,7 @@ Renderer::Renderer():
     m_ScreenWidth(0),
     m_ScreenHeight(0),
     m_IsDrawWireFrame(false),
+    m_FPSTextElement(nullptr),
     m_FPSText(nullptr),
     m_GUI(std::make_shared<GUI::GUI>())
 {
@@ -16,8 +18,6 @@ Renderer::Renderer():
             m_IsDrawWireFrame = !m_IsDrawWireFrame;
         }
     });
-
-    // m_GUI = std::make_shared<GUI>();
 }
 
 Renderer::~Renderer()
@@ -58,6 +58,19 @@ int Renderer::Initialize()
                 LOGE("no instancing support");
             }
         }
+
+        // TODO: automatically create render object from this
+        m_FPSTextElement = m_GUI->AddElement(new GUI::TextElement(
+            std::string("    .      "), // TODO: change to different string
+            VEC2(10, 10),
+            GUI::TextProperties {
+                GUI::TextProperties::FloatType::RIGHT,
+                10,
+                V_COLOR_RED
+            }));
+        auto textID = TextManager::GetInstance()->AddText(std::string("    .      "));
+        LOGD("textID: %d", textID);
+        m_FPSText = TextManager::GetInstance()->GetText(textID);
 
         m_IsInitialized = true;
     }
@@ -149,9 +162,6 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             ro.Texture = t->GetTexture();
             ro.Entities.push_back(const_cast<Entity*>(&entity));
             m_RenderQueue.push_back(ro);
-
-            // big hack
-            m_FPSText = t;
         }
     }
 
@@ -212,8 +222,7 @@ void Renderer::Render()
     glDepthFunc(GL_LESS);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_CULL_FACE);
-    // glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_BLEND);
     // glFrontFace(GL_CW);
     // glCullFace(GL_BACK);
 
@@ -230,8 +239,8 @@ void Renderer::Render()
         {
             shader->Use();
 
-            glm::mat4 viewMatrix = shader->GetType() == ShaderType::FONT ? glm::mat4(1.f) : Camera::GetInstance()->GetViewMatrix();
-            glm::mat4 projectionMatrix = shader->GetType() == ShaderType::FONT ? glm::ortho(0.0f, static_cast<float>(m_ScreenWidth), 0.0f, static_cast<float>(m_ScreenHeight)) : Camera::GetInstance()->GetProjectionMatrix();
+            glm::mat4 viewMatrix = Camera::GetInstance()->GetViewMatrix();
+            glm::mat4 projectionMatrix = Camera::GetInstance()->GetProjectionMatrix();
             shader->SetVPMatrix(
                 glm::value_ptr(viewMatrix),
                 glm::value_ptr(projectionMatrix));
@@ -272,7 +281,37 @@ void Renderer::Render()
         }
     }
 
+    RenderGUI();
+
     CHECK_GL_ERROR("Renderer::Render");
+}
+
+void Renderer::RenderGUI()
+{
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // TODO: add support for more GUI elements
+    Shader* shader = m_ShaderManager.GetShader(ShaderType::FONT);
+    shader->Use();
+    glm::mat4 viewMatrix = glm::mat4(1.f);
+    glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(m_ScreenWidth), 0.0f, static_cast<float>(m_ScreenHeight));
+    shader->SetVPMatrix(
+        glm::value_ptr(viewMatrix),
+        glm::value_ptr(projectionMatrix));
+    m_FPSText->GetRenderBuffer()->VAO->Bind();
+    m_FPSText->GetRenderBuffer()->IBO->Bind();
+    // TODO: add these to some render object
+    auto transform = Components::Transform(VEC3(10.f, 10.f, 0), VEC3(100.f, 100.f, 100.f));
+    // auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
+    shader->SetUniformMatrix4(shader->GetVariables()[2], glm::value_ptr(transform.GetMM()));
+    shader->SetUniform1i(shader->GetVariables()[5], 0);
+    shader->BindTexture(m_FPSText->GetTexture()->GetTextureID());
+    shader->Draw(m_FPSText->GetRenderBuffer());
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void Renderer::UpdateFPS(const std::string &fps)

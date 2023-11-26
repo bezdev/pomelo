@@ -68,8 +68,7 @@ void SceneManager::CreateSandboxScene()
         s.CreateEntity()
             .AddComponent<Components::Transform>(VEC3(10.f, 10.f, 0), VEC3(100.f, 100.f, 100.f))
             // .AddComponent<Components::Text>(TextManager::GetInstance()->AddText(std::string("bezdev")));
-            // .AddComponent<Components::Text>(TextManager::GetInstance()->AddText(std::string("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz")));
-            .AddComponent<Components::Text>(TextManager::GetInstance()->AddText(std::string("    .      ")));
+            .AddComponent<Components::Text>(TextManager::GetInstance()->AddText(std::string("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz")));
 
         // s.CreateEntity()
         //     .AddComponent<Components::Transform>(p)

@@ -45,7 +45,6 @@ private:
     ElementID m_ID;
 };
 
-
 class GUIIterator : public std::iterator<std::input_iterator_tag, Element>
 {
 public:
@@ -102,6 +101,7 @@ class GUI
 {
 public:
     GUI();
+    // TODO: fix memory leak
     ~GUI() { LOGD("GUI::~GUI"); }
 
     GUIIterator begin() { return GUIIterator(m_Root); }

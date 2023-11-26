@@ -63,6 +63,7 @@ public:
     void LoadEntities(const std::vector<Entity>& entities);
     void UpdateWindowSize(int width, int height);
     void Render();
+    void RenderGUI();
     void UpdateFPS(const std::string& fps);
 private:
     static Renderer* s_Instance;
@@ -74,10 +75,9 @@ private:
     int m_ScreenHeight;
 
     ShaderManager m_ShaderManager;
-    std::shared_ptr<GUI::GUI> m_GUI;
-
     std::vector<RenderObject> m_RenderQueue;
-
+    std::shared_ptr<GUI::GUI> m_GUI;
+    GUI::Element* m_FPSTextElement;
     Text* m_FPSText;
 
     void Cleanup();

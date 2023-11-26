@@ -1,4 +1,5 @@
 #include "render/Shader.h"
+#include "Shader.h"
 
 Shader::Shader():
     m_Variables(10),
@@ -13,6 +14,22 @@ void Shader::LoadShader(const std::vector<GLuint>& shaders, const std::vector<Sh
         if (variables[i].Type == ShaderVariableType::ATTRIBUTE) m_Variables[i] = glGetAttribLocation(m_Program, variables[i].Name);
         else if (variables[i].Type == ShaderVariableType::UNIFORM) m_Variables[i] = glGetUniformLocation(m_Program, variables[i].Name);
     }
+}
+
+void Shader::SetUniformMatrix4(GLint location, const GLfloat *value)
+{
+    glUniformMatrix4fv(location, 1, GL_FALSE, value);
+}
+
+void Shader::SetUniform1i(GLint location, GLint v0)
+{
+    glUniform1i(location, v0);
+}
+
+void Shader::BindTexture(GLuint textureID)
+{
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureID);
 }
 
 Shader::~Shader()
