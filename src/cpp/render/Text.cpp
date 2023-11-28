@@ -6,11 +6,13 @@ FontFiles Text::s_FONT_FILE_MAP[] = {
     { "assets/fonts/default.png", "assets/fonts/default.csv" },
 };
 
-Text::Text(std::string text)
+Text::Text(TextID id, std::string text):
+    m_TextID(id),
+    m_Width(0.f)
 {
-    m_Text = std::move(text);
     m_Font = FontManager::GetInstance()->CreateFont(s_FONT_FILE_MAP[Components::FontType::DEFAULT].Glyph);
     m_Texture = TextureManager::GetInstance()->CreateTexture(s_FONT_FILE_MAP[Components::FontType::DEFAULT].Atlas);
+    SetText(std::move(text));
 
     std::vector<VEC3> vertices;
     std::vector<VEC2> texCoords;
@@ -21,7 +23,7 @@ Text::Text(std::string text)
 
 void Text::UpdateText(std::string text)
 {
-    m_Text = text;
+    SetText(std::move(text));
     std::vector<VEC3> vertices;
     std::vector<VEC2> texCoords;
     std::vector<unsigned short> indices;
@@ -73,12 +75,28 @@ void Text::CreateData(std::vector<VEC3>& vertices, std::vector<VEC2>& texCoords,
     }
 }
 
+void Text::SetText(std::string text)
+{
+    m_Text = text;
+
+    float width = 0.f;
+    for (auto it = m_Text.begin(); it != m_Text.end(); ++it)
+    {
+        Glyph g = m_Font->GetGlyph(*it);
+        width += g.Advance;
+    }
+
+    float scale = 1.f / m_Font->GetMaxHeight();
+    m_Width = width * scale;
+}
+
 TextManager::TextManager()
 {
 }
 
-int TextManager::AddText(std::string text)
+Text* TextManager::CreateText(std::string text)
 {
-    m_Texts.push_back(new Text(text));
-    return m_Texts.size() - 1;
+    Text* t = new Text(m_Texts.size(), text);
+    m_Texts.push_back(t);
+    return t;
 }

@@ -9,6 +9,7 @@ Scene::Scene()
 void Scene::Load()
 {
     Renderer::GetInstance()->LoadEntities(ECS::GetInstance()->GetEntities());
+    Renderer::GetInstance()->LoadGUI();
 
     for (auto e : ECS::GetInstance()->GetEntitiesWithComponents<Components::Motion>())
     {
@@ -68,7 +69,7 @@ void SceneManager::CreateSandboxScene()
         s.CreateEntity()
             .AddComponent<Components::Transform>(VEC3(10.f, 10.f, 0), VEC3(100.f, 100.f, 100.f))
             // .AddComponent<Components::Text>(TextManager::GetInstance()->AddText(std::string("bezdev")));
-            .AddComponent<Components::Text>(TextManager::GetInstance()->AddText(std::string("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz")));
+            .AddComponent<Components::Text>(TextManager::GetInstance()->CreateText(std::string("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"))->GetTextID());
 
         // s.CreateEntity()
         //     .AddComponent<Components::Transform>(p)

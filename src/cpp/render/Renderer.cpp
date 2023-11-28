@@ -8,9 +8,8 @@ Renderer::Renderer():
     m_ScreenWidth(0),
     m_ScreenHeight(0),
     m_IsDrawWireFrame(false),
-    m_FPSTextElement(nullptr),
-    m_FPSText(nullptr),
-    m_GUI(std::make_shared<GUI::GUI>())
+    m_GUIRenderObjects(10),
+    m_FPSTextElement(nullptr)
 {
     InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_N, [&](InputEvent event, InputData data) {
         if (data.Action == InputAction::UP)
@@ -43,6 +42,7 @@ int Renderer::Initialize()
             std::stringstream ss(extensions);
             std::string extension;
             LOGI("glGetString(GL_EXTENSIONS): %s", extensions.c_str());
+
             while (ss >> extension)
             {
                 if (extension == "GL_ARB_draw_instanced")
@@ -58,19 +58,6 @@ int Renderer::Initialize()
                 LOGE("no instancing support");
             }
         }
-
-        // TODO: automatically create render object from this
-        m_FPSTextElement = m_GUI->AddElement(new GUI::TextElement(
-            std::string("    .      "), // TODO: change to different string
-            VEC2(10, 10),
-            GUI::TextProperties {
-                GUI::TextProperties::FloatType::RIGHT,
-                10,
-                V_COLOR_RED
-            }));
-        auto textID = TextManager::GetInstance()->AddText(std::string("    .      "));
-        LOGD("textID: %d", textID);
-        m_FPSText = TextManager::GetInstance()->GetText(textID);
 
         m_IsInitialized = true;
     }
@@ -93,7 +80,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
     RenderBufferManager* renderBufferManager = RenderBufferManager::GetInstance();
     renderBufferManager->Cleanup();
     m_ShaderManager.Cleanup();
-    m_RenderQueue.clear();
+    m_RenderObjects.clear();
 
     std::map<Components::MeshType, std::vector<const Entity*>> instancedMap;
 
@@ -132,7 +119,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 ro.RenderBuffer = renderBufferManager->GetRenderBuffer(mesh->Type);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR);
                 ro.Entities.push_back(const_cast<Entity*>(&entity));
-                m_RenderQueue.push_back(ro);
+                m_RenderObjects.push_back(ro);
             }
             else if (material->Type == Components::MaterialType::PIXEL_COLOR && mesh->Type == Components::MeshType::AXIS)
             {
@@ -140,7 +127,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 ro.RenderBuffer = renderBufferManager->GetRenderBuffer(Components::MeshType::AXIS);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::PIXEL_COLOR);
                 ro.Entities.push_back(const_cast<Entity*>(&entity));
-                m_RenderQueue.push_back(ro);
+                m_RenderObjects.push_back(ro);
             }
             else if (material->Type == Components::MaterialType::TEXTURE) // TODO: add meshtype check
             {
@@ -149,7 +136,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::TEXTURE);
                 ro.Texture = TextureManager::GetInstance()->CreateTexture(material->Name);
                 ro.Entities.push_back(const_cast<Entity*>(&entity));
-                m_RenderQueue.push_back(ro);
+                m_RenderObjects.push_back(ro);
             }
         }
 
@@ -161,7 +148,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             ro.Shader = m_ShaderManager.GetShader(ShaderType::FONT);
             ro.Texture = t->GetTexture();
             ro.Entities.push_back(const_cast<Entity*>(&entity));
-            m_RenderQueue.push_back(ro);
+            m_RenderObjects.push_back(ro);
         }
     }
 
@@ -179,7 +166,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         ro.RenderBuffer = renderBufferManager->CreateInstancedBox(positions);
         ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR_INSTANCED);
         ro.Entities = instancedMap[Components::MeshType::INSTANCED_BOX];
-        m_RenderQueue.push_back(ro);
+        m_RenderObjects.push_back(ro);
     }
 
     if (instancedMap.find(Components::MeshType::LINE) != instancedMap.end())
@@ -188,11 +175,11 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         ro.RenderBuffer = renderBufferManager->CreateInstancedLines(instancedMap[Components::MeshType::LINE]);
         ro.Shader = m_ShaderManager.GetShader(ShaderType::PIXEL_COLOR);
         ro.Entities = instancedMap[Components::MeshType::LINE];
-        m_RenderQueue.push_back(ro);
+        m_RenderObjects.push_back(ro);
     }
 
     // TODO: also sort by material type and maybe texture id
-    std::sort(m_RenderQueue.begin(), m_RenderQueue.end(), [](RenderObject a, RenderObject b)
+    std::sort(m_RenderObjects.begin(), m_RenderObjects.end(), [](RenderObject a, RenderObject b)
     {
         if (a.Shader == b.Shader)
         {
@@ -204,6 +191,37 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         }
     });
 }
+
+void Renderer::LoadGUI()
+{
+    m_FPSTextElement = static_cast<GUI::TextElement*>(m_GUI.AddElement(m_GUI.CreateTextElement(
+        VEC2(m_ScreenWidth - 10, m_ScreenHeight - 10),
+        std::string("                    "),
+        GUI::TextProperties {
+            GUI::AnchorType::TOP_RIGHT,
+            24,
+            V_COLOR_RED
+        }
+    )));
+    AddGUIElement(m_FPSTextElement);
+}
+
+void Renderer::AddGUIElement(GUI::Element* element)
+{
+    GUI::TextElement* textElement = static_cast<GUI::TextElement*>(element);
+    if (textElement != nullptr)
+    {
+        Text* t = TextManager::GetInstance()->CreateText(textElement->GetText());
+        textElement->SetTextObject(t);
+        m_GUIRenderObjects[textElement->GetID()] = GUIRenderObject {
+            t->GetRenderBuffer(),
+            m_ShaderManager.GetShader(ShaderType::FONT),
+            t->GetTexture(),
+            element
+        };
+    }
+}
+
 
 void Renderer::UpdateWindowSize(int width, int height)
 {
@@ -230,7 +248,7 @@ void Renderer::Render()
     Components::Material* currentMaterial = nullptr;
     RenderBuffer* currentRenderBuffer = nullptr;
 
-    for (RenderObject& ro : m_RenderQueue)
+    for (RenderObject& ro : m_RenderObjects)
     {
         Shader* shader = ro.Shader;
         RenderBuffer* renderBuffer = ro.RenderBuffer;
@@ -292,30 +310,57 @@ void Renderer::RenderGUI()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // TODO: add support for more GUI elements
-    Shader* shader = m_ShaderManager.GetShader(ShaderType::FONT);
-    shader->Use();
-    glm::mat4 viewMatrix = glm::mat4(1.f);
-    glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(m_ScreenWidth), 0.0f, static_cast<float>(m_ScreenHeight));
-    shader->SetVPMatrix(
-        glm::value_ptr(viewMatrix),
-        glm::value_ptr(projectionMatrix));
-    m_FPSText->GetRenderBuffer()->VAO->Bind();
-    m_FPSText->GetRenderBuffer()->IBO->Bind();
-    // TODO: add these to some render object
-    auto transform = Components::Transform(VEC3(10.f, 10.f, 0), VEC3(100.f, 100.f, 100.f));
-    // auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
-    shader->SetUniformMatrix4(shader->GetVariables()[2], glm::value_ptr(transform.GetMM()));
-    shader->SetUniform1i(shader->GetVariables()[5], 0);
-    shader->BindTexture(m_FPSText->GetTexture()->GetTextureID());
-    shader->Draw(m_FPSText->GetRenderBuffer());
+    Shader* currentShader = nullptr;
+    RenderBuffer* currentRenderBuffer = nullptr;
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    for (auto element : m_GUI)
+    {
+        GUIRenderObject& ro = m_GUIRenderObjects[element->GetID()];
+
+        if (ro.Element == nullptr) continue;
+
+        Shader* shader = ro.Shader;
+        RenderBuffer* renderBuffer = ro.RenderBuffer;
+        Texture* texture = ro.Texture;
+
+        if (shader != currentShader)
+        {
+            shader->Use();
+
+            glm::mat4 viewMatrix = glm::mat4(1.f);
+            glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(m_ScreenWidth), 0.0f, static_cast<float>(m_ScreenHeight));
+            shader->SetVPMatrix(
+                glm::value_ptr(viewMatrix),
+                glm::value_ptr(projectionMatrix));
+
+            currentShader = shader;
+        }
+
+        if (renderBuffer != currentRenderBuffer)
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+            ro.RenderBuffer->VAO->Bind();
+            if (ro.RenderBuffer->IBO != nullptr)
+            {
+                ro.RenderBuffer->IBO->Bind();
+            }
+
+            currentRenderBuffer = renderBuffer;
+        }
+
+        auto element = static_cast<GUI::TextElement*>(ro.Element);
+        shader->SetUniformMatrix4fv(shader->GetVariables()[2], glm::value_ptr(element->GetTransform()));
+        shader->SetUniform1i(shader->GetVariables()[5], 0);
+        shader->BindTexture(texture->GetTextureID());
+        shader->Draw(currentRenderBuffer);
+    }
 }
 
 void Renderer::UpdateFPS(const std::string &fps)
 {
-    if (!m_FPSText) return;
-    m_FPSText->UpdateText(fps);
+    if (m_FPSTextElement == nullptr) return;
+    Text* t = m_FPSTextElement->GetTextObject();
+    t->UpdateText(fps);
 }

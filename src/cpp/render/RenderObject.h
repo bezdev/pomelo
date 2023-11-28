@@ -3,10 +3,14 @@
 #include <vector>
 
 struct RenderBuffer;
-struct Shader;
-struct Texture;
-struct Entity;
-struct Element;
+class Shader;
+class Texture;
+class Entity;
+
+namespace GUI
+{
+    class Element;
+}
 
 struct RenderObject
 {
@@ -21,5 +25,5 @@ struct GUIRenderObject
     ::RenderBuffer* RenderBuffer;
     ::Shader* Shader;
     ::Texture* Texture;
-    ::Element* Element;
+    GUI::Element* Element;
 };

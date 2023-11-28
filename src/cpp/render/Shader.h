@@ -117,7 +117,7 @@ public:
 
     void LoadShader(const std::vector<GLuint>& shaders, const std::vector<ShaderVariable>& variables);
     void Use() const { glUseProgram(m_Program); }
-    void SetUniformMatrix4(GLint location, const GLfloat *value);
+    void SetUniformMatrix4fv(GLint location, const GLfloat *value);
     void SetUniform1i(GLint location, GLint v0);
     void BindTexture(GLuint textureID);
 

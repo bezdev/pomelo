@@ -50,4 +50,5 @@ ITest* name = Test##_##name::GetInstance();                                     
 void Test##_##name::Run()
 
 #define TEST(name) TEST_BASE(name, false)
-#define DISABLED_TEST(name) TEST_BASE(name, true)
+#define TEST_DISABLED(name) TEST_BASE(name, false)
+#define TEST_THROW(name) TEST(TestThrow) { throw; }

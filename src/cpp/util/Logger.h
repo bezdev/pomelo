@@ -55,6 +55,25 @@ public:
 #endif
     };
 
+    template<typename... Args>
+    void LogToFile(Level level, const char* string, Args&&... args)
+    {
+        if (level < m_Level) return;
+
+        char buffer[1024];
+        snprintf(buffer, sizeof(buffer), string, std::forward<Args>(args)...);
+
+        std::basic_stringstream<char> ss;
+#ifdef BUILD_TEST
+        ss << "  ";
+#endif
+        ss << m_Name << GetTag(level) << buffer << std::endl;
+
+        std::string logString = ss.str();
+
+        m_Log.push_back(logString);
+    };
+
     std::vector<std::string> GetLog() { return m_Log; };
     void Clear() { m_Log.clear(); };
 
@@ -66,14 +85,10 @@ private:
 };
 
 #ifdef BUILD_DESKTOP
-// #ifndef BUILD_TEST
-// #define LOG(...) do { char buffer[1000]; snprintf(buffer, sizeof(buffer), __VA_ARGS__); std::cout << buffer << std::endl; } while (0);
-// #else
-// #define LOG(...) do { char buffer[1000]; snprintf(buffer, sizeof(buffer), __VA_ARGS__); std::cout << buffer << std::endl; /* TestSuite::GetInstance().AddLog(std::string(buffer)); */ } while (0);
 #define LOG(...) do { Logger::GetInstance()->Log(__VA_ARGS__); } while(0);
-// #endif
 #define LOGT(...) LOG(Logger::Level::Test, __VA_ARGS__)
 #define LOGD(...) LOG(Logger::Level::Debug, __VA_ARGS__)
 #define LOGI(...) LOG(Logger::Level::Info, __VA_ARGS__)
 #define LOGE(...) LOG(Logger::Level::Error, __VA_ARGS__)
+#define LOG_TO_FILE(...) do { Logger::GetInstance()->LogToFile(Logger::Level::Test, __VA_ARGS__); } while(0);
 #endif

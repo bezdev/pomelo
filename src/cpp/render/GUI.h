@@ -1,36 +1,50 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include <queue>
 
-#include "util/Math.h"
+#include "render/Text.h"
 #include "util/Logger.h"
+#include "util/Math.h"
 
 namespace GUI
 {
 
 using ElementID = std::size_t;
 
+enum class AnchorType
+{
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT
+};
+
+struct ContainerProperties
+{
+    float Width;
+    float Height;
+};
+
 struct TextProperties
 {
-    enum class FloatType
-    {
-        LEFT,
-        RIGHT
-    };
-
-    FloatType Type;
+    AnchorType Anchor;
     short Size;
     VEC4 Color;
 };
 
+class GUI;
+
 class Element
 {
 public:
-    Element(VEC2 position);
+    Element(ElementID id, VEC2 position);
     ~Element();
 
     Element* AddChild(Element* element);
+
+    Element* GetParent() { return m_Parent; };
     const std::vector<Element*>& GetChildren() { return m_Children; }
     ElementID GetID() { return m_ID; }
 protected:
@@ -38,8 +52,6 @@ protected:
     std::vector<Element*> m_Children;
     VEC2 m_Position;
 private:
-    static ElementID s_MaxID;
-
     Element() {};
 
     ElementID m_ID;
@@ -97,28 +109,52 @@ private:
     std::queue<Element*> m_Queue;
 };
 
-class GUI
+class ContainerElement: public Element
 {
 public:
-    GUI();
-    // TODO: fix memory leak
-    ~GUI() { LOGD("GUI::~GUI"); }
-
-    GUIIterator begin() { return GUIIterator(m_Root); }
-    GUIIterator end() { return GUIIterator(); }
-    Element* AddElement(Element* element);
+    ContainerElement(ElementID id, VEC2 position, ContainerProperties properties);
 private:
-    Element* m_Root;
+    ContainerProperties m_Properties;
 };
 
 class TextElement : public Element
 {
 public:
-    TextElement(const std::string& text, VEC2 position, TextProperties properties);
+    TextElement(ElementID id, VEC2 position, const std::string& text, TextProperties properties);
     ~TextElement();
+
+    void SetTextObject(Text* textObject);
+
+    const std::string& GetText() const { return m_Text; }
+    Text* GetTextObject() { return m_TextObject; }
+    short GetSize() { return m_Properties.Size; }
+    float GetWidth() { return m_TextObject->GetWidth() * m_Scale; }
+    glm::mat4 GetTransform();
 private:
     std::string m_Text;
     TextProperties m_Properties;
+    Text* m_TextObject;
+    float m_Scale;
+};
+
+class GUI
+{
+public:
+    GUI();
+    GUI(float width, float height);
+    ~GUI();
+
+    GUIIterator begin() { return GUIIterator(m_Root); }
+    GUIIterator end() { return GUIIterator(); }
+    Element* AddElement(Element* element);
+
+    ContainerElement* CreateContainerElement(VEC2 position, ContainerProperties properties) { return new ContainerElement(m_MaxElementID++, position, properties); }
+    TextElement* CreateTextElement(VEC2 position, const std::string& text, TextProperties properties) { return new TextElement(m_MaxElementID++, position, text, properties); }
+
+    Element* GetRoot() { return m_Root; }
+private:
+    ElementID m_MaxElementID;
+    Element* m_Root;
 };
 
 }

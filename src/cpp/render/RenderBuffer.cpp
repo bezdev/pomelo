@@ -37,7 +37,7 @@ void VertexBuffer::UpdateBufferData(void *data, int count, int dataSize)
 {
     Bind();
 
-    // glBufferData(GL_ARRAY_BUFFER, count * dataSize, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, count * dataSize, NULL, GL_DYNAMIC_DRAW);
     glBufferSubData(GL_ARRAY_BUFFER, 0, count * dataSize, data);
 
     Unbind();
@@ -85,7 +85,7 @@ void IndexBuffer::Update(unsigned short *data, int size)
 {
     Bind();
 
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, NULL, GL_DYNAMIC_DRAW);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
 
     Unbind();

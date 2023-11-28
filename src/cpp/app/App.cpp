@@ -78,10 +78,14 @@ void App::LogFPS()
     {
         float fps = frameCount * 1000.f / timeElapsed;
 
-        // Log
-        LOGI("FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);
+        std::stringstream stream;
+        stream << std::fixed << std::setprecision(1) << fps;
 
-        m_Renderer->UpdateFPS(std::to_string(fps));
+        LOG_TO_FILE("FPS: %s - Total Time (ms): %0.f Frames: %d", stream.str().c_str(), m_GlobalTimer->GetTotalTime(), frameCount);
+        // LOGD("FPS: %s - Total Time (ms): %0.f Frames: %d", stream.str().c_str(), m_GlobalTimer->GetTotalTime(), frameCount);
+
+        m_Renderer->UpdateFPS(stream.str());
+
 #if 0
         static char buffer[100];
         sprintf(buffer, "FPS: %.4f - Total Time (ms): %0.f Frames: %d", fps, m_GlobalTimer->GetTotalTime(), frameCount);

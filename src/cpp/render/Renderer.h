@@ -61,6 +61,9 @@ public:
 
     bool IsInitialized() { return m_IsInitialized; };
     void LoadEntities(const std::vector<Entity>& entities);
+    void LoadGUI();
+    void AddGUIElement(GUI::Element* element);
+
     void UpdateWindowSize(int width, int height);
     void Render();
     void RenderGUI();
@@ -75,10 +78,10 @@ private:
     int m_ScreenHeight;
 
     ShaderManager m_ShaderManager;
-    std::vector<RenderObject> m_RenderQueue;
-    std::shared_ptr<GUI::GUI> m_GUI;
-    GUI::Element* m_FPSTextElement;
-    Text* m_FPSText;
+    GUI::GUI m_GUI;
+    std::vector<RenderObject> m_RenderObjects;
+    std::vector<GUIRenderObject> m_GUIRenderObjects;
+    GUI::TextElement* m_FPSTextElement;
 
     void Cleanup();
 };

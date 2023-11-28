@@ -16,7 +16,7 @@ void Shader::LoadShader(const std::vector<GLuint>& shaders, const std::vector<Sh
     }
 }
 
-void Shader::SetUniformMatrix4(GLint location, const GLfloat *value)
+void Shader::SetUniformMatrix4fv(GLint location, const GLfloat *value)
 {
     glUniformMatrix4fv(location, 1, GL_FALSE, value);
 }
