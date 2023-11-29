@@ -81,8 +81,10 @@ void App::LogFPS()
         std::stringstream stream;
         stream << std::fixed << std::setprecision(1) << fps;
 
+#ifdef BUILD_DESKTOP
         LOG_TO_FILE("FPS: %s - Total Time (ms): %0.f Frames: %d", stream.str().c_str(), m_GlobalTimer->GetTotalTime(), frameCount);
         // LOGD("FPS: %s - Total Time (ms): %0.f Frames: %d", stream.str().c_str(), m_GlobalTimer->GetTotalTime(), frameCount);
+#endif
 
         m_Renderer->UpdateFPS(stream.str());
 

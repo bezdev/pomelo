@@ -30,7 +30,8 @@ void AndroidApp::Initialize(android_app *androidApp)
     m_AndroidApp->onAppCmd = AndroidApp::OnAppCmd;
     m_AndroidApp->onInputEvent = AndroidApp::OnInputEvent;
 
-    m_App.SetStartScene(SCENE_MANY_CUBE_AXIS);
+    // m_App.SetStartScene(SCENE_MANY_CUBE_AXIS);
+    m_App.SetStartScene(SCENE_SANDBOX);
 }
 
 void AndroidApp::InitializeWindow(ANativeWindow *window)
@@ -77,7 +78,7 @@ void AndroidApp::InitializeWindow(ANativeWindow *window)
 }
 
 void AndroidApp::OnAppCmd(struct android_app* androidApp, int32_t command) {
-    // TDOO: static cast?
+    // TODO: static cast?
     AndroidApp* aa = (AndroidApp*)androidApp->userData;
     aa->OnAppCommand(androidApp, command);
 }

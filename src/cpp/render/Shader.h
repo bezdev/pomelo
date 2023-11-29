@@ -82,7 +82,7 @@ public:
         }
         glLinkProgram(program);
 
-#ifdef BUILD_DESKTOP
+//#ifdef BUILD_DESKTOP
         GLint logLength;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
         if (logLength > 0)
@@ -93,7 +93,7 @@ public:
             free(log);
             THROW("Program link failed");
         }
-#endif
+//#endif
 
         GLint status;
         glGetProgramiv(program, GL_LINK_STATUS, &status);

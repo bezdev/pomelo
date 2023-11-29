@@ -350,8 +350,8 @@ void Renderer::RenderGUI()
             currentRenderBuffer = renderBuffer;
         }
 
-        auto element = static_cast<GUI::TextElement*>(ro.Element);
-        shader->SetUniformMatrix4fv(shader->GetVariables()[2], glm::value_ptr(element->GetTransform()));
+        auto textElement = static_cast<GUI::TextElement*>(ro.Element);
+        shader->SetUniformMatrix4fv(shader->GetVariables()[2], glm::value_ptr(textElement->GetTransform()));
         shader->SetUniform1i(shader->GetVariables()[5], 0);
         shader->BindTexture(texture->GetTextureID());
         shader->Draw(currentRenderBuffer);

@@ -6,6 +6,7 @@ set(BUILD_ANDROID 1)
 include(${CMAKE_CURRENT_LIST_DIR}/../../../../../src/cpp/CMakePomeloSrc.txt)
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../src/cpp)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../desktop/inc)
 
 add_library(native_app_glue
     STATIC

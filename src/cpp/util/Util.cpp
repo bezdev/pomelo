@@ -4,7 +4,7 @@
 #include "util/Util.h"
 
 #ifdef BUILD_ANDROID
-#include "AndroidApp.h"
+#include "app/AndroidApp.h"
 #endif
 
 std::vector<char> Util::ReadFile(const char* filename)

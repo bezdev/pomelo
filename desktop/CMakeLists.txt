@@ -41,6 +41,14 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSET_FOLDER_ABSOLUTE} ${DESTINATION}
 )
+set(DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../android/app/src/main/assets/assets")
+get_filename_component(ASSET_FOLDER_ABSOLUTE "${ASSET_FOLDER}" ABSOLUTE)
+add_custom_target(CopyAssetsAndroid ALL)
+add_custom_command(
+    TARGET CopyAssetsAndroid
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSET_FOLDER_ABSOLUTE} ${DESTINATION}
+)
 
 add_library(GLAD "glad.c")
 

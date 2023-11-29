@@ -1,5 +1,5 @@
-#include "AndroidApp.h"
-#include "scene.h"
+#include "app/AndroidApp.h"
+#include "engine/Scene.h"
 
 struct android_app;
 

@@ -4,8 +4,8 @@
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
 
-#include "app.h"
-#include "util.h"
+#include "app/app.h"
+#include "util/util.h"
 
 #define NATIVE_ACTIVITY_CLASS_NAME "android/app/NativeActivity"
 
