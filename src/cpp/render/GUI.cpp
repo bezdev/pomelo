@@ -102,3 +102,11 @@ GUI::Element* GUI::GUI::AddElement(Element* element)
 {
     return m_Root->AddChild(element);
 }
+
+void GUI::GUI::UpdateViewSize(int width, int height)
+{
+    if (m_Root != nullptr)
+    {
+         // TODO:
+    }
+}

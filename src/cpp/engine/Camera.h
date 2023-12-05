@@ -1,12 +1,14 @@
 #pragma once
 
+#include "engine/ECS.h"
 #include "util/Math.h"
 #include "util/Util.h"
 
 enum class CameraType
 {
     FREE_LOOK,
-    ORBIT
+    ORBIT,
+    FOLLOW_TARGET
 };
 
 class Camera
@@ -38,12 +40,16 @@ public:
 
     void SetCameraType(CameraType type) { m_CameraType = type; }
     void SetLookAt(const VEC3& position, const VEC3& target);
+    void SetTarget(Entity* target);
     void SetYawPitch(float yaw, float pitch);
     void UpdateViewSize(int width, int height);
 private:
     static Camera* s_Instance;
 
     CameraType m_CameraType;
+
+    Entity* m_TargetEntity;
+
     float m_ScreenX;
     float m_ScreenY;
     float m_Height;

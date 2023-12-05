@@ -147,6 +147,7 @@ public:
     GUIIterator begin() { return GUIIterator(m_Root); }
     GUIIterator end() { return GUIIterator(); }
     Element* AddElement(Element* element);
+    void UpdateViewSize(int width, int height);
 
     ContainerElement* CreateContainerElement(VEC2 position, ContainerProperties properties) { return new ContainerElement(m_MaxElementID++, position, properties); }
     TextElement* CreateTextElement(VEC2 position, const std::string& text, TextProperties properties) { return new TextElement(m_MaxElementID++, position, text, properties); }

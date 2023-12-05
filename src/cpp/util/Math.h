@@ -47,7 +47,7 @@ namespace Generator
         rand.seed(seed);
         std::uniform_real_distribution<float> dist(-1.f, 1.f);
 
-        for (size_t i = 0; i < width * height; i++)
+        for (size_t i = 0; i < static_cast<size_t>(width * height); i++)
         {
             heights[i] = dist(rand);
         }

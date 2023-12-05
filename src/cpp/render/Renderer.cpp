@@ -230,6 +230,7 @@ void Renderer::UpdateWindowSize(int width, int height)
 
     glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 
+    m_GUI.UpdateViewSize(width, height);
     Camera::GetInstance()->UpdateViewSize(width, height);
 }
 

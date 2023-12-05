@@ -1,18 +1,20 @@
 #pragma once
 
-#include "engine/ECS.h"
 #include "engine/Camera.h"
-#include "render/Renderer.h"
+#include "engine/ECS.h"
 #include "render/Text.h"
-#include "util/Math.h"
 #include "util/Color.h"
+#include "util/Math.h"
 
-// TODO: change to enum
-#define SCENE_SANDBOX 0
-#define SCENE_CUBE 1
-#define SCENE_MANY_CUBE 2
-#define SCENE_MANY_CUBE_INSTANCED 3
-#define SCENE_MANY_CUBE_AXIS 4
+enum class SceneType
+{
+    SCENE_SANDBOX = 0,
+    SCENE_GAME,
+    SCENE_CUBE,
+    SCENE_MANY_CUBE,
+    SCENE_MANY_CUBE_INSTANCED,
+    SCENE_MANY_CUBE_AXIS
+};
 
 class Scene
 {
@@ -26,18 +28,22 @@ public:
 class SceneManager
 {
 public:
-    static void LoadScene(int sceneId)
+    static void LoadScene(SceneType type)
     {
-        // sceneId = 0;
-        LOGE("LoadScene: %d", sceneId);
-        if (sceneId == SCENE_SANDBOX) CreateSandboxScene();
-        else if (sceneId == SCENE_CUBE) CreateCubeScene();
-        else if (sceneId == SCENE_MANY_CUBE) CreateManyCubeScene();
-        else if (sceneId == SCENE_MANY_CUBE_INSTANCED) CreateManyCubeSceneInstanced();
-        else if (sceneId == SCENE_MANY_CUBE_AXIS) CreateManyCubeAxisScene();
+        // type = SceneType::SCENE_SANDBOX;
+        type = SceneType::SCENE_GAME;
+        LOGE("LoadScene: %d", static_cast<int>(type));
+
+        if (type == SceneType::SCENE_SANDBOX) CreateSandboxScene();
+        else if (type == SceneType::SCENE_GAME) CreateGameScene();
+        else if (type == SceneType::SCENE_CUBE) CreateCubeScene();
+        else if (type == SceneType::SCENE_MANY_CUBE) CreateManyCubeScene();
+        else if (type == SceneType::SCENE_MANY_CUBE_INSTANCED) CreateManyCubeSceneInstanced();
+        else if (type == SceneType::SCENE_MANY_CUBE_AXIS) CreateManyCubeAxisScene();
     }
 
     static void CreateSandboxScene();
+    static void CreateGameScene();
 
     static void CreateCubeScene()
     {

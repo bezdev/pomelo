@@ -19,12 +19,12 @@
 #define PERF_RESULTS_OUTPUT_PATH "PerformanceResults.csv"
 #endif
 
-void StartApp(int sceneId)
+void StartApp(SceneType sceneType)
 {
     GLFWApp* app = GLFWApp::GetInstance();
-    app->Initialize(sceneId);
+    app->Initialize(sceneType);
 
-    std::thread t = std::thread([app, sceneId]
+    std::thread t = std::thread([app]
     { 
         SLEEP(5000);
         app->Exit();
@@ -88,7 +88,7 @@ void LogToFile(std::string testName, std::vector<std::string> log)
 
 TEST(SingleCubePerformanceTest)
 {
-    StartApp(SCENE_CUBE);
+    StartApp(SceneType::SCENE_CUBE);
 
     auto log = Logger::GetInstance()->GetLog();
     ASSERT_TRUE(log.size() > 0);
@@ -99,7 +99,7 @@ TEST(SingleCubePerformanceTest)
 
 TEST(ManyCubePerformanceTest)
 {
-    StartApp(SCENE_MANY_CUBE);
+    StartApp(SceneType::SCENE_MANY_CUBE);
 
     auto log = Logger::GetInstance()->GetLog();
     ASSERT_TRUE(log.size() > 0);
@@ -110,7 +110,7 @@ TEST(ManyCubePerformanceTest)
 
 TEST(ManyCubeInstancedPerformanceTest)
 {
-    StartApp(SCENE_MANY_CUBE_INSTANCED);
+    StartApp(SceneType::SCENE_MANY_CUBE_INSTANCED);
 
     auto log = Logger::GetInstance()->GetLog();
     ASSERT_TRUE(log.size() > 0);
@@ -121,7 +121,7 @@ TEST(ManyCubeInstancedPerformanceTest)
 
 TEST(ManyCubeAxisPerformanceTest)
 {
-    StartApp(SCENE_MANY_CUBE_AXIS);
+    StartApp(SceneType::SCENE_MANY_CUBE_AXIS);
 
     auto log = Logger::GetInstance()->GetLog();
     ASSERT_TRUE(log.size() > 0);

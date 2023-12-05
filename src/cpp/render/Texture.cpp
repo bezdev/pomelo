@@ -1,7 +1,10 @@
 #include "Texture.h"
 
+#pragma warning(push)
+#pragma warning(disable: 5045)
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
+#pragma warning(pop)
 
 TextureManager* TextureManager::s_Instance = nullptr;
 

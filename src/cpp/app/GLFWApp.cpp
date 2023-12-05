@@ -32,7 +32,7 @@ GLFWApp::~GLFWApp()
     LOGI("GLFWApp::~GLFWApp");
 }
 
-int GLFWApp::Initialize(int sceneId)
+int GLFWApp::Initialize(SceneType sceneType)
 {
     glfwSetErrorCallback(glfwOnError);
 
@@ -72,7 +72,7 @@ int GLFWApp::Initialize(int sceneId)
     glfwGetFramebufferSize(m_Window, &m_ScreenWidth, &m_ScreenHeight);
     m_App.UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
 
-    m_App.SetStartScene(sceneId);
+    m_App.SetStartScene(sceneType);
 
     return 0;
 }

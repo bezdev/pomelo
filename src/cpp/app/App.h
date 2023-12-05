@@ -3,6 +3,7 @@
 #include "engine/InputManager.h"
 #include "engine/Camera.h"
 #include "render/Renderer.h"
+#include "engine/Scene.h"
 #include "util/Timer.h"
 #include "util/Util.h"
 
@@ -26,7 +27,7 @@ public:
     void Run();
     void OnInputEvent(InputEvent event, InputData data) { InputManager::GetInstance()->OnEvent(event, data); }
     void UpdateWindowSize(int width, int height);
-    void SetStartScene(int sceneId) { m_StartSceneId = sceneId; }
+    void SetStartScene(SceneType sceneType) { m_StartSceneType = sceneType; }
 private:
     void LogFPS();
 
@@ -35,7 +36,7 @@ private:
 
     int m_ScreenWidth;
     int m_ScreenHeight;
-    int m_StartSceneId;
+    SceneType m_StartSceneType;
 
     bool m_IsFirstFrame;
 };

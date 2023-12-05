@@ -1,10 +1,12 @@
 #include "engine/Camera.h"
 #include "engine/InputManager.h"
+#include "Camera.h"
 
 Camera* Camera::s_Instance = nullptr;
 
 Camera::Camera():
     m_CameraType(CameraType::ORBIT),
+    m_TargetEntity(nullptr),
     m_Height(0),
     m_Width(0),
     m_Ratio(0),
@@ -85,6 +87,10 @@ void Camera::Update(float delta)
 
         SetYawPitch(yaw, pitch);
     }
+    else if (m_CameraType == CameraType::FOLLOW_TARGET)
+    {
+
+    }
 }
 
 void Camera::SetLookAt(const VEC3& position, const VEC3& target)
@@ -102,6 +108,11 @@ void Camera::SetLookAt(const VEC3& position, const VEC3& target)
     // LOGD("target: x,y,z: %f,%f,%f", target.x, target.y, target.z);
     // LOGD("m_LookAt: x,y,z: %f,%f,%f", m_LookAt.x, m_LookAt.y, m_LookAt.z);
     m_ViewMatrix = glm::lookAt(m_Position, m_Target, V_UP);
+}
+
+void Camera::SetTarget(Entity* target)
+{
+    m_TargetEntity = target;
 }
 
 void Camera::SetYawPitch(float yaw, float pitch)

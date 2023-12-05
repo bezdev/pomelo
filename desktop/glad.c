@@ -24,6 +24,10 @@
 #include <string.h>
 #include <glad/glad.h>
 
+#pragma warning(push)
+#pragma warning(disable: 4191)
+#pragma warning(disable: 5045)
+
 static void* get_proc(const char *namez);
 
 #if defined(_WIN32) || defined(__CYGWIN__)
@@ -2516,3 +2520,4 @@ int gladLoadGLLoader(GLADloadproc load) {
 	return GLVersion.major != 0 || GLVersion.minor != 0;
 }
 
+#pragma warning(pop)

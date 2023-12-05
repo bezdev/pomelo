@@ -37,7 +37,7 @@ public:
     ~GLFWApp();
 
     // TODO: remove sceneId parameter
-    int Initialize(int sceneId);
+    int Initialize(SceneType sceneType);
 
     void ProcessInput();
 

@@ -3,7 +3,8 @@
 #include "engine/PhysicsEngine.h"
 
 App::App():
-    m_IsFirstFrame(true)
+    m_IsFirstFrame(true),
+    m_StartSceneType(SceneType::SCENE_SANDBOX)
 {
 }
 
@@ -39,7 +40,7 @@ void App::Run() {
     if (m_IsFirstFrame) {
         LOGD("first frame");
 
-        SceneManager::LoadScene(m_StartSceneId);
+        SceneManager::LoadScene(m_StartSceneType);
 
         m_GlobalTimer->Reset();
         m_IsFirstFrame = false;
