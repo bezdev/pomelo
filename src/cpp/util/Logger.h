@@ -92,3 +92,5 @@ private:
 #define LOGE(...) LOG(Logger::Level::Error, __VA_ARGS__)
 #define LOG_TO_FILE(...) do { Logger::GetInstance()->LogToFile(Logger::Level::Test, __VA_ARGS__); } while(0);
 #endif
+
+#define LOG_VEC3(label, vector) LOGD(#label": %f,%f,%f", vector.x, vector.y, vector.z)

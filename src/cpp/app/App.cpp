@@ -2,6 +2,8 @@
 
 #include "engine/PhysicsEngine.h"
 
+App* App::s_Instance = nullptr;
+
 App::App():
     m_IsFirstFrame(true),
     m_StartSceneType(SceneType::SCENE_SANDBOX)
@@ -46,6 +48,11 @@ void App::Run() {
         m_IsFirstFrame = false;
     } else {
         m_GlobalTimer->Update();
+    }
+
+    for (auto& callback : m_Callbacks)
+    {
+        callback(m_GlobalTimer->GetDelta());
     }
 
     PhysicsEngine::GetInstance()->UpdateMotions(m_GlobalTimer->GetDelta());

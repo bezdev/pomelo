@@ -45,7 +45,7 @@ public:
     void Exit();
 private:
     static GLFWApp* s_Instance;
-    App m_App;
+    App* m_App;
 
     GLFWwindow* m_Window;
 

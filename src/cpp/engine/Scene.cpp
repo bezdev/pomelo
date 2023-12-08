@@ -96,22 +96,70 @@ void SceneManager::CreateGameScene()
     auto car = s.CreateEntity()
         .AddComponent<Components::Transform>(V_ORIGIN, VEC3(1.f, 1.f, 5.f))
         .AddComponent<Components::Mesh>(Components::MeshType::BOX)
-        .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 0.f, 0.f, 1.0f));
+        .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 0.f, 0.f, 1.0f))
+        .AddComponent<Components::Physics>();
         // .AddComponent<Components::Motion>(Components::MotionType::ORBIT, glm::vec3(10.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), 5000);
 
     s.CreateEntity()
-        .AddComponent<Components::Transform>(V_ORIGIN + VEC3(10.f, 0.f, 0.f))
-        .AddComponent<Components::Mesh>(Components::MeshType::BLENDER_AXIS)
-        .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.0f, 1.f, 0.f, 1.0f));
+        .AddComponent<Components::Transform>(V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f))
+        .AddComponent<Components::Mesh>(Components::MeshType::PLANE_MAP)
+        .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
 
-    InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_N, [&](InputEvent event, InputData data) {
-        if (data.Action == InputAction::UP)
+    // s.CreateEntity()
+    //     .AddComponent<Components::Transform>(V_ORIGIN + VEC3(10.f, 0.f, 0.f))
+    //     .AddComponent<Components::Mesh>(Components::MeshType::BLENDER_AXIS)
+    //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.0f, 1.f, 0.f, 1.0f));
+
+    // InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_W, [&](InputEvent event, InputData data) {
+    //     if (data.Action == InputAction::UP)
+    //     {
+    //         // m_IsDrawWireFrame = !m_IsDrawWireFrame;
+    //     }
+    // });
+
+    float c_acceleration = 6;
+    float current_acceleration = 0;
+    float turnRate = Constants::PI / 1000;
+    Components::Physics* p = &car.GetComponent<Components::Physics>();
+    App::GetInstance()->RegisterOnUpdateCallback([=](float delta)
+    {
+        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_J))
         {
-            // m_IsDrawWireFrame = !m_IsDrawWireFrame;
+            float turnAngle = 1 * turnRate * delta;
+            glm::quat rotation = glm::angleAxis(turnAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+            p->Direction = glm::normalize(rotation * p->Direction);
+            p->Velocity = glm::length(p->Velocity) * p->Direction;
         }
+        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_L))
+        {
+            float turnAngle = -1 * turnRate * delta;
+            glm::quat rotation = glm::angleAxis(turnAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+            p->Direction = glm::normalize(rotation * p->Direction);
+            p->Velocity = glm::length(p->Velocity) * p->Direction;
+        }
+
+        float acceleration = c_acceleration;
+        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_I))
+        {
+            acceleration = c_acceleration;
+        } else
+        {
+            acceleration = -c_acceleration * 3;
+        }
+
+        if (glm::dot(glm::normalize(p->Velocity), p->Direction) < 0)
+        {
+            acceleration = 0.f;
+            p->Velocity = V_ORIGIN;
+        }
+
+        p->Acceleration = acceleration * p->Direction;
     });
 
+
+
     Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 10.f, 15.f), V_ORIGIN);
+    // Camera::GetInstance()->SetCameraType(CameraType::FOLLOW_TARGET);
     Camera::GetInstance()->SetCameraType(CameraType::FREE_LOOK);
 
     s.Load();

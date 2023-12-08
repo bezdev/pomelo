@@ -15,6 +15,9 @@
 
 extern VEC3 V_ORIGIN;
 extern VEC3 V_UP;
+extern VEC3 V_X;
+extern VEC3 V_Y;
+extern VEC3 V_Z;
 extern QUAT Q_DEFAULT;
 
 namespace Generator

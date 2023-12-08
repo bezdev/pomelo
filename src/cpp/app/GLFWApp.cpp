@@ -20,15 +20,18 @@ void glfwOnError(int error, const char* description)
 }
 
 GLFWApp::GLFWApp():
+    m_App(nullptr),
     m_ScreenWidth(SCREEN_WIDTH),
     m_ScreenHeight(SCREEN_HEIGHT)
 {
+    m_App = App::GetInstance();
 }
 
 GLFWApp::~GLFWApp()
 {
     glfwDestroyWindow(m_Window);
     glfwTerminate();
+    App::DestroyInstance();
     LOGI("GLFWApp::~GLFWApp");
 }
 
@@ -67,12 +70,12 @@ int GLFWApp::Initialize(SceneType sceneType)
         return -1;
     }
 
-    m_App.Initialize();
+    m_App->Initialize();
 
     glfwGetFramebufferSize(m_Window, &m_ScreenWidth, &m_ScreenHeight);
-    m_App.UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
+    m_App->UpdateWindowSize(m_ScreenWidth, m_ScreenHeight);
 
-    m_App.SetStartScene(sceneType);
+    m_App->SetStartScene(sceneType);
 
     return 0;
 }
@@ -87,7 +90,7 @@ void GLFWApp::Run()
     while (!glfwWindowShouldClose(m_Window))
     {
         TIME_FUNC(glfwPollEvents());
-        TIME_FUNC(m_App.Run());
+        TIME_FUNC(m_App->Run());
         TIME_FUNC(glfwSwapBuffers(m_Window));
     }
 }
@@ -120,7 +123,7 @@ void GLFWApp::s_CursorPositionCallback(GLFWwindow *window, double xpos, double y
 void GLFWApp::SetFramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     LOGD("App::SetFramebufferSizeCallback");
-    m_App.UpdateWindowSize(width, height);
+    m_App->UpdateWindowSize(width, height);
 }
 
 void GLFWApp::KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -133,7 +136,7 @@ void GLFWApp::KeyCallback(GLFWwindow *window, int key, int scancode, int action,
     {
         InputAction a = InputAction::DOWN;
         if (action == GLFW_RELEASE) a = InputAction::UP;
-        m_App.OnInputEvent(GLFWKeyToInputEventMap[key], InputData(a));
+        m_App->OnInputEvent(GLFWKeyToInputEventMap[key], InputData(a));
     }
 }
 
@@ -146,7 +149,7 @@ void GLFWApp::MouseButtonCallback(GLFWwindow* window, int button, int action, in
 
         InputAction a = InputAction::DOWN;
         if (action == GLFW_RELEASE) a = InputAction::UP;
-        m_App.OnInputEvent(
+        m_App->OnInputEvent(
             GLFWMouseToInputEventMap[button],
             InputData(a, static_cast<float>(x), static_cast<float>(y))
         );

@@ -11,6 +11,8 @@
 
 class Renderer;
 
+using OnUpdateCallback = std::function<void(float)>;
+
 class GameApp {
 public:
     virtual void Initialize() = 0;
@@ -19,6 +21,18 @@ public:
 
 class App {
 public:
+    static App* GetInstance()
+    {
+        if (!s_Instance) s_Instance = new App();
+        return s_Instance;
+    }
+
+    static void DestroyInstance()
+    {
+        delete s_Instance;
+        s_Instance = nullptr;
+    }
+
     App();
     ~App();
 
@@ -28,15 +42,20 @@ public:
     void OnInputEvent(InputEvent event, InputData data) { InputManager::GetInstance()->OnEvent(event, data); }
     void UpdateWindowSize(int width, int height);
     void SetStartScene(SceneType sceneType) { m_StartSceneType = sceneType; }
+
+    void RegisterOnUpdateCallback(OnUpdateCallback callback) { m_Callbacks.push_back(callback); }
 private:
+    static App* s_Instance;
+
     void LogFPS();
 
     Renderer* m_Renderer;
     Timer* m_GlobalTimer;
 
+    bool m_IsFirstFrame;
     int m_ScreenWidth;
     int m_ScreenHeight;
     SceneType m_StartSceneType;
 
-    bool m_IsFirstFrame;
+    std::vector<OnUpdateCallback> m_Callbacks;
 };

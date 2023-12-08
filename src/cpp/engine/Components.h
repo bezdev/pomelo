@@ -174,16 +174,23 @@ namespace Components
     {
         Physics():
             Velocity(VEC3(0.f, 0.f, 0.f)),
-            Force(VEC3(0.f, 0.f, 0.f))
+            Acceleration(VEC3(0.f, 0.f, 0.f)),
+            Direction(VEC3(0.f, 0.f, 1.f))
         {}
 
         Physics(PhysicsType type):
             Physics()
         {
-            if (type & GRAVITY) Force += VEC3(0.f, -9.81f, 0.f);
+            if (type & GRAVITY) Acceleration += VEC3(0.f, -9.81f, 0.f);
         }
+
+        // Physics(VEC3 velocity):
+        //     Velocity(velocity)
+        // {}
+
         VEC3 Velocity;
-        VEC3 Force;
+        VEC3 Acceleration;
+        VEC3 Direction;
     };
 
     enum FontType

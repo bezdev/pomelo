@@ -17,8 +17,21 @@ void PhysicsEngine::UpdatePhysics(float delta)
         Components::Physics& physics = e->GetComponent<Components::Physics>();
         Components::Transform& transform = e->GetComponent<Components::Transform>();
 
-        physics.Velocity += physics.Force * delta;
+        physics.Velocity += physics.Acceleration * delta;
         transform.SetPosition(transform.GetPosition() + physics.Velocity * delta);
+
+
+        glm::vec3 rotationAxis = glm::cross(V_Z, physics.Direction);
+
+        if (glm::length(rotationAxis) < 0.0005)
+        {
+            rotationAxis = glm::vec3(0, 1, 0);
+        }
+
+        float rotationAngle = acos(glm::dot(V_Z, physics.Direction));
+        glm::quat rotationQuat = glm::angleAxis(rotationAngle, glm::normalize(rotationAxis));
+        transform.SetRotation(rotationQuat);
+
 
         // TODO: make generic collision detection
         if (transform.GetPosition().y < 0)
