@@ -23,6 +23,8 @@ public:
     void Load();
 
     Entity& CreateEntity() { return ECS::GetInstance()->CreateEntity(); };
+private:
+    std::vector<Entity*> m_Entities;
 };
 
 class SceneManager

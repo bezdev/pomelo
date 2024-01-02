@@ -193,6 +193,19 @@ namespace Components
         VEC3 Direction;
     };
 
+    enum CollisionType
+    {
+        SPHERE,
+        BOX
+    };
+
+    struct Collision
+    {
+        CollisionType Type;
+        VEC3 Position;
+        VEC2 Size;
+    };
+
     enum FontType
     {
         DEFAULT = 0

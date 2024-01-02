@@ -8,6 +8,29 @@ PhysicsEngine::PhysicsEngine()
 {
 }
 
+void PhysicsEngine::Update(float delta)
+{
+    UpdateMotions(delta);
+    UpdatePhysics(delta);
+    UpdateCollisions(delta);
+}
+
+void PhysicsEngine::UpdateMotions(float delta)
+{
+    for (auto e : m_MotionEntities)
+    {
+        Components::Motion& motion = e->GetComponent<Components::Motion>();
+        if (motion.Type == Components::MotionType::PATH)
+        {
+            UpdatePath(e, &motion, delta);
+        }
+        else if (motion.Type == Components::MotionType::ORBIT)
+        {
+            UpdateOrbit(e, &motion, delta);
+        }
+    }
+}
+
 void PhysicsEngine::UpdatePhysics(float delta)
 {
     delta /= 1000.f;
@@ -19,7 +42,6 @@ void PhysicsEngine::UpdatePhysics(float delta)
 
         physics.Velocity += physics.Acceleration * delta;
         transform.SetPosition(transform.GetPosition() + physics.Velocity * delta);
-
 
         glm::vec3 rotationAxis = glm::cross(V_Z, physics.Direction);
 
@@ -42,23 +64,41 @@ void PhysicsEngine::UpdatePhysics(float delta)
     }
 }
 
-void PhysicsEngine::UpdateMotions(float delta)
+void PhysicsEngine::UpdateCollisions(float delta)
 {
-    for (auto e : m_MotionEntities)
+    std::vector<Entity*> entities;
+    for (auto e : m_CollisionEntities)
     {
-        Components::Motion& motion = e->GetComponent<Components::Motion>();
-        if (motion.Type == Components::MotionType::PATH)
-        {
-            UpdatePath(e, &motion, delta);
-        }
-        else if (motion.Type == Components::MotionType::ORBIT)
-        {
-            UpdateOrbit(e, &motion, delta);
-        }
+        Components::Collision& collision = e->GetComponent<Components::Collision>();
+        Components::Transform& transform = e->GetComponent<Components::Transform>();
+
+        collision.Position = transform.GetPosition();
+
+        entities.push_back(e);
     }
+
+    EntityID i = 0;
+     for (auto e1 : entities)
+     {
+        i = e1->GetID();
+        for (auto e2 : entities)
+        {
+            if (e2->GetID() <= i)
+            {
+                continue;
+            }
+
+            CheckCollision(e1, e2);
+        }
+     }
 }
 
-void PhysicsEngine::UpdatePath(Entity* entity, Components::Motion* motion, float delta)
+bool PhysicsEngine::CheckCollision(Entity *a, Entity *b)
+{
+    return false;
+}
+
+void PhysicsEngine::UpdatePath(Entity *entity, Components::Motion *motion, float delta)
 {
     if (motion->Step >= 1.f) return;
 

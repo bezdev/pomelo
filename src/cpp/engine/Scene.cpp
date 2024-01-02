@@ -22,6 +22,11 @@ void Scene::Load()
     {
         PhysicsEngine::GetInstance()->AddPhysicsEntity(e);
     }
+
+    for (auto e : ECS::GetInstance()->GetEntitiesWithComponents<Components::Collision>())
+    {
+        PhysicsEngine::GetInstance()->AddCollisionEntity(e);
+    }
 }
 
 void SceneManager::CreateSandboxScene()

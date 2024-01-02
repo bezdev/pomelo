@@ -55,8 +55,7 @@ void App::Run() {
         callback(m_GlobalTimer->GetDelta());
     }
 
-    PhysicsEngine::GetInstance()->UpdateMotions(m_GlobalTimer->GetDelta());
-    PhysicsEngine::GetInstance()->UpdatePhysics(m_GlobalTimer->GetDelta());
+    PhysicsEngine::GetInstance()->Update(m_GlobalTimer->GetDelta());
 
     Camera::GetInstance()->Update(m_GlobalTimer->GetDelta());
 
