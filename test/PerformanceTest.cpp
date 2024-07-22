@@ -129,3 +129,36 @@ TEST(ManyCubeAxisPerformanceTest)
     LogToFile(GetName(), log);
     Logger::GetInstance()->Clear();
 }
+
+TEST(CollisionScenePerformanceTest)
+{
+    StartApp(SceneType::SCENE_COLLISION);
+
+    auto log = Logger::GetInstance()->GetLog();
+    ASSERT_TRUE(log.size() > 0);
+
+    LogToFile(GetName(), log);
+    Logger::GetInstance()->Clear();
+}
+
+TEST(CollisionSceneNoPhysicsPerformanceTest)
+{
+    StartApp(SceneType::SCENE_COLLISION_NO_PHYSICS);
+
+    auto log = Logger::GetInstance()->GetLog();
+    ASSERT_TRUE(log.size() > 0);
+
+    LogToFile(GetName(), log);
+    Logger::GetInstance()->Clear();
+}
+
+TEST(CollisionSceneNoCollisionsPerformanceTest)
+{
+    StartApp(SceneType::SCENE_COLLISION_NO_COLLISION);
+
+    auto log = Logger::GetInstance()->GetLog();
+    ASSERT_TRUE(log.size() > 0);
+
+    LogToFile(GetName(), log);
+    Logger::GetInstance()->Clear();
+}

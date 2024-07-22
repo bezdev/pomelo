@@ -172,10 +172,18 @@ namespace Components
 
     struct Physics
     {
+        Physics(VEC3 velocity, VEC3 acceleration, VEC3 direction):
+            Velocity(velocity),
+            Acceleration(acceleration),
+            Direction(direction)
+        {}
+
         Physics():
-            Velocity(VEC3(0.f, 0.f, 0.f)),
-            Acceleration(VEC3(0.f, 0.f, 0.f)),
-            Direction(VEC3(0.f, 0.f, 1.f))
+            Physics(
+                VEC3(0.f, 0.f, 0.f),
+                VEC3(0.f, 0.f, 0.f),
+                VEC3(0.f, 0.f, 1.f)
+            )
         {}
 
         Physics(PhysicsType type):
@@ -184,9 +192,9 @@ namespace Components
             if (type & GRAVITY) Acceleration += VEC3(0.f, -9.81f, 0.f);
         }
 
-        // Physics(VEC3 velocity):
-        //     Velocity(velocity)
-        // {}
+        Physics(VEC3 velocity):
+            Physics(velocity, V_ORIGIN, VEC3(0.f, 0.f, 1.f))
+        {}
 
         VEC3 Velocity;
         VEC3 Acceleration;
@@ -201,6 +209,16 @@ namespace Components
 
     struct Collision
     {
+        // TODO: call other constructor
+        Collision()
+        {}
+
+        Collision(CollisionType type, VEC3 position, VEC2 size):
+            Type(type),
+            Position(position),
+            Size(size)
+        {}
+
         CollisionType Type;
         VEC3 Position;
         VEC2 Size;

@@ -5,6 +5,7 @@
 #include "render/Text.h"
 #include "util/Color.h"
 #include "util/Math.h"
+#include "util/Timer.h"
 
 enum class SceneType
 {
@@ -13,7 +14,10 @@ enum class SceneType
     SCENE_CUBE,
     SCENE_MANY_CUBE,
     SCENE_MANY_CUBE_INSTANCED,
-    SCENE_MANY_CUBE_AXIS
+    SCENE_MANY_CUBE_AXIS,
+    SCENE_COLLISION,
+    SCENE_COLLISION_NO_PHYSICS,
+    SCENE_COLLISION_NO_COLLISION,
 };
 
 class Scene
@@ -23,8 +27,6 @@ public:
     void Load();
 
     Entity& CreateEntity() { return ECS::GetInstance()->CreateEntity(); };
-private:
-    std::vector<Entity*> m_Entities;
 };
 
 class SceneManager
@@ -32,8 +34,10 @@ class SceneManager
 public:
     static void LoadScene(SceneType type)
     {
+        // type = SceneType::SCENE_COLLISION;
         // type = SceneType::SCENE_SANDBOX;
-        type = SceneType::SCENE_GAME;
+        // type = SceneType::SCENE_GAME;
+        // type = SceneType::SCENE_MANY_CUBE_AXIS;
         LOGE("LoadScene: %d", static_cast<int>(type));
 
         if (type == SceneType::SCENE_SANDBOX) CreateSandboxScene();
@@ -42,10 +46,14 @@ public:
         else if (type == SceneType::SCENE_MANY_CUBE) CreateManyCubeScene();
         else if (type == SceneType::SCENE_MANY_CUBE_INSTANCED) CreateManyCubeSceneInstanced();
         else if (type == SceneType::SCENE_MANY_CUBE_AXIS) CreateManyCubeAxisScene();
+        else if (type == SceneType::SCENE_COLLISION) CreateCollisionScene(true, true);
+        else if (type == SceneType::SCENE_COLLISION_NO_PHYSICS) CreateCollisionScene(false, false);
+        else if (type == SceneType::SCENE_COLLISION_NO_COLLISION) CreateCollisionScene(true, false);
     }
 
     static void CreateSandboxScene();
     static void CreateGameScene();
+    static void CreateCollisionScene(bool hasPhysics, bool hasCollisions);
 
     static void CreateCubeScene()
     {
@@ -106,6 +114,7 @@ public:
     {
         Scene s;
 
+        ScopeTimer t("create ent");
         int NUM_BOXES = 100000;
         for (int i = 0; i < NUM_BOXES; i++)
         {

@@ -169,3 +169,79 @@ void SceneManager::CreateGameScene()
 
     s.Load();
 }
+
+void SceneManager::CreateCollisionScene(bool hasPhysics, bool hasCollisions)
+{
+    Scene s;
+
+    EntityFactory::CreateAxis(V_ORIGIN);
+
+    int NUM_PAIRS = 100;
+    for (int i = 0; i < NUM_PAIRS; i++) {
+        float space = 2.f;
+        float y = (-NUM_PAIRS / 2 + .5) * space + (i * space);
+
+        if (hasPhysics) {
+            if (hasCollisions) {
+                auto e1 = s.CreateEntity()
+                    .AddComponent<Components::Transform>(VEC3(10.f, y, 0.f))
+                    .AddComponent<Components::Physics>(VEC3(-5.f, 0.f, 0.f))
+                    .AddComponent<Components::Mesh>(Components::MeshType::SPHERE)
+                    .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_COLOR_BLUE)
+                    .AddComponent<Components::Collision>(Components::CollisionType::SPHERE, V_ORIGIN, VEC2(.5f, .5f))
+                    ;
+
+                auto e2 = s.CreateEntity()
+                    .AddComponent<Components::Transform>(VEC3(-10.f, y, 0.f))
+                    .AddComponent<Components::Physics>(VEC3(5.f, 0.f, 0.f))
+                    .AddComponent<Components::Mesh>(Components::MeshType::SPHERE)
+                    .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_COLOR_RED)
+                    .AddComponent<Components::Collision>(Components::CollisionType::SPHERE, V_ORIGIN, VEC2(.5f, .5f))
+                    ;
+            } else {
+                auto e1 = s.CreateEntity()
+                    .AddComponent<Components::Transform>(VEC3(10.f, y, 0.f))
+                    .AddComponent<Components::Physics>(VEC3(-5.f, 0.f, 0.f))
+                    .AddComponent<Components::Mesh>(Components::MeshType::SPHERE)
+                    .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_COLOR_BLUE)
+                    ;
+
+                auto e2 = s.CreateEntity()
+                    .AddComponent<Components::Transform>(VEC3(-10.f, y, 0.f))
+                    .AddComponent<Components::Physics>(VEC3(5.f, 0.f, 0.f))
+                    .AddComponent<Components::Mesh>(Components::MeshType::SPHERE)
+                    .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_COLOR_RED)
+                    ;
+            }
+        } else {
+            auto e1 = s.CreateEntity()
+                .AddComponent<Components::Transform>(VEC3(10.f, y, 0.f))
+                .AddComponent<Components::Mesh>(Components::MeshType::SPHERE)
+                .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_COLOR_BLUE)
+                ;
+
+            auto e2 = s.CreateEntity()
+                .AddComponent<Components::Transform>(VEC3(-10.f, y, 0.f))
+                .AddComponent<Components::Mesh>(Components::MeshType::SPHERE)
+                .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_COLOR_RED)
+                ;
+        }
+    }
+
+    // s.CreateEntity()
+    //     .AddComponent<Components::Transform>(glm::vec3(10.f, 0.f, 0.f))
+    //     .AddComponent<Components::Physics>(VEC3(-5.f, 0.f, 0.f))
+    //     .AddComponent<Components::Mesh>(Components::MeshType::SPHERE)
+    //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_COLOR_BLUE)
+    //     .AddComponent<Components::Collision>(Components::CollisionType::SPHERE, V_ORIGIN, VEC2(.5f, .5f));
+
+    // s.CreateEntity()
+    //     .AddComponent<Components::Transform>(glm::vec3(-10.f, 0.f, 0.f))
+    //     .AddComponent<Components::Physics>(VEC3(5.f, 0.f, 0.f))
+    //     .AddComponent<Components::Mesh>(Components::MeshType::SPHERE)
+    //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, V_COLOR_RED)
+    //     .AddComponent<Components::Collision>(Components::CollisionType::SPHERE, V_ORIGIN, VEC2(.5f, .5f));
+
+    Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 50.f, 50.f), glm::vec3(0.f, 0.f, 0.f));
+    s.Load();
+}

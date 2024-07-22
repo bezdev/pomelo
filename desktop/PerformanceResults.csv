@@ -213,3 +213,17 @@ time,OS,resolution,name,average,min,max
 2023-11-27 22-43-33,windows,1920x1080,ManyCubePerformanceTest,905.96,31.3,4399.3
 2023-11-27 22-43-38,windows,1920x1080,ManyCubeInstancedPerformanceTest,1784.34,1330.8,1898.5
 2023-11-27 22-43-44,windows,1920x1080,ManyCubeAxisPerformanceTest,37.1667,16.9,77.4
+2024-07-21 22-13-05,windows,1920x1080,SingleCubePerformanceTest,29.5,28.8,30.2
+2024-07-21 22-13-11,windows,1920x1080,ManyCubePerformanceTest,29.38,28.9,30.2
+2024-07-21 22-13-16,windows,1920x1080,ManyCubeInstancedPerformanceTest,1802.25,1649.2,1858.5
+2024-07-21 22-13-21,windows,1920x1080,ManyCubeAxisPerformanceTest,385.25,14.9,1495.9
+2024-07-21 22-13-26,windows,1920x1080,CollisionScenePerformanceTest,350.76,175,395.3
+2024-07-21 22-13-31,windows,1920x1080,CollisionSceneNoPhysicsPerformanceTest,3099.74,1697.7,3458.6
+2024-07-21 22-13-36,windows,1920x1080,CollisionSceneNoCollisionsPerformanceTest,2560.24,2451.9,2976.3
+2024-07-21 22-15-02,windows,1920x1080,SingleCubePerformanceTest,29.85,29.6,30.6
+2024-07-21 22-15-07,windows,1920x1080,ManyCubePerformanceTest,29.18,28.7,29.7
+2024-07-21 22-15-12,windows,1920x1080,ManyCubeInstancedPerformanceTest,1788.43,1585.4,1857.1
+2024-07-21 22-15-17,windows,1920x1080,ManyCubeAxisPerformanceTest,415.375,14.4,1617.2
+2024-07-21 22-15-23,windows,1920x1080,CollisionScenePerformanceTest,350.84,158.6,400.2
+2024-07-21 22-15-28,windows,1920x1080,CollisionSceneNoPhysicsPerformanceTest,3044.88,1514.7,3454.3
+2024-07-21 22-15-33,windows,1920x1080,CollisionSceneNoCollisionsPerformanceTest,2588.78,2451.1,3075.7

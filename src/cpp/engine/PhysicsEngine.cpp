@@ -54,49 +54,20 @@ void PhysicsEngine::UpdatePhysics(float delta)
         glm::quat rotationQuat = glm::angleAxis(rotationAngle, glm::normalize(rotationAxis));
         transform.SetRotation(rotationQuat);
 
-
         // TODO: make generic collision detection
-        if (transform.GetPosition().y < 0)
-        {
-            physics.Velocity *= -1;
-            transform.SetPosition(V_ORIGIN);
-        }
+        // if (transform.GetPosition().y < 0)
+        // {
+        //     physics.Velocity *= -1;
+        //     transform.SetPosition(V_ORIGIN);
+        // }
     }
 }
 
 void PhysicsEngine::UpdateCollisions(float delta)
 {
-    std::vector<Entity*> entities;
-    for (auto e : m_CollisionEntities)
-    {
-        Components::Collision& collision = e->GetComponent<Components::Collision>();
-        Components::Transform& transform = e->GetComponent<Components::Transform>();
-
-        collision.Position = transform.GetPosition();
-
-        entities.push_back(e);
-    }
-
-    EntityID i = 0;
-     for (auto e1 : entities)
-     {
-        i = e1->GetID();
-        for (auto e2 : entities)
-        {
-            if (e2->GetID() <= i)
-            {
-                continue;
-            }
-
-            CheckCollision(e1, e2);
-        }
-     }
+    m_CollisionEngine.Update(delta);
 }
 
-bool PhysicsEngine::CheckCollision(Entity *a, Entity *b)
-{
-    return false;
-}
 
 void PhysicsEngine::UpdatePath(Entity *entity, Components::Motion *motion, float delta)
 {
