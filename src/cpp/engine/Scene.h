@@ -38,6 +38,7 @@ public:
         // type = SceneType::SCENE_SANDBOX;
         // type = SceneType::SCENE_GAME;
         // type = SceneType::SCENE_MANY_CUBE_AXIS;
+        // type = SceneType::SCENE_MANY_CUBE_INSTANCED;
         LOGE("LoadScene: %d", static_cast<int>(type));
 
         if (type == SceneType::SCENE_SANDBOX) CreateSandboxScene();
@@ -62,10 +63,10 @@ public:
         int NUM_BOXES = 1;
         for (int i = 0; i < NUM_BOXES; i++)
         {
-            s.CreateEntity()
-                .AddComponent<Components::Transform>(glm::vec3(0, 0, 0))
-                .AddComponent<Components::Mesh>(Components::MeshType::BOX)
-                .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            auto e1 = CREATE_ENTITY();
+            ADD_COMPONENT(e1, Components::Transform, glm::vec3(0, 0, 0));
+            ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::BOX);
+            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
@@ -81,10 +82,10 @@ public:
         {
             glm::vec3 p(RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50));
 
-            s.CreateEntity()
-                .AddComponent<Components::Transform>(p)
-                .AddComponent<Components::Mesh>(Components::MeshType::BOX)
-                .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            auto e1 = CREATE_ENTITY();
+            ADD_COMPONENT(e1, Components::Transform, p);
+            ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::BOX);
+            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
@@ -100,10 +101,10 @@ public:
         {
             glm::vec3 p(RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50));
 
-            s.CreateEntity()
-                .AddComponent<Components::Transform>(p)
-                .AddComponent<Components::Mesh>(Components::MeshType::INSTANCED_BOX)
-                .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            auto e1 = CREATE_ENTITY();
+            ADD_COMPONENT(e1, Components::Transform, p);
+            ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::INSTANCED_BOX);
+            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
@@ -120,14 +121,14 @@ public:
         {
             glm::vec3 p(RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50));
 
-            s.CreateEntity()
-                .AddComponent<Components::Transform>(p)
-                .AddComponent<Components::Mesh>(Components::MeshType::BOX)
-                .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
-            s.CreateEntity()
-                .AddComponent<Components::Transform>(p)
-                .AddComponent<Components::Mesh>(Components::MeshType::AXIS)
-                .AddComponent<Components::Material>(Components::MaterialType::PIXEL_COLOR);
+            auto e1 = CREATE_ENTITY();
+            ADD_COMPONENT(e1, Components::Transform, p);
+            ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::BOX);
+            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            auto e2 = CREATE_ENTITY();
+            ADD_COMPONENT(e2, Components::Transform, p);
+            ADD_COMPONENT(e2, Components::Mesh, Components::MeshType::AXIS);
+            ADD_COMPONENT(e2, Components::Material, Components::MaterialType::PIXEL_COLOR);
         }
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));

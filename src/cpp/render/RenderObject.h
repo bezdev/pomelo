@@ -17,7 +17,7 @@ struct RenderObject
     ::RenderBuffer* RenderBuffer;
     ::Shader* Shader;
     ::Texture* Texture;
-    std::vector<const ::Entity*> Entities;
+    std::vector<ENTITY> Entities;
 };
 
 struct GUIRenderObject

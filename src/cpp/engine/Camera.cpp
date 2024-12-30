@@ -6,7 +6,7 @@ Camera* Camera::s_Instance = nullptr;
 
 Camera::Camera():
     m_CameraType(CameraType::ORBIT),
-    m_TargetEntity(nullptr),
+    // m_TargetEntity(nullptr),
     m_Height(0),
     m_Width(0),
     m_Ratio(0),
@@ -110,10 +110,17 @@ void Camera::SetLookAt(const VEC3& position, const VEC3& target)
     m_ViewMatrix = glm::lookAt(m_Position, m_Target, V_UP);
 }
 
+#ifdef USE_ENTT
+void Camera::SetTarget(entt::entity target)
+{
+    m_TargetEntity = target;
+}
+#else
 void Camera::SetTarget(Entity* target)
 {
     m_TargetEntity = target;
 }
+#endif
 
 void Camera::SetYawPitch(float yaw, float pitch)
 {

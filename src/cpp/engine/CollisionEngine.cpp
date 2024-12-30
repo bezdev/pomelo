@@ -17,13 +17,25 @@ void CollisionEngine::Update(float delta)
 
 void CollisionEngine::DetectCollisions()
 {
+#ifdef USE_ENTT
+    entt::entity i;
+#else
     EntityID i = 0;
+#endif
     for (auto e1 : m_CollisionEntities)
     {
+#ifdef USE_ENTT
+        i = e1;
+#else
         i = e1->GetID();
+#endif
         for (auto e2 : m_CollisionEntities)
         {
+#ifdef USE_ENTT
+            if (e2 <= i)
+#else
             if (e2->GetID() <= i)
+#endif
             {
                 continue;
             }
@@ -33,17 +45,17 @@ void CollisionEngine::DetectCollisions()
     }
 }
 
-Collision CollisionEngine::CheckCollision(Entity *a, Entity *b) {
+Collision CollisionEngine::CheckCollision(ENTITY a, ENTITY b) {
     Collision c = { V_ORIGIN };
 
-    if (!a->HasComponent<Components::Physics>() || !b->HasComponent<Components::Physics>()) return c;
-    Components::Collision& collisionA = a->GetComponent<Components::Collision>();
-    Components::Transform& transformA = a->GetComponent<Components::Transform>();
-    Components::Physics& physicsA = a->GetComponent<Components::Physics>();
+    if (!HAS_COMPONENT(a, Components::Physics) || !HAS_COMPONENT(b, Components::Physics)) return c;
+    Components::Collision& collisionA = GET_COMPONENT(a, Components::Collision);
+    Components::Transform& transformA = GET_COMPONENT(a, Components::Transform);
+    Components::Physics& physicsA = GET_COMPONENT(a, Components::Physics);
 
-    Components::Collision& collisionB = b->GetComponent<Components::Collision>();
-    Components::Transform& transformB = b->GetComponent<Components::Transform>();
-    Components::Physics& physicsB = b->GetComponent<Components::Physics>();
+    Components::Collision& collisionB = GET_COMPONENT(b, Components::Collision);
+    Components::Transform& transformB = GET_COMPONENT(b, Components::Transform);
+    Components::Physics& physicsB = GET_COMPONENT(b, Components::Physics);
 
     glm::vec3 posA = transformA.GetPosition();
     glm::vec3 posB = transformB.GetPosition();

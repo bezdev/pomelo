@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "engine/Components.h"
+#include "vendor/entt/entt.hpp"
 
 using EntityID = std::size_t;
 using ComponentTypeID = std::size_t;
@@ -157,3 +158,38 @@ private:
     std::vector<Entity> m_Entities;
     EntityID m_nextEntityID = 0;
 };
+
+class ENTT
+{
+public:
+    static entt::registry* GetInstance()
+    {
+        if (!s_Instance) s_Instance = new entt::registry();
+        return s_Instance;
+    }
+
+    static void DestoryInstance()
+    {
+        delete s_Instance;
+        s_Instance = nullptr;
+    }
+private:
+    static entt::registry* s_Instance;
+};
+
+#define USE_ENTT
+#ifndef USE_ENTT
+#define ENTITY Entity*
+#define CREATE_ENTITY() (&ECS::GetInstance()->CreateEntity())
+#define GET_ENTITIES_WITH_COMPONENTS(...) ECS::GetInstance()->GetEntitiesWithComponents<__VA_ARGS__>()
+#define ADD_COMPONENT(entity, component, ...) entity->AddComponent<component>(__VA_ARGS__)
+#define GET_COMPONENT(entity, component) entity->GetComponent<component>()
+#define HAS_COMPONENT(entity, component) entity->HasComponent<component>()
+#else
+#define ENTITY entt::entity
+#define CREATE_ENTITY() ENTT::GetInstance()->create()
+#define GET_ENTITIES_WITH_COMPONENTS(...) ENTT::GetInstance()->view<__VA_ARGS__>()
+#define ADD_COMPONENT(entity, component, ...) ENTT::GetInstance()->emplace<component>(entity, __VA_ARGS__)
+#define GET_COMPONENT(entity, component) ENTT::GetInstance()->get<component>(entity)
+#define HAS_COMPONENT(entity, component) ENTT::GetInstance()->all_of<component>(entity)
+#endif

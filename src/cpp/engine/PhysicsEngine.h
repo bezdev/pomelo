@@ -22,9 +22,10 @@ public:
 
     PhysicsEngine();
 
-    void AddMotionEntity(Entity* entity) { m_MotionEntities.push_back(entity); }
-    void AddPhysicsEntity(Entity* entity) { m_PhysicsEntities.push_back(entity); }
-    void AddCollisionEntity(Entity* entity) { m_CollisionEngine.AddEntity(entity); }
+    void AddMotionEntity(ENTITY entity) { m_MotionEntities.push_back(entity); }
+    void AddPhysicsEntity(ENTITY entity) { m_PhysicsEntities.push_back(entity); }
+    void AddCollisionEntity(ENTITY entity) { m_CollisionEngine.AddEntity(entity); }
+
     void Update(float delta);
     void UpdateMotions(float delta);
     void UpdatePhysics(float delta);
@@ -32,11 +33,11 @@ public:
 private:
     static PhysicsEngine* s_Instance;
 
-    void UpdatePath(Entity* entity, Components::Motion* motion, float delta);
-    void UpdateOrbit(Entity* entity, Components::Motion* motion, float delta);
+    void UpdatePath(ENTITY entity, Components::Motion* motion, float delta);
+    void UpdateOrbit(ENTITY entity, Components::Motion* motion, float delta);
 
     CollisionEngine m_CollisionEngine;
-    std::vector<Entity*> m_MotionEntities;
-    std::vector<Entity*> m_PhysicsEntities;
+    std::vector<ENTITY> m_MotionEntities;
+    std::vector<ENTITY> m_PhysicsEntities;
 };
 

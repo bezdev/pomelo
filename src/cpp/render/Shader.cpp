@@ -66,8 +66,8 @@ void SolidColorShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMat
 
 void SolidColorShader::SetPerRenderObject(const RenderObject* renderObject)
 {
-    auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
-    auto material = renderObject->Entities.back()->GetComponent<Components::Material>();
+    auto transform = GET_COMPONENT(renderObject->Entities.back(), Components::Transform);
+    auto material = GET_COMPONENT(renderObject->Entities.back(), Components::Material);
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
     glUniform4f(m_Variables[1], material.Color.r, material.Color.g, material.Color.b, material.Color.a);
 }
@@ -105,9 +105,9 @@ void SolidColorShaderInstanced::SetVPMatrix(glm::f32* viewMatrix, glm::f32* proj
 void SolidColorShaderInstanced::SetPerRenderObject(const RenderObject* renderObject)
 {
     // TODO: fix this hack
-    auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
+    auto transform = GET_COMPONENT(renderObject->Entities.back(), Components::Transform);
     transform.SetPosition(glm::vec3(0,0,0));
-    auto material = renderObject->Entities.back()->GetComponent<Components::Material>();
+    auto material = GET_COMPONENT(renderObject->Entities.back(), Components::Material);
     glUniform4f(m_Variables[2], material.Color.r, material.Color.g, material.Color.b, material.Color.a);
     glUniformMatrix4fv(m_Variables[3], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
 }
@@ -145,7 +145,7 @@ void PixelColorShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMat
 
 void PixelColorShader::SetPerRenderObject(const RenderObject* renderObject)
 {
-    auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
+    auto transform = GET_COMPONENT(renderObject->Entities.back(), Components::Transform);
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
     // glLineWidth(3);
 }
@@ -189,8 +189,8 @@ void TextureShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix
 
 void TextureShader::SetPerRenderObject(const RenderObject* renderObject)
 {
-    auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
-    auto material = renderObject->Entities.back()->GetComponent<Components::Material>();
+    auto transform = GET_COMPONENT(renderObject->Entities.back(), Components::Transform);
+    auto material = GET_COMPONENT(renderObject->Entities.back(), Components::Material);
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
 
     // TODO: add to a per material method
@@ -231,7 +231,7 @@ void FontShader::SetVPMatrix(glm::f32* viewMatrix, glm::f32* projectionMatrix)
 
 void FontShader::SetPerRenderObject(const RenderObject* renderObject)
 {
-    auto transform = renderObject->Entities.back()->GetComponent<Components::Transform>();
+    auto transform = GET_COMPONENT(renderObject->Entities.back(), Components::Transform);
     glUniformMatrix4fv(m_Variables[2], 1, GL_FALSE, glm::value_ptr(transform.GetMM()));
 
     // TODO: add to a per material method

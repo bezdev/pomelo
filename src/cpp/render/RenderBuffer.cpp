@@ -282,19 +282,19 @@ RenderBuffer* RenderBufferManager::CreateInstancedBox(std::vector<glm::vec3>& po
     return rb;
 }
 
-RenderBuffer *RenderBufferManager::CreateInstancedLines(const std::vector<const Entity *>& entities)
+RenderBuffer *RenderBufferManager::CreateInstancedLines(const std::vector<ENTITY>& entities)
 {
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec4> colors;
 
     short i = 0;
-    for (const Entity* e : entities)
+    for (auto e : entities)
     {
-        auto& transform = e->GetComponent<Components::Transform>();
+        auto& transform = GET_COMPONENT(e, Components::Transform);
         vertices.push_back(transform.GetPosition());
         vertices.push_back(transform.GetPosition() + transform.GetScale());
 
-        auto& material = e->GetComponent<Components::Material>();
+        auto& material = GET_COMPONENT(e, Components::Material);
         colors.push_back(material.Color);
         colors.push_back(material.Color);
     }

@@ -82,33 +82,40 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
     m_ShaderManager.Cleanup();
     m_RenderObjects.clear();
 
-    std::map<Components::MeshType, std::vector<const Entity*>> instancedMap;
+    std::map<Components::MeshType, std::vector<ENTITY>> instancedMap;
 
-    for (const Entity& entity : entities)
+#ifdef USE_ENTT
+    for (auto entity : ENTT::GetInstance()->view<Components::Transform>())
+#else
+    for (auto& e : ECS::GetInstance()->GetEntities())
+#endif
     {
+#ifndef USE_ENTT
+        auto entity = &e;
+#endif
         Components::Material* material = nullptr;
         Components::Mesh* mesh = nullptr;
         Components::Text* text = nullptr;
 
-        if (entity.HasComponent<Components::Material>())
+        if (HAS_COMPONENT(entity, Components::Material))
         {
-            material = &entity.GetComponent<Components::Material>();
+            material = &GET_COMPONENT(entity, Components::Material);
         }
 
-        if (entity.HasComponent<Components::Mesh>())
+        if (HAS_COMPONENT(entity, Components::Mesh))
         {
-            mesh = &entity.GetComponent<Components::Mesh>();
+            mesh = &GET_COMPONENT(entity, Components::Mesh);
 
             if (mesh->Type == Components::MeshType::INSTANCED_BOX || mesh->Type == Components::MeshType::LINE )
             {
-                instancedMap[mesh->Type].push_back(&entity);
+                instancedMap[mesh->Type].push_back(entity);
                 continue;
             }
         }
 
-        if (entity.HasComponent<Components::Text>())
+        if (HAS_COMPONENT(entity, Components::Text))
         {
-            text = &entity.GetComponent<Components::Text>();
+            text = &GET_COMPONENT(entity, Components::Text);
         }
 
         if (material != nullptr && mesh != nullptr)
@@ -118,7 +125,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 RenderObject ro;
                 ro.RenderBuffer = renderBufferManager->GetRenderBuffer(mesh->Type);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::SOLID_COLOR);
-                ro.Entities.push_back(const_cast<Entity*>(&entity));
+                ro.Entities.push_back(entity);
                 m_RenderObjects.push_back(ro);
             }
             else if (material->Type == Components::MaterialType::PIXEL_COLOR && mesh->Type == Components::MeshType::AXIS)
@@ -126,7 +133,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 RenderObject ro;
                 ro.RenderBuffer = renderBufferManager->GetRenderBuffer(Components::MeshType::AXIS);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::PIXEL_COLOR);
-                ro.Entities.push_back(const_cast<Entity*>(&entity));
+                ro.Entities.push_back(entity);
                 m_RenderObjects.push_back(ro);
             }
             else if (material->Type == Components::MaterialType::TEXTURE) // TODO: add meshtype check
@@ -135,7 +142,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
                 ro.RenderBuffer = renderBufferManager->GetRenderBuffer(Components::MeshType::PLANE_TEXTURE);
                 ro.Shader = m_ShaderManager.GetShader(ShaderType::TEXTURE);
                 ro.Texture = TextureManager::GetInstance()->CreateTexture(material->Name);
-                ro.Entities.push_back(const_cast<Entity*>(&entity));
+                ro.Entities.push_back(entity);
                 m_RenderObjects.push_back(ro);
             }
         }
@@ -147,7 +154,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
             ro.RenderBuffer = t->GetRenderBuffer();
             ro.Shader = m_ShaderManager.GetShader(ShaderType::FONT);
             ro.Texture = t->GetTexture();
-            ro.Entities.push_back(const_cast<Entity*>(&entity));
+            ro.Entities.push_back(entity);
             m_RenderObjects.push_back(ro);
         }
     }
@@ -156,9 +163,9 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
     {
         std::vector<glm::vec3> positions;
 
-        for (const auto& e : instancedMap[Components::MeshType::INSTANCED_BOX])
+        for (auto e : instancedMap[Components::MeshType::INSTANCED_BOX])
         {
-            auto& position = e->GetComponent<Components::Transform>();
+            auto& position = GET_COMPONENT(e, Components::Transform);
             positions.push_back(position.GetPosition());
         }
 

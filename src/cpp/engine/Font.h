@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-#include "engine/ECS.h"
 #include "engine/Components.h"
 #include "util/Util.h"
 

@@ -19,7 +19,7 @@ void PhysicsEngine::UpdateMotions(float delta)
 {
     for (auto e : m_MotionEntities)
     {
-        Components::Motion& motion = e->GetComponent<Components::Motion>();
+        Components::Motion& motion = GET_COMPONENT(e, Components::Motion);
         if (motion.Type == Components::MotionType::PATH)
         {
             UpdatePath(e, &motion, delta);
@@ -37,8 +37,8 @@ void PhysicsEngine::UpdatePhysics(float delta)
 
     for (auto e : m_PhysicsEntities)
     {
-        Components::Physics& physics = e->GetComponent<Components::Physics>();
-        Components::Transform& transform = e->GetComponent<Components::Transform>();
+        Components::Physics& physics = GET_COMPONENT(e, Components::Physics);
+        Components::Transform& transform = GET_COMPONENT(e, Components::Transform);
 
         physics.Velocity += physics.Acceleration * delta;
         transform.SetPosition(transform.GetPosition() + physics.Velocity * delta);
@@ -69,7 +69,7 @@ void PhysicsEngine::UpdateCollisions(float delta)
 }
 
 
-void PhysicsEngine::UpdatePath(Entity *entity, Components::Motion *motion, float delta)
+void PhysicsEngine::UpdatePath(ENTITY entity, Components::Motion *motion, float delta)
 {
     if (motion->Step >= 1.f) return;
 
@@ -87,13 +87,13 @@ void PhysicsEngine::UpdatePath(Entity *entity, Components::Motion *motion, float
         position = motion->Target;
     }
 
-    Components::Transform& transform = entity->GetComponent<Components::Transform>();
+    Components::Transform& transform = GET_COMPONENT(entity, Components::Transform);
     transform.SetPosition(position);
 }
 
-void PhysicsEngine::UpdateOrbit(Entity* entity, Components::Motion* motion, float delta)
+void PhysicsEngine::UpdateOrbit(ENTITY entity, Components::Motion* motion, float delta)
 {
-    Components::Transform& transform = entity->GetComponent<Components::Transform>();
+    Components::Transform& transform = GET_COMPONENT(entity, Components::Transform);
 
     // Calculate angle
     float angularSpeed = 2 * Constants::PI / motion->Time;

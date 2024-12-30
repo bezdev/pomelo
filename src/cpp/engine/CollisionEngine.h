@@ -115,13 +115,13 @@ public:
     CollisionEngine();
 
     void Update(float delta);
-    void AddEntity(Entity* entity) { m_CollisionEntities.push_back(entity); }
+    void AddEntity(ENTITY entity) { m_CollisionEntities.push_back(entity); }
     void DetectCollisions();
-    Collision CheckCollision(Entity* a, Entity* b);
+    Collision CheckCollision(ENTITY a, ENTITY b);
 private:
     static CollisionEngine* s_Instance;
 
-    std::vector<Entity*> m_CollisionEntities;
+    std::vector<ENTITY> m_CollisionEntities;
 };
 
 class CollisionHelpers

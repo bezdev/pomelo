@@ -40,7 +40,11 @@ public:
 
     void SetCameraType(CameraType type) { m_CameraType = type; }
     void SetLookAt(const VEC3& position, const VEC3& target);
+#ifdef USE_ENTT
+    void SetTarget(entt::entity target);
+#else
     void SetTarget(Entity* target);
+#endif
     void SetYawPitch(float yaw, float pitch);
     void UpdateViewSize(int width, int height);
 private:
@@ -48,7 +52,11 @@ private:
 
     CameraType m_CameraType;
 
+#ifdef USE_ENTT
+    entt::entity m_TargetEntity;
+#else
     Entity* m_TargetEntity;
+#endif
 
     float m_ScreenX;
     float m_ScreenY;
