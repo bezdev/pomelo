@@ -31,7 +31,7 @@ void AndroidApp::Initialize(android_app *androidApp)
     m_AndroidApp->onInputEvent = AndroidApp::OnInputEvent;
 
     // m_App.SetStartScene(SCENE_MANY_CUBE_AXIS);
-    m_App.SetStartScene(SCENE_SANDBOX);
+    m_App.SetStartScene(SceneType::SCENE_SANDBOX);
 }
 
 void AndroidApp::InitializeWindow(ANativeWindow *window)

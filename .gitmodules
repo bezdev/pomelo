@@ -1,0 +1,3 @@
+[submodule "src/cpp/vendor/JoltPhysics"]
+	path = src/cpp/vendor/JoltPhysics
+	url = https://github.com/jrouwe/JoltPhysics.git

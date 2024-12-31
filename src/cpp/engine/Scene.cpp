@@ -107,7 +107,7 @@ void SceneManager::CreateGameScene()
     ADD_COMPONENT(car, Components::Transform, V_ORIGIN, VEC3(1.f, 1.f, 5.f));
     ADD_COMPONENT(car, Components::Mesh, Components::MeshType::BOX);
     ADD_COMPONENT(car, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 0.f, 0.f, 1.0f));
-    ADD_COMPONENT(car, Components::Physics);
+    //ADD_COMPONENT(car, Components::Physics);
         // .AddComponent<Components::Motion>(Components::MotionType::ORBIT, glm::vec3(10.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), 5000);
 
     auto e1 = CREATE_ENTITY();
