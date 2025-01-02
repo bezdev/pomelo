@@ -35,6 +35,8 @@ int App::Initialize()
     JNIUtil::GetInstance()->Initialize(this);
 #endif
 
+    JPH::RegisterDefaultAllocator();
+
     return 0;
 }
 

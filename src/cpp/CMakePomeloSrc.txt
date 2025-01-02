@@ -49,3 +49,11 @@ if(DEFINED BUILD_DESKTOP)
         ${SOURCES_BASE_PATH}/app/GLFWApp.cpp
     )
 endif()
+
+add_subdirectory(
+    "${SOURCES_BASE_PATH}/vendor/JoltPhysics"
+    "${CMAKE_CURRENT_BINARY_DIR}/JoltPhysics_build"
+)
+
+include_directories(${SOURCES_BASE_PATH}/vendor/JoltPhysics/)
+

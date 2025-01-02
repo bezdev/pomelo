@@ -27,7 +27,18 @@ add_library(pomelo-native
 target_include_directories(pomelo-native
     PRIVATE
     ${ANDROID_NDK}/sources/android/native_app_glue
+    ${SOURCES_BASE_PATH}/vendor/JoltPhysics
 )
+
+set(USE_SSE4_1 OFF CACHE BOOL "Disable SSE4.1")
+set(USE_SSE4_2 OFF CACHE BOOL "Disable SSE4.2")
+set(USE_AVX OFF CACHE BOOL "Disable AVX")
+set(USE_AVX2 OFF CACHE BOOL "Disable AVX2")
+set(USE_AVX512 OFF CACHE BOOL "Disable AVX512")
+set(USE_LZCNT OFF CACHE BOOL "Disable LZCNT")
+set(USE_TZCNT OFF CACHE BOOL "Disable TZCNT")
+set(USE_F16C OFF CACHE BOOL "Disable F16C")
+set(USE_FMADD OFF CACHE BOOL "Disable FMADD")
 
 find_library(log-lib log)
 find_library(gl-v3 GLESv3)
@@ -38,5 +49,6 @@ target_link_libraries(
     ${gl-v3}
     android
     native_app_glue
+    Jolt
     ${log-lib}
 )

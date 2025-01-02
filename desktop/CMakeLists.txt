@@ -61,13 +61,15 @@ target_include_directories(game SYSTEM PRIVATE ${CMAKE_CURRENT_LIST_DIR}/inc)
 set_target_properties(pomelo PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS NO)
 set_target_properties(game PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS NO)
 
+target_include_directories(pomelo PRIVATE ${SOURCES_BASE_PATH}/vendor/JoltPhysics)
+
 if (WIN32)
     find_library(GLFW_LIB
         glfw3
         HINTS "${CMAKE_CURRENT_LIST_DIR}/lib/GLFW"
     )
 
-    target_link_libraries(pomelo ${GLFW_LIB} opengl32 GLAD)
+    target_link_libraries(pomelo ${GLFW_LIB} opengl32 GLAD Jolt)
     target_link_libraries(game ${GLFW_LIB} opengl32 GLAD pomelo)
 
 elseif (APPLE)
