@@ -18,6 +18,7 @@ enum class SceneType
     SCENE_COLLISION,
     SCENE_COLLISION_NO_PHYSICS,
     SCENE_COLLISION_NO_COLLISION,
+    SCENE_JOLT_HELLO_WORLD,
 };
 
 class Scene
@@ -39,6 +40,7 @@ public:
         // type = SceneType::SCENE_GAME;
         // type = SceneType::SCENE_MANY_CUBE_AXIS;
         // type = SceneType::SCENE_MANY_CUBE_INSTANCED;
+        type = SceneType::SCENE_JOLT_HELLO_WORLD;
         LOGE("LoadScene: %d", static_cast<int>(type));
 
         if (type == SceneType::SCENE_SANDBOX) CreateSandboxScene();
@@ -50,11 +52,13 @@ public:
         else if (type == SceneType::SCENE_COLLISION) CreateCollisionScene(true, true);
         else if (type == SceneType::SCENE_COLLISION_NO_PHYSICS) CreateCollisionScene(false, false);
         else if (type == SceneType::SCENE_COLLISION_NO_COLLISION) CreateCollisionScene(true, false);
+        else if (type == SceneType::SCENE_JOLT_HELLO_WORLD) CreateJoltHelloWorldScene();
     }
 
     static void CreateSandboxScene();
     static void CreateGameScene();
     static void CreateCollisionScene(bool hasPhysics, bool hasCollisions);
+    static void CreateJoltHelloWorldScene();
 
     static void CreateCubeScene()
     {

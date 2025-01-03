@@ -35,7 +35,7 @@ int App::Initialize()
     JNIUtil::GetInstance()->Initialize(this);
 #endif
 
-    JPH::RegisterDefaultAllocator();
+    PhysicsEngine::GetInstance()->Initialize();
 
     return 0;
 }

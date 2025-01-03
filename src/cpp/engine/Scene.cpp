@@ -244,3 +244,31 @@ void SceneManager::CreateCollisionScene(bool hasPhysics, bool hasCollisions)
     Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 50.f, 50.f), glm::vec3(0.f, 0.f, 0.f));
     s.Load();
 }
+
+void SceneManager::CreateJoltHelloWorldScene()
+{
+    Scene s;
+
+    EntityFactory::CreateAxis(V_ORIGIN);
+
+    auto floor = CREATE_ENTITY();
+    ADD_COMPONENT(floor, Components::Transform, glm::vec3(0, 0, 0), glm::vec3(100.f, 1.f, 100.f));
+    ADD_COMPONENT(floor, Components::Mesh, Components::MeshType::BOX);
+    ADD_COMPONENT(floor, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+
+    auto sphere = CREATE_ENTITY();
+    ADD_COMPONENT(sphere, Components::Transform, glm::vec3(0, 20, 0), glm::vec3(.5f, .5f, .5f));
+    ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
+    ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+
+    if (!ENTT::GetInstance()->valid(sphere))
+    {
+        std::cerr << "Error: Entity is invalid or does not exist in the registry." << std::endl;
+        return;
+    }
+    std::cout << "Adding Entity: " << static_cast<uint32_t>(sphere) << std::endl;
+    PhysicsEngine::GetInstance()->AddPhysicsEntity(sphere);
+
+    Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 50.f, 50.f), glm::vec3(0.f, 0.f, 0.f));
+    s.Load();
+}
