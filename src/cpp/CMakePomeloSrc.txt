@@ -50,10 +50,5 @@ if(DEFINED BUILD_DESKTOP)
     )
 endif()
 
-add_subdirectory(
-    "${SOURCES_BASE_PATH}/vendor/JoltPhysics"
-    "${CMAKE_CURRENT_BINARY_DIR}/JoltPhysics_build"
-)
-
-include_directories(${SOURCES_BASE_PATH}/vendor/JoltPhysics/)
+include(${SOURCES_BASE_PATH}/CMakeJolt.cmake)
 
