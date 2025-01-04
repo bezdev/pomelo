@@ -16,7 +16,7 @@ add_compile_options(-Wall)
 
 set(TEST_FOLDER ${CMAKE_CURRENT_LIST_DIR}/../test)
 
-include(${CMAKE_CURRENT_LIST_DIR}/../src/cpp/CMakePomeloSrc.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/../src/cpp/CMakePomelo.cmake)
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../src/cpp)
 include_directories(${TEST_FOLDER})

@@ -51,4 +51,3 @@ if(DEFINED BUILD_DESKTOP)
 endif()
 
 include(${SOURCES_BASE_PATH}/CMakeJolt.cmake)
-
