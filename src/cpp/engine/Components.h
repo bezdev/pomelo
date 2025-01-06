@@ -238,4 +238,40 @@ namespace Components
 
         int ID;
     };
+
+    enum class CollisionMotionType : uint8_t
+    {
+        Static = 0,
+        Kinematic,
+        Dynamic,
+    };
+
+    enum class CollisionActivationType
+    {
+        Activate = 0,
+        DontActivate
+    };
+
+    enum class CollisionLayer
+    {
+        NON_MOVING = 0,
+        MOVING = 1,
+        NUM_LAYERS = 2,
+    };
+
+    struct CollisionSphere
+    {
+        float Radius;
+        CollisionMotionType MotionType;
+        CollisionActivationType ActivationType;
+        CollisionLayer Layer;
+    };
+
+    struct CollisionBox
+    {
+        VEC3 Extents;
+        CollisionMotionType MotionType;
+        CollisionActivationType ActivationType;
+        CollisionLayer Layer;
+    };
 }

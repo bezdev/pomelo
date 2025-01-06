@@ -108,6 +108,9 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "ranges": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "coroutine": "cpp",
+        "csignal": "cpp",
+        "shared_mutex": "cpp"
     }
 }
