@@ -1,22 +1,30 @@
 #include "render/Renderer.h"
 #include "Renderer.h"
+#include <engine/EventDispatcher.h>
 
-Renderer* Renderer::s_Instance = nullptr;
+Renderer *Renderer::s_Instance = nullptr;
 
-Renderer::Renderer():
-    m_IsInitialized(false),
-    m_ScreenWidth(0),
-    m_ScreenHeight(0),
-    m_IsDrawWireFrame(false),
-    m_GUIRenderObjects(10),
-    m_FPSTextElement(nullptr)
+Renderer::Renderer() : m_IsInitialized(false),
+                       m_ScreenWidth(0),
+                       m_ScreenHeight(0),
+                       m_IsDrawWireFrame(false),
+                       m_GUIRenderObjects(10),
+                       m_FPSTextElement(nullptr)
 {
-    InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_N, [&](InputEvent event, InputData data) {
+    InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_N, [&](InputEvent event, InputData data)
+                                                  {
         if (data.Action == InputAction::UP)
         {
             m_IsDrawWireFrame = !m_IsDrawWireFrame;
-        }
-    });
+        } });
+
+    EventDispatcher::GetInstance()->Subscribe(EventType::ENTITY_CREATED, [](const Event &event)
+                                              {
+        if (std::holds_alternative<EntityData>(event.Data))
+        {
+            const auto& data = std::get<EntityData>(event.Data);
+            LOGD("ENTITY_CREATED: %d", data.Entity);
+        } });
 }
 
 Renderer::~Renderer()
@@ -24,43 +32,45 @@ Renderer::~Renderer()
     LOGD("Renderer::~Renderer");
     Cleanup();
 }
- 
+
 int Renderer::Initialize()
 {
-    if (!m_IsInitialized)
+    if (m_IsInitialized)
     {
-        GLint majorVersion;
-        GLint minorVersion;
-        glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
-        glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
-        LOGI("OpenGL Version: %d.%d", majorVersion, minorVersion);
+        return 0;
+    }
 
-        if (majorVersion == 3 && minorVersion < 3)
+    GLint majorVersion;
+    GLint minorVersion;
+    glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+    glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+    LOGI("OpenGL Version: %d.%d", majorVersion, minorVersion);
+
+    if (majorVersion == 3 && minorVersion < 3)
+    {
+        bool hasARBDrawInstanced = false;
+        std::string extensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+        std::stringstream ss(extensions);
+        std::string extension;
+        LOGI("glGetString(GL_EXTENSIONS): %s", extensions.c_str());
+
+        while (ss >> extension)
         {
-            bool hasARBDrawInstanced = false;
-            std::string extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
-            std::stringstream ss(extensions);
-            std::string extension;
-            LOGI("glGetString(GL_EXTENSIONS): %s", extensions.c_str());
-
-            while (ss >> extension)
+            if (extension == "GL_ARB_draw_instanced")
             {
-                if (extension == "GL_ARB_draw_instanced")
-                {
-                    hasARBDrawInstanced = true;
-                }
-
-                // LOGI(extension.c_str());
+                hasARBDrawInstanced = true;
             }
 
-            if (majorVersion == 3 && minorVersion < 3 && !hasARBDrawInstanced)
-            {
-                LOGE("no instancing support");
-            }
+            LOGI(extension.c_str());
         }
 
-        m_IsInitialized = true;
+        if (majorVersion == 3 && minorVersion < 3 && !hasARBDrawInstanced)
+        {
+            LOGE("no instancing support");
+        }
     }
+
+    m_IsInitialized = true;
 
     return 0;
 }
@@ -73,11 +83,11 @@ void Renderer::Cleanup()
     TextManager::DestroyInstance();
 }
 
-void Renderer::LoadEntities(const std::vector<Entity>& entities)
+void Renderer::LoadEntities(const std::vector<Entity> &entities)
 {
     ScopeTimer s("LoadEntities");
 
-    RenderBufferManager* renderBufferManager = RenderBufferManager::GetInstance();
+    RenderBufferManager *renderBufferManager = RenderBufferManager::GetInstance();
     renderBufferManager->Cleanup();
     m_ShaderManager.Cleanup();
     m_RenderObjects.clear();
@@ -87,15 +97,15 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 #ifdef USE_ENTT
     for (auto entity : ENTT::GetInstance()->view<Components::Transform>())
 #else
-    for (auto& e : ECS::GetInstance()->GetEntities())
+    for (auto &e : ECS::GetInstance()->GetEntities())
 #endif
     {
 #ifndef USE_ENTT
         auto entity = &e;
 #endif
-        Components::Material* material = nullptr;
-        Components::Mesh* mesh = nullptr;
-        Components::Text* text = nullptr;
+        Components::Material *material = nullptr;
+        Components::Mesh *mesh = nullptr;
+        Components::Text *text = nullptr;
 
         if (HAS_COMPONENT(entity, Components::Material))
         {
@@ -106,7 +116,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         {
             mesh = &GET_COMPONENT(entity, Components::Mesh);
 
-            if (mesh->Type == Components::MeshType::INSTANCED_BOX || mesh->Type == Components::MeshType::LINE )
+            if (mesh->Type == Components::MeshType::INSTANCED_BOX || mesh->Type == Components::MeshType::LINE)
             {
                 instancedMap[mesh->Type].push_back(entity);
                 continue;
@@ -149,7 +159,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 
         if (text != nullptr)
         {
-            Text* t = TextManager::GetInstance()->GetText(text->ID);
+            Text *t = TextManager::GetInstance()->GetText(text->ID);
             RenderObject ro;
             ro.RenderBuffer = t->GetRenderBuffer();
             ro.Shader = m_ShaderManager.GetShader(ShaderType::FONT);
@@ -165,7 +175,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 
         for (auto e : instancedMap[Components::MeshType::INSTANCED_BOX])
         {
-            auto& position = GET_COMPONENT(e, Components::Transform);
+            auto &position = GET_COMPONENT(e, Components::Transform);
             positions.push_back(position.GetPosition());
         }
 
@@ -187,7 +197,7 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
 
     // TODO: also sort by material type and maybe texture id
     std::sort(m_RenderObjects.begin(), m_RenderObjects.end(), [](RenderObject a, RenderObject b)
-    {
+              {
         if (a.Shader == b.Shader)
         {
             return a.RenderBuffer < b.RenderBuffer;
@@ -195,40 +205,35 @@ void Renderer::LoadEntities(const std::vector<Entity>& entities)
         else
         {
             return a.Shader < b.Shader;
-        }
-    });
+        } });
 }
 
 void Renderer::LoadGUI()
 {
-    m_FPSTextElement = static_cast<GUI::TextElement*>(m_GUI.AddElement(m_GUI.CreateTextElement(
+    m_FPSTextElement = static_cast<GUI::TextElement *>(m_GUI.AddElement(m_GUI.CreateTextElement(
         VEC2(m_ScreenWidth - 10, m_ScreenHeight - 10),
         std::string("                    "),
-        GUI::TextProperties {
+        GUI::TextProperties{
             GUI::AnchorType::TOP_RIGHT,
             24,
-            V_COLOR_RED
-        }
-    )));
+            V_COLOR_RED})));
     AddGUIElement(m_FPSTextElement);
 }
 
-void Renderer::AddGUIElement(GUI::Element* element)
+void Renderer::AddGUIElement(GUI::Element *element)
 {
-    GUI::TextElement* textElement = static_cast<GUI::TextElement*>(element);
+    GUI::TextElement *textElement = static_cast<GUI::TextElement *>(element);
     if (textElement != nullptr)
     {
-        Text* t = TextManager::GetInstance()->CreateText(textElement->GetText());
+        Text *t = TextManager::GetInstance()->CreateText(textElement->GetText());
         textElement->SetTextObject(t);
-        m_GUIRenderObjects[textElement->GetID()] = GUIRenderObject {
+        m_GUIRenderObjects[textElement->GetID()] = GUIRenderObject{
             t->GetRenderBuffer(),
             m_ShaderManager.GetShader(ShaderType::FONT),
             t->GetTexture(),
-            element
-        };
+            element};
     }
 }
-
 
 void Renderer::UpdateWindowSize(int width, int height)
 {
@@ -252,14 +257,14 @@ void Renderer::Render()
     // glFrontFace(GL_CW);
     // glCullFace(GL_BACK);
 
-    Shader* currentShader = nullptr;
-    Components::Material* currentMaterial = nullptr;
-    RenderBuffer* currentRenderBuffer = nullptr;
+    Shader *currentShader = nullptr;
+    Components::Material *currentMaterial = nullptr;
+    RenderBuffer *currentRenderBuffer = nullptr;
 
-    for (RenderObject& ro : m_RenderObjects)
+    for (RenderObject &ro : m_RenderObjects)
     {
-        Shader* shader = ro.Shader;
-        RenderBuffer* renderBuffer = ro.RenderBuffer;
+        Shader *shader = ro.Shader;
+        RenderBuffer *renderBuffer = ro.RenderBuffer;
 
         if (shader != currentShader)
         {
@@ -318,18 +323,19 @@ void Renderer::RenderGUI()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    Shader* currentShader = nullptr;
-    RenderBuffer* currentRenderBuffer = nullptr;
+    Shader *currentShader = nullptr;
+    RenderBuffer *currentRenderBuffer = nullptr;
 
     for (auto element : m_GUI)
     {
-        GUIRenderObject& ro = m_GUIRenderObjects[element->GetID()];
+        GUIRenderObject &ro = m_GUIRenderObjects[element->GetID()];
 
-        if (ro.Element == nullptr) continue;
+        if (ro.Element == nullptr)
+            continue;
 
-        Shader* shader = ro.Shader;
-        RenderBuffer* renderBuffer = ro.RenderBuffer;
-        Texture* texture = ro.Texture;
+        Shader *shader = ro.Shader;
+        RenderBuffer *renderBuffer = ro.RenderBuffer;
+        Texture *texture = ro.Texture;
 
         if (shader != currentShader)
         {
@@ -358,7 +364,7 @@ void Renderer::RenderGUI()
             currentRenderBuffer = renderBuffer;
         }
 
-        auto textElement = static_cast<GUI::TextElement*>(ro.Element);
+        auto textElement = static_cast<GUI::TextElement *>(ro.Element);
         shader->SetUniformMatrix4fv(shader->GetVariables()[2], glm::value_ptr(textElement->GetTransform()));
         shader->SetUniform1i(shader->GetVariables()[5], 0);
         shader->BindTexture(texture->GetTextureID());
@@ -368,7 +374,8 @@ void Renderer::RenderGUI()
 
 void Renderer::UpdateFPS(const std::string &fps)
 {
-    if (m_FPSTextElement == nullptr) return;
-    Text* t = m_FPSTextElement->GetTextObject();
+    if (m_FPSTextElement == nullptr)
+        return;
+    Text *t = m_FPSTextElement->GetTextObject();
     t->UpdateText(fps);
 }

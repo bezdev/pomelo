@@ -29,6 +29,7 @@ set(SOURCE_FILES
     ${SOURCES_BASE_PATH}/engine/Mesh.cpp
     ${SOURCES_BASE_PATH}/engine/Scene.cpp
     ${SOURCES_BASE_PATH}/engine/ECS.cpp
+    ${SOURCES_BASE_PATH}/engine/EventDispatcher.cpp
     ${SOURCES_BASE_PATH}/engine/Font.cpp
     ${SOURCES_BASE_PATH}/util/Logger.cpp
     ${SOURCES_BASE_PATH}/util/Util.cpp

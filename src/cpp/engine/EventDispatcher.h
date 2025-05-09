@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ECS.h"
+
 #include <array>
 #include <functional>
 #include <mutex>
@@ -16,28 +18,40 @@ enum class EventType : unsigned int
     NUM_EVENTS,
 };
 
-struct EntityPayload
+struct EntityData
 {
-    unsigned int entityId;
+    ENTITY Entity;
 };
 
-struct KeypressPayload
+struct KeypressData
 {
-    char key;
+    char Key;
 };
 
-using EventPayload = std::variant<std::monostate, EntityPayload, KeypressPayload>;
+using EventData = std::variant<std::monostate, EntityData, KeypressData>;
 
 struct Event
 {
-    EventType type;
-    EventPayload payload;
+    EventType Type;
+    EventData Data;
 };
 
 class EventDispatcher
 {
 public:
     using Callback = std::function<void(const Event &)>;
+
+    static EventDispatcher* GetInstance()
+    {
+        if (!s_Instance) s_Instance = new EventDispatcher();
+        return s_Instance;
+    }
+
+    static void DestoryInstance()
+    {
+        delete s_Instance;
+        s_Instance = nullptr;
+    }
 
     EventDispatcher()
     {
@@ -70,7 +84,7 @@ public:
             const Event &event = eventsToDispatch.front();
 
             std::lock_guard<std::mutex> lock(m_SubscriberMutex);
-            const auto &callbacks = m_Subscribers[static_cast<size_t>(event.type)];
+            const auto &callbacks = m_Subscribers[static_cast<size_t>(event.Type)];
             for (const auto &callback : callbacks)
             {
                 callback(event);
@@ -81,6 +95,8 @@ public:
     }
 
 private:
+    static EventDispatcher *s_Instance;
+
     std::array<std::vector<Callback>, static_cast<size_t>(EventType::NUM_EVENTS)> m_Subscribers;
     std::queue<Event> m_EventQueue;
 

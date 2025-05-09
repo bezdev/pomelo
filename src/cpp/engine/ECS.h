@@ -9,6 +9,8 @@
 #include "engine/Components.h"
 #include "vendor/entt/entt.hpp"
 
+#define USE_ENTT
+
 using EntityID = std::size_t;
 using ComponentTypeID = std::size_t;
 
@@ -177,19 +179,41 @@ private:
     static entt::registry* s_Instance;
 };
 
-#define USE_ENTT
-#ifndef USE_ENTT
-#define ENTITY Entity*
-#define CREATE_ENTITY() (&ECS::GetInstance()->CreateEntity())
-#define GET_ENTITIES_WITH_COMPONENTS(...) ECS::GetInstance()->GetEntitiesWithComponents<__VA_ARGS__>()
-#define ADD_COMPONENT(entity, component, ...) entity->AddComponent<component>(__VA_ARGS__)
-#define GET_COMPONENT(entity, component) entity->GetComponent<component>()
-#define HAS_COMPONENT(entity, component) entity->HasComponent<component>()
-#else
+
+#ifdef USE_ENTT
 #define ENTITY entt::entity
+#else
+#define ENTITY Entity*
+#endif
+
+class Event;
+void PublishAddEntityEvent(ENTITY entity);
+
+template<typename ComponentType, typename... Args>
+ComponentType& AddComponent(ENTITY entity, Args&&... args)
+{
+#ifdef USE_ENTT
+    auto& result = ENTT::GetInstance()->emplace<ComponentType>(entity, std::forward<Args>(args)...);
+#else
+    auto& result = entity->AddComponent<ComponentType>(std::forward<Args>(args)...);
+#endif
+
+    // TODO: this is actually a component added event
+    PublishAddEntityEvent(entity);
+
+    return result;
+}
+
+#ifdef USE_ENTT
 #define CREATE_ENTITY() ENTT::GetInstance()->create()
 #define GET_ENTITIES_WITH_COMPONENTS(...) ENTT::GetInstance()->view<__VA_ARGS__>()
-#define ADD_COMPONENT(entity, component, ...) ENTT::GetInstance()->emplace<component>(entity, __VA_ARGS__)
+#define ADD_COMPONENT(entity, component, ...) AddComponent<component>(entity, __VA_ARGS__)
 #define GET_COMPONENT(entity, component) ENTT::GetInstance()->get<component>(entity)
 #define HAS_COMPONENT(entity, component) ENTT::GetInstance()->all_of<component>(entity)
+#else
+#define CREATE_ENTITY() (&ECS::GetInstance()->CreateEntity())
+#define GET_ENTITIES_WITH_COMPONENTS(...) ECS::GetInstance()->GetEntitiesWithComponents<__VA_ARGS__>()
+#define ADD_COMPONENT(entity, component, ...) AddComponent<component>(entity, __VA_ARGS__)
+#define GET_COMPONENT(entity, component) entity->GetComponent<component>()
+#define HAS_COMPONENT(entity, component) entity->HasComponent<component>()
 #endif
