@@ -4,9 +4,9 @@
 ECS* ECS::s_Instance = nullptr;
 entt::registry* ENTT::s_Instance = nullptr;
 
-void PublishAddEntityEvent(ENTITY entity)
+void PublishCreateEntityEvent(ENTITY entity)
 {
-    LOGD("PublishAddEntityEvent: %d", entity);
+    LOGD("PublishCreateEntityEvent: %d", entity);
 
     EntityData data { entity };
     Event e {

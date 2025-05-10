@@ -187,7 +187,7 @@ private:
 #endif
 
 class Event;
-void PublishAddEntityEvent(ENTITY entity);
+void PublishCreateEntityEvent(ENTITY entity);
 
 template<typename ComponentType, typename... Args>
 ComponentType& AddComponent(ENTITY entity, Args&&... args)
@@ -198,22 +198,32 @@ ComponentType& AddComponent(ENTITY entity, Args&&... args)
     auto& result = entity->AddComponent<ComponentType>(std::forward<Args>(args)...);
 #endif
 
-    // TODO: this is actually a component added event
-    PublishAddEntityEvent(entity);
-
     return result;
 }
 
+inline ENTITY CreateEntity()
+{
+    ENTITY e;
 #ifdef USE_ENTT
-#define CREATE_ENTITY() ENTT::GetInstance()->create()
-#define GET_ENTITIES_WITH_COMPONENTS(...) ENTT::GetInstance()->view<__VA_ARGS__>()
+    e = ENTT::GetInstance()->create();
+#else
+    e = (&ECS::GetInstance()->CreateEntity());
+#endif
+
+    PublishCreateEntityEvent(e);
+
+    return e;
+}
+
+#define CREATE_ENTITY() CreateEntity()
 #define ADD_COMPONENT(entity, component, ...) AddComponent<component>(entity, __VA_ARGS__)
+
+#ifdef USE_ENTT
+#define GET_ENTITIES_WITH_COMPONENTS(...) ENTT::GetInstance()->view<__VA_ARGS__>()
 #define GET_COMPONENT(entity, component) ENTT::GetInstance()->get<component>(entity)
 #define HAS_COMPONENT(entity, component) ENTT::GetInstance()->all_of<component>(entity)
 #else
-#define CREATE_ENTITY() (&ECS::GetInstance()->CreateEntity())
 #define GET_ENTITIES_WITH_COMPONENTS(...) ECS::GetInstance()->GetEntitiesWithComponents<__VA_ARGS__>()
-#define ADD_COMPONENT(entity, component, ...) AddComponent<component>(entity, __VA_ARGS__)
 #define GET_COMPONENT(entity, component) entity->GetComponent<component>()
 #define HAS_COMPONENT(entity, component) entity->HasComponent<component>()
 #endif
