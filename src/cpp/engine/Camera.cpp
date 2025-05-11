@@ -1,24 +1,20 @@
 #include "engine/Camera.h"
-#include "engine/InputManager.h"
 #include "Camera.h"
+#include "engine/EventDispatcher.h"
+#include "engine/InputManager.h"
 
-Camera* Camera::s_Instance = nullptr;
+Camera *Camera::s_Instance = nullptr;
 
-Camera::Camera():
-    m_CameraType(CameraType::ORBIT),
-    // m_TargetEntity(nullptr),
-    m_Height(0),
-    m_Width(0),
-    m_Ratio(0),
-    m_NearPlane(3),
-    m_FarPlane(500),
-    m_ScreenX(-1.f),
-    m_ScreenY(-1.f)
+Camera::Camera()
+    : m_CameraType(CameraType::ORBIT),
+      // m_TargetEntity(nullptr),
+      m_Height(0), m_Width(0), m_Ratio(0), m_NearPlane(3), m_FarPlane(500), m_ScreenX(-1.f), m_ScreenY(-1.f)
 {
     InputManager::GetInstance()->RegisterCallback(InputEvent::MOUSE_MOVE, [&](InputEvent event, InputData data) {
         if (m_CameraType == CameraType::ORBIT)
         {
-            if (!InputManager::GetInstance()->IsKeyDown(InputEvent::MOUSE_BUTTON_LEFT)) return;
+            if (!InputManager::GetInstance()->IsKeyDown(InputEvent::MOUSE_BUTTON_LEFT))
+                return;
 
             float camTheta = atan2f(m_LookAt.x, m_LookAt.z);
             float camPhi = asinf(m_LookAt.y);
@@ -29,10 +25,9 @@ Camera::Camera():
             camTheta = GET_ANGLE_IN_RANGE(camTheta, 0, 2 * Constants::PI);
             camPhi = CAP_ANGLE(camPhi, MIN_PHI, MAX_PHI);
 
-            m_Position = m_Target - glm::vec3(
-                m_LookAtDistance * std::cos(camPhi) * std::sin(camTheta),
-                m_LookAtDistance * std::sin(camPhi),
-                m_LookAtDistance * std::cos(camPhi) * std::cos(camTheta));
+            m_Position = m_Target - glm::vec3(m_LookAtDistance * std::cos(camPhi) * std::sin(camTheta),
+                                              m_LookAtDistance * std::sin(camPhi),
+                                              m_LookAtDistance * std::cos(camPhi) * std::cos(camTheta));
 
             SetLookAt(m_Position, m_Target);
         }
@@ -43,7 +38,25 @@ Camera::Camera():
         {
             if (data.Action == InputAction::DOWN)
             {
+                LOGD("InputManager::GetInstance()->RegisterCallback(InputEvent::MOUSE_BUTTON_LEFT, [&](InputEvent "
+                     "event, InputData data) {");
                 m_ScreenX = m_ScreenY = -1;
+            }
+        }
+    });
+
+    EventDispatcher::GetInstance()->Subscribe(EventType::INPUT_EVENT, [this](const Event &e) {
+        if (std::holds_alternative<InputEventData>(e.Data))
+        {
+            const auto &data = std::get<InputEventData>(e.Data);
+
+            if (m_CameraType == CameraType::FREE_LOOK)
+            {
+                if (data.Data.Action == InputAction::DOWN)
+                {
+                    LOGD("EventDispatcher::GetInstance()->Subscribe(EventType::INPUT_EVENT, [this](const Event &e) {");
+                    // m_ScreenX = m_ScreenY = -1;
+                }
             }
         }
     });
@@ -58,10 +71,14 @@ void Camera::Update(float delta)
 
         glm::vec3 direction = glm::normalize(m_Target - m_Position);
 
-        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_W)) m_Position += direction * velocity;
-        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_S)) m_Position -= direction * velocity;
-        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_A)) m_Position -= glm::normalize(glm::cross(direction, glm::vec3(0.f, 1.f, 0.f))) * velocity;
-        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_D)) m_Position += glm::normalize(glm::cross(direction, glm::vec3(0.f, 1.f, 0.f))) * velocity;
+        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_W))
+            m_Position += direction * velocity;
+        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_S))
+            m_Position -= direction * velocity;
+        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_A))
+            m_Position -= glm::normalize(glm::cross(direction, glm::vec3(0.f, 1.f, 0.f))) * velocity;
+        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_D))
+            m_Position += glm::normalize(glm::cross(direction, glm::vec3(0.f, 1.f, 0.f))) * velocity;
 
         float yaw = m_Yaw;
         float pitch = m_Pitch;
@@ -72,7 +89,8 @@ void Camera::Update(float delta)
 
             float xOffset = data.X - m_ScreenX;
             float yOffset = data.Y - m_ScreenY;
-            if (m_ScreenX < 0 && m_ScreenY < 0) xOffset = yOffset = 0;
+            if (m_ScreenX < 0 && m_ScreenY < 0)
+                xOffset = yOffset = 0;
 
             m_ScreenX = data.X;
             m_ScreenY = data.Y;
@@ -80,7 +98,7 @@ void Camera::Update(float delta)
             yaw -= glm::radians(mouseSensitivity * xOffset);
             yaw = fmod(yaw, 2.0f * Constants::PI);
             if (yaw < 0.0f)
-                yaw += 2.0f * Constants:: PI;
+                yaw += 2.0f * Constants::PI;
 
             pitch -= glm::radians(mouseSensitivity * yOffset);
         }
@@ -89,11 +107,10 @@ void Camera::Update(float delta)
     }
     else if (m_CameraType == CameraType::FOLLOW_TARGET)
     {
-
     }
 }
 
-void Camera::SetLookAt(const VEC3& position, const VEC3& target)
+void Camera::SetLookAt(const VEC3 &position, const VEC3 &target)
 {
     m_Position = position;
     m_Target = target;
@@ -116,7 +133,7 @@ void Camera::SetTarget(entt::entity target)
     m_TargetEntity = target;
 }
 #else
-void Camera::SetTarget(Entity* target)
+void Camera::SetTarget(Entity *target)
 {
     m_TargetEntity = target;
 }

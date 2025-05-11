@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ECS.h"
+#include "InputManager.h"
 
-#include <array>
 #include <functional>
 #include <mutex>
 #include <queue>
@@ -13,8 +13,7 @@ enum class EventType : unsigned int
 {
     ENTITY_CREATED = 0,
     ENTITY_DELETED,
-    KEYPRESS_P,
-    KEYPRESS_R,
+    INPUT_EVENT,
     NUM_EVENTS,
 };
 
@@ -23,12 +22,17 @@ struct EntityData
     ENTITY Entity;
 };
 
-struct KeypressData
+struct InputEventData
 {
-    char Key;
+    InputEvent Event;
+    InputData Data;
 };
 
-using EventData = std::variant<std::monostate, EntityData, KeypressData>;
+using EventData = std::variant<
+    std::monostate,
+    EntityData,
+    InputEventData
+>;
 
 struct Event
 {
@@ -64,8 +68,14 @@ public:
         m_Subscribers[static_cast<size_t>(type)].emplace_back(std::move(callback));
     }
 
-    void Publish(const Event &event)
+    void Publish(const Event &event, bool immediate = false)
     {
+        if (immediate)
+        {
+            DispatchEvent(event);
+            return;
+        }
+
         std::lock_guard<std::mutex> lock(m_EventQueueMutex);
         m_EventQueue.push(event);
     }
@@ -82,18 +92,21 @@ public:
         while (!eventsToDispatch.empty())
         {
             const Event &event = eventsToDispatch.front();
-
-            std::lock_guard<std::mutex> lock(m_SubscriberMutex);
-            const auto &callbacks = m_Subscribers[static_cast<size_t>(event.Type)];
-            for (const auto &callback : callbacks)
-            {
-                callback(event);
-            }
+            DispatchEvent(event);
 
             eventsToDispatch.pop();
         }
     }
 
+    void DispatchEvent(const Event& event)
+    {
+        std::lock_guard<std::mutex> lock(m_SubscriberMutex);
+        const auto &callbacks = m_Subscribers[static_cast<size_t>(event.Type)];
+        for (const auto &callback : callbacks)
+        {
+            callback(event);
+        }
+    }
 private:
     static EventDispatcher *s_Instance;
 

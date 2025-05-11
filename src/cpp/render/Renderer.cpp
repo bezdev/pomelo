@@ -4,27 +4,24 @@
 
 Renderer *Renderer::s_Instance = nullptr;
 
-Renderer::Renderer() : m_IsInitialized(false),
-                       m_ScreenWidth(0),
-                       m_ScreenHeight(0),
-                       m_IsDrawWireFrame(false),
-                       m_GUIRenderObjects(10),
-                       m_FPSTextElement(nullptr)
+Renderer::Renderer()
+    : m_IsInitialized(false), m_ScreenWidth(0), m_ScreenHeight(0), m_IsDrawWireFrame(false), m_GUIRenderObjects(10),
+      m_FPSTextElement(nullptr)
 {
-    InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_N, [&](InputEvent event, InputData data)
-                                                  {
+    InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_N, [&](InputEvent event, InputData data) {
         if (data.Action == InputAction::UP)
         {
             m_IsDrawWireFrame = !m_IsDrawWireFrame;
-        } });
+        }
+    });
 
-    EventDispatcher::GetInstance()->Subscribe(EventType::ENTITY_CREATED, [](const Event &event)
-                                              {
+    EventDispatcher::GetInstance()->Subscribe(EventType::ENTITY_CREATED, [](const Event &event) {
         if (std::holds_alternative<EntityData>(event.Data))
         {
-            const auto& data = std::get<EntityData>(event.Data);
+            const auto &data = std::get<EntityData>(event.Data);
             LOGD("ENTITY_CREATED: %d", data.Entity);
-        } });
+        }
+    });
 }
 
 Renderer::~Renderer()
@@ -138,7 +135,8 @@ void Renderer::LoadEntities(const std::vector<Entity> &entities)
                 ro.Entities.push_back(entity);
                 m_RenderObjects.push_back(ro);
             }
-            else if (material->Type == Components::MaterialType::PIXEL_COLOR && mesh->Type == Components::MeshType::AXIS)
+            else if (material->Type == Components::MaterialType::PIXEL_COLOR &&
+                     mesh->Type == Components::MeshType::AXIS)
             {
                 RenderObject ro;
                 ro.RenderBuffer = renderBufferManager->GetRenderBuffer(Components::MeshType::AXIS);
@@ -196,8 +194,7 @@ void Renderer::LoadEntities(const std::vector<Entity> &entities)
     }
 
     // TODO: also sort by material type and maybe texture id
-    std::sort(m_RenderObjects.begin(), m_RenderObjects.end(), [](RenderObject a, RenderObject b)
-              {
+    std::sort(m_RenderObjects.begin(), m_RenderObjects.end(), [](RenderObject a, RenderObject b) {
         if (a.Shader == b.Shader)
         {
             return a.RenderBuffer < b.RenderBuffer;
@@ -205,18 +202,15 @@ void Renderer::LoadEntities(const std::vector<Entity> &entities)
         else
         {
             return a.Shader < b.Shader;
-        } });
+        }
+    });
 }
 
 void Renderer::LoadGUI()
 {
-    m_FPSTextElement = static_cast<GUI::TextElement *>(m_GUI.AddElement(m_GUI.CreateTextElement(
-        VEC2(m_ScreenWidth - 10, m_ScreenHeight - 10),
-        std::string("                    "),
-        GUI::TextProperties{
-            GUI::AnchorType::TOP_RIGHT,
-            24,
-            V_COLOR_RED})));
+    m_FPSTextElement = static_cast<GUI::TextElement *>(m_GUI.AddElement(
+        m_GUI.CreateTextElement(VEC2(m_ScreenWidth - 10, m_ScreenHeight - 10), std::string("                    "),
+                                GUI::TextProperties{GUI::AnchorType::TOP_RIGHT, 24, V_COLOR_RED})));
     AddGUIElement(m_FPSTextElement);
 }
 
@@ -228,10 +222,7 @@ void Renderer::AddGUIElement(GUI::Element *element)
         Text *t = TextManager::GetInstance()->CreateText(textElement->GetText());
         textElement->SetTextObject(t);
         m_GUIRenderObjects[textElement->GetID()] = GUIRenderObject{
-            t->GetRenderBuffer(),
-            m_ShaderManager.GetShader(ShaderType::FONT),
-            t->GetTexture(),
-            element};
+            t->GetRenderBuffer(), m_ShaderManager.GetShader(ShaderType::FONT), t->GetTexture(), element};
     }
 }
 
@@ -272,9 +263,7 @@ void Renderer::Render()
 
             glm::mat4 viewMatrix = Camera::GetInstance()->GetViewMatrix();
             glm::mat4 projectionMatrix = Camera::GetInstance()->GetProjectionMatrix();
-            shader->SetVPMatrix(
-                glm::value_ptr(viewMatrix),
-                glm::value_ptr(projectionMatrix));
+            shader->SetVPMatrix(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
 
             currentShader = shader;
         }
@@ -342,10 +331,9 @@ void Renderer::RenderGUI()
             shader->Use();
 
             glm::mat4 viewMatrix = glm::mat4(1.f);
-            glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(m_ScreenWidth), 0.0f, static_cast<float>(m_ScreenHeight));
-            shader->SetVPMatrix(
-                glm::value_ptr(viewMatrix),
-                glm::value_ptr(projectionMatrix));
+            glm::mat4 projectionMatrix =
+                glm::ortho(0.0f, static_cast<float>(m_ScreenWidth), 0.0f, static_cast<float>(m_ScreenHeight));
+            shader->SetVPMatrix(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
 
             currentShader = shader;
         }
