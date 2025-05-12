@@ -10,24 +10,8 @@ Scene::Scene()
 
 void Scene::Load()
 {
-    // TODO: not needed to pass parameter
-    Renderer::GetInstance()->LoadEntities(ECS::GetInstance()->GetEntities());
+    Renderer::GetInstance()->ClearEntities();
     Renderer::GetInstance()->LoadGUI();
-
-    for (auto e : GET_ENTITIES_WITH_COMPONENTS(Components::Motion))
-    {
-        PhysicsEngine::GetInstance()->AddMotionEntity(e);
-    }
-
-    for (auto e : GET_ENTITIES_WITH_COMPONENTS(Components::Physics))
-    {
-        PhysicsEngine::GetInstance()->AddPhysicsEntity(e);
-    }
-
-    for (auto e : GET_ENTITIES_WITH_COMPONENTS(Components::Collision))
-    {
-        PhysicsEngine::GetInstance()->AddCollisionEntity(e);
-    }
 }
 
 void SceneManager::CreateSandboxScene()

@@ -1,277 +1,271 @@
 #pragma once
 
-#include "util/Util.h"
 #include "util/Math.h"
+#include "util/Util.h"
 
 namespace Components
 {
-    class Transform
+class Transform
+{
+  public:
+    Transform() : Transform(V_ORIGIN)
     {
-    public:
-        Transform():
-            Transform(V_ORIGIN)
-        {}
+    }
 
+    Transform(const VEC3 &position) : Transform(position, VEC3(1.f))
+    {
+    }
 
-        Transform(const VEC3& position):
-            Transform(position, VEC3(1.f))
-        {}
+    Transform(const VEC3 &position, const VEC3 &scale) : Transform(position, Q_DEFAULT, scale)
+    {
+    }
 
-        Transform(const VEC3& position, const VEC3& scale):
-            Transform(position, Q_DEFAULT, scale)
-        {
-        }
+    Transform(const VEC3 &position, const QUAT &rotation, const VEC3 &scale)
+        : m_Position(position), m_Rotation(rotation), m_Scale(scale), m_MM(MAT4(1.f)), m_IsStale(false)
+    {
+        ComputeMM();
+    }
 
-        Transform(const VEC3& position, const QUAT& rotation, const VEC3& scale):
-            m_Position(position),
-            m_Rotation(rotation),
-            m_Scale(scale),
-            m_MM(MAT4(1.f)),
-            m_IsStale(false)
-        {
+    void SetPosition(const VEC3 &position)
+    {
+        m_Position = position;
+        m_MM[3] = VEC4(m_Position, 1.f);
+    }
+
+    void SetRotation(const QUAT &rotation)
+    {
+        m_Rotation = rotation;
+        m_IsStale = true;
+    }
+
+    void SetScale(const VEC3 &scale)
+    {
+        m_Scale = scale;
+        m_IsStale = true;
+    }
+
+    VEC3 &GetPosition()
+    {
+        return m_Position;
+    }
+    VEC3 &GetScale()
+    {
+        return m_Scale;
+    }
+
+    MAT4 &GetMM()
+    {
+        if (m_IsStale)
             ComputeMM();
-        }
+        return m_MM;
+    }
 
-        void SetPosition(const VEC3& position)
-        {
-            m_Position = position;
-            m_MM[3] = VEC4(m_Position, 1.f);
-        }
-
-        void SetRotation(const QUAT& rotation)
-        {
-            m_Rotation = rotation;
-            m_IsStale = true;
-        }
-
-        void SetScale(const VEC3& scale)
-        {
-            m_Scale = scale;
-            m_IsStale = true;
-        }
-
-        VEC3& GetPosition() { return m_Position; }
-        VEC3& GetScale() { return m_Scale; }
-
-        MAT4& GetMM()
-        {
-            if (m_IsStale) ComputeMM();
-            return m_MM;
-        }
-
-    private:
-        void ComputeMM()
-        {
-            m_MM = glm::translate(MAT4(1.f), m_Position);
-            m_MM *= glm::mat4_cast(m_Rotation);
-            m_MM = glm::scale(m_MM, m_Scale);
-            m_IsStale = false;
-        }
-
-        VEC3 m_Position;
-        QUAT m_Rotation;
-        VEC3 m_Scale;
-        MAT4 m_MM;
-        bool m_IsStale;
-    };
-
-    enum class MeshType
+  private:
+    void ComputeMM()
     {
-        LINE,
-        AXIS,
-        PLANE,
-        PLANE_MAP,
-        PLANE_TEXTURE,
-        BOX,
-        SPHERE,
-        INSTANCED_BOX,
-        BLENDER_AXIS,
-        BLENDER_MONKEY,
-        COUNT
-    };
+        m_MM = glm::translate(MAT4(1.f), m_Position);
+        m_MM *= glm::mat4_cast(m_Rotation);
+        m_MM = glm::scale(m_MM, m_Scale);
+        m_IsStale = false;
+    }
 
-    struct Mesh
+    VEC3 m_Position;
+    QUAT m_Rotation;
+    VEC3 m_Scale;
+    MAT4 m_MM;
+    bool m_IsStale;
+};
+
+enum class MeshType
+{
+    LINE,
+    AXIS,
+    PLANE,
+    PLANE_MAP,
+    PLANE_TEXTURE,
+    BOX,
+    SPHERE,
+    INSTANCED_BOX,
+    BLENDER_AXIS,
+    BLENDER_MONKEY,
+    COUNT
+};
+
+struct Mesh
+{
+    Mesh()
     {
-        Mesh() {}
-        Mesh(MeshType type):
-            Type(type)
-        {}
-        Mesh(MeshType type, const char* name):
-            Type(type),
-            Name(name)
-        {}
-
-        MeshType Type;
-        const char* Name;
-        int Seed;
-    };
-
-    enum class MaterialType
+    }
+    Mesh(MeshType type) : Type(type)
     {
-        SOLID_COLOR,
-        PIXEL_COLOR,
-        TEXTURE,
-        COUNT
-    };
-
-    struct Material
+    }
+    Mesh(MeshType type, const char *name) : Type(type), Name(name)
     {
-        Material() {}
+    }
 
-        Material(MaterialType type):
-            Type(type)
-        {}
+    MeshType Type;
+    const char *Name;
+    int Seed;
+};
 
-        Material(MaterialType type, glm::vec4 color):
-            Type(type),
-            Color(color)
-        {}
+enum class MaterialType
+{
+    SOLID_COLOR,
+    PIXEL_COLOR,
+    TEXTURE,
+    COUNT
+};
 
-        Material(MaterialType type, glm::vec4 color, const char* name):
-            Type(type),
-            Color(color),
-            Name(name)
-        {}
-
-        MaterialType Type;
-        glm::vec4 Color;
-        const char* Name;
-    };
-
-    enum class MotionType
+struct Material
+{
+    Material()
     {
-        PATH,
-        ORBIT,
-        COUNT
-    };
+    }
 
-    struct Motion
+    Material(MaterialType type) : Type(type)
     {
-        Motion() {};
+    }
 
-        Motion(MotionType type, VEC3 start, VEC3 target, float time):
-            Type(type),
-            Start(start),
-            Target(target),
-            Step(0.f),
-            Time(time)
-        {}
-
-        MotionType Type;
-        VEC3 Start;
-        VEC3 Target;
-        float Step;
-        float Time;
-    };
-
-    enum PhysicsType
+    Material(MaterialType type, glm::vec4 color) : Type(type), Color(color)
     {
-        NONE = 0,
-        GRAVITY = 1 << 0
-    };
+    }
 
-    struct Physics
+    Material(MaterialType type, glm::vec4 color, const char *name) : Type(type), Color(color), Name(name)
     {
-        Physics(VEC3 velocity, VEC3 acceleration, VEC3 direction):
-            Velocity(velocity),
-            Acceleration(acceleration),
-            Direction(direction)
-        {}
+    }
 
-        Physics():
-            Physics(
-                VEC3(0.f, 0.f, 0.f),
-                VEC3(0.f, 0.f, 0.f),
-                VEC3(0.f, 0.f, 1.f)
-            )
-        {}
+    MaterialType Type;
+    glm::vec4 Color;
+    const char *Name;
+};
 
-        Physics(PhysicsType type):
-            Physics()
-        {
-            if (type & GRAVITY) Acceleration += VEC3(0.f, -9.81f, 0.f);
-        }
+enum class MotionType
+{
+    PATH,
+    ORBIT,
+    COUNT
+};
 
-        Physics(VEC3 velocity):
-            Physics(velocity, V_ORIGIN, VEC3(0.f, 0.f, 1.f))
-        {}
+struct Motion
+{
+    Motion() {};
 
-        VEC3 Velocity;
-        VEC3 Acceleration;
-        VEC3 Direction;
-    };
-
-    enum CollisionType
+    Motion(MotionType type, VEC3 start, VEC3 target, float time)
+        : Type(type), Start(start), Target(target), Step(0.f), Time(time)
     {
-        SPHERE,
-        BOX
-    };
+    }
 
-    struct Collision
+    MotionType Type;
+    VEC3 Start;
+    VEC3 Target;
+    float Step;
+    float Time;
+};
+
+enum PhysicsType
+{
+    NONE = 0,
+    GRAVITY = 1 << 0
+};
+
+struct Physics
+{
+    Physics(VEC3 velocity, VEC3 acceleration, VEC3 direction)
+        : Velocity(velocity), Acceleration(acceleration), Direction(direction)
     {
-        // TODO: call other constructor
-        Collision()
-        {}
+    }
 
-        Collision(CollisionType type, VEC3 position, VEC2 size):
-            Type(type),
-            Position(position),
-            Size(size)
-        {}
-
-        CollisionType Type;
-        VEC3 Position;
-        VEC2 Size;
-    };
-
-    enum FontType
+    Physics() : Physics(VEC3(0.f, 0.f, 0.f), VEC3(0.f, 0.f, 0.f), VEC3(0.f, 0.f, 1.f))
     {
-        DEFAULT = 0
-    };
+    }
 
-    struct Text
+    Physics(PhysicsType type) : Physics()
     {
-        Text() {}
-        Text(int id):
-            ID(id)
-        {}
+        if (type & GRAVITY)
+            Acceleration += VEC3(0.f, -9.81f, 0.f);
+    }
 
-        int ID;
-    };
-
-    enum class CollisionMotionType : uint8_t
+    Physics(VEC3 velocity) : Physics(velocity, V_ORIGIN, VEC3(0.f, 0.f, 1.f))
     {
-        Static = 0,
-        Kinematic,
-        Dynamic,
-    };
+    }
 
-    enum class CollisionActivationType
-    {
-        Activate = 0,
-        DontActivate
-    };
+    VEC3 Velocity;
+    VEC3 Acceleration;
+    VEC3 Direction;
+};
 
-    enum class CollisionLayer
-    {
-        NON_MOVING = 0,
-        MOVING = 1,
-        NUM_LAYERS = 2,
-    };
+enum CollisionType
+{
+    SPHERE,
+    BOX
+};
 
-    struct CollisionSphere
+struct Collision
+{
+    // TODO: call other constructor
+    Collision()
     {
-        float Radius;
-        CollisionMotionType MotionType;
-        CollisionActivationType ActivationType;
-        CollisionLayer Layer;
-    };
+    }
 
-    struct CollisionBox
+    Collision(CollisionType type, VEC3 position, VEC2 size) : Type(type), Position(position), Size(size)
     {
-        VEC3 Extents;
-        CollisionMotionType MotionType;
-        CollisionActivationType ActivationType;
-        CollisionLayer Layer;
-    };
-}
+    }
+
+    CollisionType Type;
+    VEC3 Position;
+    VEC2 Size;
+};
+
+enum FontType
+{
+    DEFAULT = 0
+};
+
+struct Text
+{
+    Text()
+    {
+    }
+    Text(int id) : ID(id)
+    {
+    }
+
+    int ID;
+};
+
+enum class CollisionMotionType : uint8_t
+{
+    Static = 0,
+    Kinematic,
+    Dynamic,
+};
+
+enum class CollisionActivationType
+{
+    Activate = 0,
+    DontActivate
+};
+
+enum class CollisionLayer
+{
+    NON_MOVING = 0,
+    MOVING = 1,
+    NUM_LAYERS = 2,
+};
+
+struct CollisionSphere
+{
+    float Radius;
+    CollisionMotionType MotionType;
+    CollisionActivationType ActivationType;
+    CollisionLayer Layer;
+};
+
+struct CollisionBox
+{
+    VEC3 Extents;
+    CollisionMotionType MotionType;
+    CollisionActivationType ActivationType;
+    CollisionLayer Layer;
+};
+} // namespace Components

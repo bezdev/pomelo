@@ -1,17 +1,18 @@
 #pragma once
 
 #include "engine/CollisionEngine.h"
-#include "engine/PhysicsJolt.h"
 #include "engine/ECS.h"
+#include "engine/PhysicsJolt.h"
 #include "util/Logger.h"
 #include "util/Math.h"
 
 class PhysicsEngine
 {
-public:
+  public:
     static PhysicsEngine *GetInstance()
     {
-        if (!s_Instance) s_Instance = new PhysicsEngine();
+        if (!s_Instance)
+            s_Instance = new PhysicsEngine();
         return s_Instance;
     }
 
@@ -20,7 +21,6 @@ public:
         delete s_Instance;
         s_Instance = nullptr;
     }
-
 
     PhysicsEngine();
 
@@ -32,8 +32,14 @@ public:
         m_PhysicsJolt.AddEntity(entity);
     }
 
-    void AddMotionEntity(ENTITY entity) { m_MotionEntities.push_back(entity); }
-    void AddCollisionEntity(ENTITY entity) { m_CollisionEngine.AddEntity(entity); }
+    void AddMotionEntity(ENTITY entity)
+    {
+        m_MotionEntities.push_back(entity);
+    }
+    void AddCollisionEntity(ENTITY entity)
+    {
+        m_CollisionEngine.AddEntity(entity);
+    }
 
     void Update(float delta);
 
@@ -41,8 +47,8 @@ public:
     void UpdatePhysics(float delta);
     void UpdateCollisions(float delta);
 
-private:
-    static PhysicsEngine* s_Instance;
+  private:
+    static PhysicsEngine *s_Instance;
 
     void UpdatePath(ENTITY entity, Components::Motion *motion, float delta);
     void UpdateOrbit(ENTITY entity, Components::Motion *motion, float delta);

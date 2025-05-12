@@ -8,11 +8,6 @@ InputManager::InputManager()
 {
 }
 
-void InputManager::RegisterCallback(InputEvent event, InputCallback callback)
-{
-    m_Callbacks[event].push_back(callback);
-}
-
 void InputManager::OnEvent(InputEvent event, InputData data)
 {
     if (data.Action == InputAction::DOWN)
@@ -35,9 +30,5 @@ void InputManager::OnEvent(InputEvent event, InputData data)
     // if (data.Action != InputAction::MOVE) LOGD("InputManager::OnEvent: event: %d, data: { %d, %f, %f, %f, %f }",
     // static_cast<int>(event), data.Action, data.X, data.Y, data.DX, data.DY);
 
-    for (auto &callback : m_Callbacks[event])
-    {
-        callback(event, data);
-    }
     EventDispatcher::GetInstance()->Publish(Event{EventType::INPUT_EVENT, InputEventData{event, data}}, true);
 }

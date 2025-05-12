@@ -28,11 +28,7 @@ struct InputEventData
     InputData Data;
 };
 
-using EventData = std::variant<
-    std::monostate,
-    EntityData,
-    InputEventData
->;
+using EventData = std::variant<std::monostate, EntityData, InputEventData>;
 
 struct Event
 {
@@ -42,16 +38,17 @@ struct Event
 
 class EventDispatcher
 {
-public:
+  public:
     using Callback = std::function<void(const Event &)>;
 
-    static EventDispatcher* GetInstance()
+    static EventDispatcher *GetInstance()
     {
-        if (!s_Instance) s_Instance = new EventDispatcher();
+        if (!s_Instance)
+            s_Instance = new EventDispatcher();
         return s_Instance;
     }
 
-    static void DestoryInstance()
+    static void DestroyInstance()
     {
         delete s_Instance;
         s_Instance = nullptr;
@@ -98,7 +95,7 @@ public:
         }
     }
 
-    void DispatchEvent(const Event& event)
+    void DispatchEvent(const Event &event)
     {
         std::lock_guard<std::mutex> lock(m_SubscriberMutex);
         const auto &callbacks = m_Subscribers[static_cast<size_t>(event.Type)];
@@ -107,7 +104,8 @@ public:
             callback(event);
         }
     }
-private:
+
+  private:
     static EventDispatcher *s_Instance;
 
     std::array<std::vector<Callback>, static_cast<size_t>(EventType::NUM_EVENTS)> m_Subscribers;

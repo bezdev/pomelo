@@ -23,16 +23,19 @@ enum class SceneType
 
 class Scene
 {
-public:
+  public:
     Scene();
     void Load();
 
-    Entity& CreateEntity() { return ECS::GetInstance()->CreateEntity(); };
+    Entity &CreateEntity()
+    {
+        return ECS::GetInstance()->CreateEntity();
+    };
 };
 
 class SceneManager
 {
-public:
+  public:
     static void LoadScene(SceneType type)
     {
         // type = SceneType::SCENE_COLLISION;
@@ -41,18 +44,29 @@ public:
         // type = SceneType::SCENE_MANY_CUBE_AXIS;
         // type = SceneType::SCENE_MANY_CUBE_INSTANCED;
         type = SceneType::SCENE_JOLT_HELLO_WORLD;
+        // type = SceneType::SCENE_MANY_CUBE_INSTANCED;
         LOGE("LoadScene: %d", static_cast<int>(type));
 
-        if (type == SceneType::SCENE_SANDBOX) CreateSandboxScene();
-        else if (type == SceneType::SCENE_GAME) CreateGameScene();
-        else if (type == SceneType::SCENE_CUBE) CreateCubeScene();
-        else if (type == SceneType::SCENE_MANY_CUBE) CreateManyCubeScene();
-        else if (type == SceneType::SCENE_MANY_CUBE_INSTANCED) CreateManyCubeSceneInstanced();
-        else if (type == SceneType::SCENE_MANY_CUBE_AXIS) CreateManyCubeAxisScene();
-        else if (type == SceneType::SCENE_COLLISION) CreateCollisionScene(true, true);
-        else if (type == SceneType::SCENE_COLLISION_NO_PHYSICS) CreateCollisionScene(false, false);
-        else if (type == SceneType::SCENE_COLLISION_NO_COLLISION) CreateCollisionScene(true, false);
-        else if (type == SceneType::SCENE_JOLT_HELLO_WORLD) CreateJoltHelloWorldScene();
+        if (type == SceneType::SCENE_SANDBOX)
+            CreateSandboxScene();
+        else if (type == SceneType::SCENE_GAME)
+            CreateGameScene();
+        else if (type == SceneType::SCENE_CUBE)
+            CreateCubeScene();
+        else if (type == SceneType::SCENE_MANY_CUBE)
+            CreateManyCubeScene();
+        else if (type == SceneType::SCENE_MANY_CUBE_INSTANCED)
+            CreateManyCubeSceneInstanced();
+        else if (type == SceneType::SCENE_MANY_CUBE_AXIS)
+            CreateManyCubeAxisScene();
+        else if (type == SceneType::SCENE_COLLISION)
+            CreateCollisionScene(true, true);
+        else if (type == SceneType::SCENE_COLLISION_NO_PHYSICS)
+            CreateCollisionScene(false, false);
+        else if (type == SceneType::SCENE_COLLISION_NO_COLLISION)
+            CreateCollisionScene(true, false);
+        else if (type == SceneType::SCENE_JOLT_HELLO_WORLD)
+            CreateJoltHelloWorldScene();
     }
 
     static void CreateSandboxScene();
@@ -70,7 +84,8 @@ public:
             auto e1 = CREATE_ENTITY();
             ADD_COMPONENT(e1, Components::Transform, glm::vec3(0, 0, 0));
             ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::BOX);
-            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR,
+                          glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
@@ -89,7 +104,8 @@ public:
             auto e1 = CREATE_ENTITY();
             ADD_COMPONENT(e1, Components::Transform, p);
             ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::BOX);
-            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR,
+                          glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
@@ -108,7 +124,8 @@ public:
             auto e1 = CREATE_ENTITY();
             ADD_COMPONENT(e1, Components::Transform, p);
             ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::INSTANCED_BOX);
-            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR,
+                          glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
@@ -128,7 +145,8 @@ public:
             auto e1 = CREATE_ENTITY();
             ADD_COMPONENT(e1, Components::Transform, p);
             ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::BOX);
-            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR,
+                          glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
             auto e2 = CREATE_ENTITY();
             ADD_COMPONENT(e2, Components::Transform, p);
             ADD_COMPONENT(e2, Components::Mesh, Components::MeshType::AXIS);

@@ -1,5 +1,6 @@
 #include "PhysicsEngine.h"
 
+#include "engine/EventDispatcher.h"
 #include "util/Util.h"
 
 using namespace JPH::literals;
@@ -13,6 +14,25 @@ PhysicsEngine::PhysicsEngine()
 void PhysicsEngine::Initialize()
 {
     m_PhysicsJolt.Initialize();
+
+    EventDispatcher::GetInstance()->Subscribe(EventType::ENTITY_CREATED, [this](const Event &event) {
+        if (std::holds_alternative<EntityData>(event.Data))
+        {
+            const auto &data = std::get<EntityData>(event.Data);
+            if (HAS_COMPONENT(data.Entity, Components::Motion))
+            {
+                AddMotionEntity(data.Entity);
+            }
+            if (HAS_COMPONENT(data.Entity, Components::Physics))
+            {
+                AddPhysicsEntity(data.Entity);
+            }
+            if (HAS_COMPONENT(data.Entity, Components::Collision))
+            {
+                AddCollisionEntity(data.Entity);
+            }
+        }
+    });
 }
 
 void PhysicsEngine::Update(float delta)
@@ -24,7 +44,7 @@ void PhysicsEngine::UpdateMotions(float delta)
 {
     for (auto e : m_MotionEntities)
     {
-        Components::Motion& motion = GET_COMPONENT(e, Components::Motion);
+        Components::Motion &motion = GET_COMPONENT(e, Components::Motion);
         if (motion.Type == Components::MotionType::PATH)
         {
             UpdatePath(e, &motion, delta);
@@ -42,8 +62,8 @@ void PhysicsEngine::UpdatePhysics(float delta)
 
     for (auto e : m_PhysicsEntities)
     {
-        Components::Physics& physics = GET_COMPONENT(e, Components::Physics);
-        Components::Transform& transform = GET_COMPONENT(e, Components::Transform);
+        Components::Physics &physics = GET_COMPONENT(e, Components::Physics);
+        Components::Transform &transform = GET_COMPONENT(e, Components::Transform);
 
         physics.Velocity += physics.Acceleration * delta;
         transform.SetPosition(transform.GetPosition() + physics.Velocity * delta);

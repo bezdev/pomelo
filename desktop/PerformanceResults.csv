@@ -255,3 +255,10 @@ time,OS,resolution,name,average,min,max
 2024-12-29 22-05-08,windows,1920x1080,CollisionScenePerformanceTest,-nan(ind),1e+06,0
 2024-12-29 22-05-14,windows,1920x1080,CollisionSceneNoPhysicsPerformanceTest,-nan(ind),1e+06,0
 2024-12-29 22-05-20,windows,1920x1080,CollisionSceneNoCollisionsPerformanceTest,-nan(ind),1e+06,0
+2025-05-11 22-47-55,windows,1920x1080,SingleCubePerformanceTest,4071.52,3440.8,4451.4
+2025-05-11 22-48-01,windows,1920x1080,ManyCubePerformanceTest,430,0.5,1717.3
+2025-05-11 22-48-06,windows,1920x1080,ManyCubeInstancedPerformanceTest,1802.65,1.8,3539.7
+2025-05-11 22-48-11,windows,1920x1080,ManyCubeAxisPerformanceTest,-nan(ind),1e+06,0
+2025-05-11 22-48-16,windows,1920x1080,CollisionScenePerformanceTest,1281.34,893.9,2616.9
+2025-05-11 22-48-21,windows,1920x1080,CollisionSceneNoPhysicsPerformanceTest,956.3,930.4,969.2
+2025-05-11 22-48-27,windows,1920x1080,CollisionSceneNoCollisionsPerformanceTest,958.56,941.1,965.7

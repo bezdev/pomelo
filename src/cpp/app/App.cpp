@@ -3,11 +3,9 @@
 #include "engine/EventDispatcher.h"
 #include "engine/PhysicsEngine.h"
 
-App* App::s_Instance = nullptr;
+App *App::s_Instance = nullptr;
 
-App::App():
-    m_IsFirstFrame(true),
-    m_StartSceneType(SceneType::SCENE_SANDBOX)
+App::App() : m_IsFirstFrame(true), m_StartSceneType(SceneType::SCENE_SANDBOX)
 {
 }
 
@@ -18,6 +16,7 @@ App::~App()
     Renderer::DestroyInstance();
     Camera::DestroyInstance();
     ECS::DestoryInstance();
+    EventDispatcher::DestroyInstance();
 
 #if 0
     delete JNIUtil::GetInstance();
@@ -41,20 +40,24 @@ int App::Initialize()
     return 0;
 }
 
-void App::Run() {
-    if (m_IsFirstFrame) {
+void App::Run()
+{
+    if (m_IsFirstFrame)
+    {
         LOGD("first frame");
 
         SceneManager::LoadScene(m_StartSceneType);
 
         m_GlobalTimer->Reset();
         m_IsFirstFrame = false;
-    } else {
+    }
+    else
+    {
         m_GlobalTimer->Update();
     }
 
     // TODO: add this to event dispatcher
-    for (auto& callback : m_Callbacks)
+    for (auto &callback : m_Callbacks)
     {
         callback(m_GlobalTimer->GetDelta());
     }
@@ -68,7 +71,6 @@ void App::Run() {
 
     LogFPS();
 }
-
 
 void App::UpdateWindowSize(int width, int height)
 {
@@ -94,8 +96,10 @@ void App::LogFPS()
         stream << std::fixed << std::setprecision(1) << fps;
 
 #ifdef BUILD_DESKTOP
-        LOG_TO_FILE("FPS: %s - Total Time (ms): %0.f Frames: %d", stream.str().c_str(), m_GlobalTimer->GetTotalTime(), frameCount);
-        // LOGD("FPS: %s - Total Time (ms): %0.f Frames: %d", stream.str().c_str(), m_GlobalTimer->GetTotalTime(), frameCount);
+        LOG_TO_FILE("FPS: %s - Total Time (ms): %0.f Frames: %d", stream.str().c_str(), m_GlobalTimer->GetTotalTime(),
+                    frameCount);
+        // LOGD("FPS: %s - Total Time (ms): %0.f Frames: %d", stream.str().c_str(), m_GlobalTimer->GetTotalTime(),
+        // frameCount);
 #endif
 
         m_Renderer->UpdateFPS(stream.str());

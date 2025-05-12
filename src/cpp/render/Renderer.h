@@ -1,10 +1,9 @@
 #pragma once
 
-#include <map>
-#include <vector>
 #include <list>
 #include <map>
 #include <memory>
+#include <vector>
 
 #ifdef BUILD_ANDROID
 #include <EGL/egl.h>
@@ -30,8 +29,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-
-inline void CHECK_GL_ERROR(const char* label)
+inline void CHECK_GL_ERROR(const char *label)
 {
     for (GLint error = glGetError(); error; error = glGetError())
     {
@@ -41,10 +39,11 @@ inline void CHECK_GL_ERROR(const char* label)
 
 class Renderer
 {
-public:
-    static Renderer* GetInstance()
+  public:
+    static Renderer *GetInstance()
     {
-        if (!s_Instance) s_Instance = new Renderer();
+        if (!s_Instance)
+            s_Instance = new Renderer();
         return s_Instance;
     }
 
@@ -59,17 +58,22 @@ public:
 
     int Initialize();
 
-    bool IsInitialized() { return m_IsInitialized; };
-    void LoadEntities(const std::vector<Entity>& entities);
+    bool IsInitialized()
+    {
+        return m_IsInitialized;
+    };
+    void LoadEntities(const std::vector<ENTITY> &entities);
+    void ClearEntities();
     void LoadGUI();
-    void AddGUIElement(GUI::Element* element);
+    void AddGUIElement(GUI::Element *element);
 
     void UpdateWindowSize(int width, int height);
     void Render();
     void RenderGUI();
-    void UpdateFPS(const std::string& fps);
-private:
-    static Renderer* s_Instance;
+    void UpdateFPS(const std::string &fps);
+
+  private:
+    static Renderer *s_Instance;
 
     bool m_IsInitialized;
     bool m_IsDrawWireFrame;
@@ -81,7 +85,8 @@ private:
     GUI::GUI m_GUI;
     std::vector<RenderObject> m_RenderObjects;
     std::vector<GUIRenderObject> m_GUIRenderObjects;
-    GUI::TextElement* m_FPSTextElement;
+    GUI::TextElement *m_FPSTextElement;
+    std::vector<ENTITY> m_EntitiesCreatedQueue;
 
     void Cleanup();
 };

@@ -10,37 +10,30 @@ Camera::Camera()
       // m_TargetEntity(nullptr),
       m_Height(0), m_Width(0), m_Ratio(0), m_NearPlane(3), m_FarPlane(500), m_ScreenX(-1.f), m_ScreenY(-1.f)
 {
-    InputManager::GetInstance()->RegisterCallback(InputEvent::MOUSE_MOVE, [&](InputEvent event, InputData data) {
-        if (m_CameraType == CameraType::ORBIT)
+    EventDispatcher::GetInstance()->Subscribe(EventType::INPUT_EVENT, [this](const Event &e) {
+        if (std::holds_alternative<InputEventData>(e.Data))
         {
-            if (!InputManager::GetInstance()->IsKeyDown(InputEvent::MOUSE_BUTTON_LEFT))
-                return;
+            const auto &data = std::get<InputEventData>(e.Data);
 
-            float camTheta = atan2f(m_LookAt.x, m_LookAt.z);
-            float camPhi = asinf(m_LookAt.y);
-
-            camTheta -= (data.DX * MOVE_SCALE);
-            camPhi -= (data.DY * MOVE_SCALE);
-
-            camTheta = GET_ANGLE_IN_RANGE(camTheta, 0, 2 * Constants::PI);
-            camPhi = CAP_ANGLE(camPhi, MIN_PHI, MAX_PHI);
-
-            m_Position = m_Target - glm::vec3(m_LookAtDistance * std::cos(camPhi) * std::sin(camTheta),
-                                              m_LookAtDistance * std::sin(camPhi),
-                                              m_LookAtDistance * std::cos(camPhi) * std::cos(camTheta));
-
-            SetLookAt(m_Position, m_Target);
-        }
-    });
-
-    InputManager::GetInstance()->RegisterCallback(InputEvent::MOUSE_BUTTON_LEFT, [&](InputEvent event, InputData data) {
-        if (m_CameraType == CameraType::FREE_LOOK)
-        {
-            if (data.Action == InputAction::DOWN)
+            if (data.Event == InputEvent::MOUSE_MOVE && m_CameraType == CameraType::ORBIT)
             {
-                LOGD("InputManager::GetInstance()->RegisterCallback(InputEvent::MOUSE_BUTTON_LEFT, [&](InputEvent "
-                     "event, InputData data) {");
-                m_ScreenX = m_ScreenY = -1;
+                if (!InputManager::GetInstance()->IsKeyDown(InputEvent::MOUSE_BUTTON_LEFT))
+                    return;
+
+                float camTheta = atan2f(m_LookAt.x, m_LookAt.z);
+                float camPhi = asinf(m_LookAt.y);
+
+                camTheta -= (data.Data.DX * MOVE_SCALE);
+                camPhi -= (data.Data.DY * MOVE_SCALE);
+
+                camTheta = GET_ANGLE_IN_RANGE(camTheta, 0, 2 * Constants::PI);
+                camPhi = CAP_ANGLE(camPhi, MIN_PHI, MAX_PHI);
+
+                m_Position = m_Target - glm::vec3(m_LookAtDistance * std::cos(camPhi) * std::sin(camTheta),
+                                                  m_LookAtDistance * std::sin(camPhi),
+                                                  m_LookAtDistance * std::cos(camPhi) * std::cos(camTheta));
+
+                SetLookAt(m_Position, m_Target);
             }
         }
     });
@@ -50,13 +43,10 @@ Camera::Camera()
         {
             const auto &data = std::get<InputEventData>(e.Data);
 
-            if (m_CameraType == CameraType::FREE_LOOK)
+            if (m_CameraType == CameraType::FREE_LOOK && data.Event == InputEvent::MOUSE_BUTTON_LEFT &&
+                data.Data.Action == InputAction::DOWN)
             {
-                if (data.Data.Action == InputAction::DOWN)
-                {
-                    LOGD("EventDispatcher::GetInstance()->Subscribe(EventType::INPUT_EVENT, [this](const Event &e) {");
-                    // m_ScreenX = m_ScreenY = -1;
-                }
+                m_ScreenX = m_ScreenY = -1;
             }
         }
     });

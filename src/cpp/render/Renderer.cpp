@@ -8,18 +8,22 @@ Renderer::Renderer()
     : m_IsInitialized(false), m_ScreenWidth(0), m_ScreenHeight(0), m_IsDrawWireFrame(false), m_GUIRenderObjects(10),
       m_FPSTextElement(nullptr)
 {
-    InputManager::GetInstance()->RegisterCallback(InputEvent::KEY_N, [&](InputEvent event, InputData data) {
-        if (data.Action == InputAction::UP)
+    EventDispatcher::GetInstance()->Subscribe(EventType::INPUT_EVENT, [this](const Event &e) {
+        if (std::holds_alternative<InputEventData>(e.Data))
         {
-            m_IsDrawWireFrame = !m_IsDrawWireFrame;
+            const auto &data = std::get<InputEventData>(e.Data);
+            if (data.Event == InputEvent::KEY_N && data.Data.Action == InputAction::UP)
+            {
+                m_IsDrawWireFrame = !m_IsDrawWireFrame;
+            }
         }
     });
 
-    EventDispatcher::GetInstance()->Subscribe(EventType::ENTITY_CREATED, [](const Event &event) {
+    EventDispatcher::GetInstance()->Subscribe(EventType::ENTITY_CREATED, [this](const Event &event) {
         if (std::holds_alternative<EntityData>(event.Data))
         {
             const auto &data = std::get<EntityData>(event.Data);
-            LOGD("ENTITY_CREATED: %d", data.Entity);
+            m_EntitiesCreatedQueue.push_back(data.Entity);
         }
     });
 }
@@ -80,26 +84,16 @@ void Renderer::Cleanup()
     TextManager::DestroyInstance();
 }
 
-void Renderer::LoadEntities(const std::vector<Entity> &entities)
+void Renderer::LoadEntities(const std::vector<ENTITY> &entities)
 {
     ScopeTimer s("LoadEntities");
 
     RenderBufferManager *renderBufferManager = RenderBufferManager::GetInstance();
-    renderBufferManager->Cleanup();
-    m_ShaderManager.Cleanup();
-    m_RenderObjects.clear();
 
     std::map<Components::MeshType, std::vector<ENTITY>> instancedMap;
 
-#ifdef USE_ENTT
-    for (auto entity : ENTT::GetInstance()->view<Components::Transform>())
-#else
-    for (auto &e : ECS::GetInstance()->GetEntities())
-#endif
+    for (auto entity : entities)
     {
-#ifndef USE_ENTT
-        auto entity = &e;
-#endif
         Components::Material *material = nullptr;
         Components::Mesh *mesh = nullptr;
         Components::Text *text = nullptr;
@@ -206,6 +200,15 @@ void Renderer::LoadEntities(const std::vector<Entity> &entities)
     });
 }
 
+void Renderer::ClearEntities()
+{
+    RenderBufferManager::GetInstance()->Cleanup();
+    m_ShaderManager.Cleanup();
+    m_RenderObjects.clear();
+    // TODO: this is gross
+    // m_GUIRenderObjects.clear();
+}
+
 void Renderer::LoadGUI()
 {
     m_FPSTextElement = static_cast<GUI::TextElement *>(m_GUI.AddElement(
@@ -239,6 +242,12 @@ void Renderer::UpdateWindowSize(int width, int height)
 
 void Renderer::Render()
 {
+    if (m_EntitiesCreatedQueue.size() > 0)
+    {
+        LoadEntities(m_EntitiesCreatedQueue);
+        m_EntitiesCreatedQueue.clear();
+    }
+
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
