@@ -10,7 +10,7 @@ Camera::Camera()
       // m_TargetEntity(nullptr),
       m_Height(0), m_Width(0), m_Ratio(0), m_NearPlane(3), m_FarPlane(500), m_ScreenX(-1.f), m_ScreenY(-1.f)
 {
-    EventDispatcher::GetInstance()->Subscribe(EventType::INPUT_EVENT, [this](const Event &e) {
+    EventDispatcher::GetInstance()->Subscribe(EventType::INPUT, [this](const Event &e) {
         if (std::holds_alternative<InputEventData>(e.Data))
         {
             const auto &data = std::get<InputEventData>(e.Data);
@@ -38,7 +38,7 @@ Camera::Camera()
         }
     });
 
-    EventDispatcher::GetInstance()->Subscribe(EventType::INPUT_EVENT, [this](const Event &e) {
+    EventDispatcher::GetInstance()->Subscribe(EventType::INPUT, [this](const Event &e) {
         if (std::holds_alternative<InputEventData>(e.Data))
         {
             const auto &data = std::get<InputEventData>(e.Data);

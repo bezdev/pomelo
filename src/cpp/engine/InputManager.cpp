@@ -30,5 +30,5 @@ void InputManager::OnEvent(InputEvent event, InputData data)
     // if (data.Action != InputAction::MOVE) LOGD("InputManager::OnEvent: event: %d, data: { %d, %f, %f, %f, %f }",
     // static_cast<int>(event), data.Action, data.X, data.Y, data.DX, data.DY);
 
-    EventDispatcher::GetInstance()->Publish(Event{EventType::INPUT_EVENT, InputEventData{event, data}}, true);
+    EventDispatcher::GetInstance()->Publish(Event{EventType::INPUT, InputEventData{event, data}}, true);
 }

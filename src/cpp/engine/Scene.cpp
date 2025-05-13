@@ -1,6 +1,7 @@
 #include "engine/Scene.h"
 #include "Scene.h"
 #include "engine/EntityFactory.h"
+#include "engine/EventDispatcher.h"
 #include "engine/PhysicsEngine.h"
 #include "render/Renderer.h"
 
@@ -120,43 +121,50 @@ void SceneManager::CreateGameScene()
     //     }
     // });
 
-    float c_acceleration = 6;
-    float current_acceleration = 0;
-    float turnRate = Constants::PI / 1000;
     Components::Physics *p = &GET_COMPONENT(car, Components::Physics);
-    App::GetInstance()->RegisterOnUpdateCallback([=](float delta) {
-        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_J))
+    EventDispatcher::GetInstance()->Subscribe(EventType::ON_UPDATE, [p](const Event &e) {
+        if (std::holds_alternative<InputEventData>(e.Data))
         {
-            float turnAngle = 1 * turnRate * delta;
-            glm::quat rotation = glm::angleAxis(turnAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-            p->Direction = glm::normalize(rotation * p->Direction);
-            p->Velocity = glm::length(p->Velocity) * p->Direction;
-        }
-        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_L))
-        {
-            float turnAngle = -1 * turnRate * delta;
-            glm::quat rotation = glm::angleAxis(turnAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-            p->Direction = glm::normalize(rotation * p->Direction);
-            p->Velocity = glm::length(p->Velocity) * p->Direction;
-        }
+            float c_acceleration = 6;
+            float current_acceleration = 0;
+            float turnRate = Constants::PI / 1000;
 
-        float acceleration = c_acceleration;
-        if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_I))
-        {
-            acceleration = c_acceleration;
-        }
-        else
-        {
-            acceleration = -c_acceleration * 3;
-        }
+            const auto &data = std::get<OnUpdateEventData>(e.Data);
+            const float delta = data.DeltaTime;
 
-        if (glm::dot(glm::normalize(p->Velocity), p->Direction) < 0)
-        {
-            acceleration = 0.f;
-            p->Velocity = V_ORIGIN;
-        }
+            if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_J))
+            {
+                float turnAngle = 1 * turnRate * delta;
+                glm::quat rotation = glm::angleAxis(turnAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+                p->Direction = glm::normalize(rotation * p->Direction);
+                p->Velocity = glm::length(p->Velocity) * p->Direction;
+            }
+            if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_L))
+            {
+                float turnAngle = -1 * turnRate * delta;
+                glm::quat rotation = glm::angleAxis(turnAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+                p->Direction = glm::normalize(rotation * p->Direction);
+                p->Velocity = glm::length(p->Velocity) * p->Direction;
+            }
 
-        p->Acceleration = acceleration * p->Direction;
+            float acceleration = c_acceleration;
+            if (InputManager::GetInstance()->IsKeyDown(InputEvent::KEY_I))
+            {
+                acceleration = c_acceleration;
+            }
+            else
+            {
+                acceleration = -c_acceleration * 3;
+            }
+
+            if (glm::dot(glm::normalize(p->Velocity), p->Direction) < 0)
+            {
+                acceleration = 0.f;
+                p->Velocity = V_ORIGIN;
+            }
+
+            p->Acceleration = acceleration * p->Direction;
+        }
     });
 
     Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 10.f, 15.f), V_ORIGIN);
@@ -260,22 +268,39 @@ void SceneManager::CreateJoltHelloWorldScene()
     collisionBox.ActivationType = Components::CollisionActivationType::DontActivate;
     collisionBox.Layer = Components::CollisionLayer::NON_MOVING;
 
-    auto sphere = CREATE_ENTITY();
-    ADD_COMPONENT(sphere, Components::Transform, VEC3(0, 20, 0), VEC3(.5f, .5f, .5f));
-    ADD_COMPONENT(sphere, Components::Physics, VEC3(0.f, -5.f, 0.f));
-    ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
-    ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR,
-                  glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
-    Components::CollisionSphere &collisionSphere = ADD_COMPONENT(sphere, Components::CollisionSphere);
-    collisionSphere.Radius = .5f;
-    collisionSphere.MotionType = Components::CollisionMotionType::Dynamic;
-    collisionSphere.ActivationType = Components::CollisionActivationType::Activate;
-    collisionSphere.Layer = Components::CollisionLayer::MOVING;
+    size_t SPHERE_COUNT = 50;
+    for (size_t i = 0; i < SPHERE_COUNT; i++)
+    {
+        // glm::vec3 p(RANDOM_FLOAT(-50, 50), 20, RANDOM_FLOAT(-50, 50));
+        glm::vec3 p(0, 60, -100 + i * (200.f / SPHERE_COUNT));
+        auto sphere = CREATE_ENTITY();
+        ADD_COMPONENT(sphere, Components::Transform, p, VEC3(.5f, .5f, .5f));
+        ADD_COMPONENT(sphere, Components::Physics, VEC3(0.f, -5.f, 0.f));
+        ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
+        ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR,
+                      glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+        Components::CollisionSphere &collisionSphere = ADD_COMPONENT(sphere, Components::CollisionSphere);
+        collisionSphere.Radius = .5f;
+        collisionSphere.MotionType = Components::CollisionMotionType::Dynamic;
+        collisionSphere.ActivationType = Components::CollisionActivationType::Activate;
+        collisionSphere.Layer = Components::CollisionLayer::MOVING;
+    }
+    // auto sphere = CREATE_ENTITY();
+    // ADD_COMPONENT(sphere, Components::Transform, VEC3(0, 20, 0), VEC3(.5f, .5f, .5f));
+    // ADD_COMPONENT(sphere, Components::Physics, VEC3(0.f, -5.f, 0.f));
+    // ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
+    // ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR,
+    //               glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+    // Components::CollisionSphere &collisionSphere = ADD_COMPONENT(sphere, Components::CollisionSphere);
+    // collisionSphere.Radius = .5f;
+    // collisionSphere.MotionType = Components::CollisionMotionType::Dynamic;
+    // collisionSphere.ActivationType = Components::CollisionActivationType::Activate;
+    // collisionSphere.Layer = Components::CollisionLayer::MOVING;
 
-    PhysicsEngine::GetInstance()->AddPhysicsEntity(floor);
-    PhysicsEngine::GetInstance()->AddPhysicsEntity(sphere);
+    // PhysicsEngine::GetInstance()->AddPhysicsEntity(floor);
+    // PhysicsEngine::GetInstance()->AddPhysicsEntity(sphere);
 
-    Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 50.f, 50.f), glm::vec3(0.f, 0.f, 0.f));
+    Camera::GetInstance()->SetLookAt(glm::vec3(100.f, 100.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
     Camera::GetInstance()->SetCameraType(CameraType::FREE_LOOK);
     s.Load();
 }

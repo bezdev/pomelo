@@ -1,5 +1,6 @@
 #pragma once
 
+// clang-format off
 #include <Jolt/Jolt.h>
 #include <Jolt/RegisterTypes.h>
 #include <Jolt/Core/Factory.h>
@@ -26,18 +27,19 @@
 #define VEC3_TO_JPH_RVEC3(v) JPH::RVec3(static_cast<JPH::Real>((v).x), \
                                         static_cast<JPH::Real>((v).y), \
                                         static_cast<JPH::Real>((v).z))
+// clang-format on
 
 namespace Layers
 {
-    static constexpr JPH::ObjectLayer NON_MOVING = 0;
-    static constexpr JPH::ObjectLayer MOVING = 1;
-    static constexpr JPH::ObjectLayer NUM_LAYERS = 2;
-};
+static constexpr JPH::ObjectLayer NON_MOVING = 0;
+static constexpr JPH::ObjectLayer MOVING = 1;
+static constexpr JPH::ObjectLayer NUM_LAYERS = 2;
+}; // namespace Layers
 
 /// Class that determines if two object layers can collide
 class ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
 {
-public:
+  public:
     virtual bool ShouldCollide(JPH::ObjectLayer inObject1, JPH::ObjectLayer inObject2) const override
     {
         switch (inObject1)
@@ -60,16 +62,16 @@ public:
 // your broadphase layers define JPH_TRACK_BROADPHASE_STATS and look at the stats reported on the TTY.
 namespace BroadPhaseLayers
 {
-    static constexpr JPH::BroadPhaseLayer NON_MOVING(0);
-    static constexpr JPH::BroadPhaseLayer MOVING(1);
-    static constexpr unsigned int NUM_LAYERS(2);
-};
+static constexpr JPH::BroadPhaseLayer NON_MOVING(0);
+static constexpr JPH::BroadPhaseLayer MOVING(1);
+static constexpr unsigned int NUM_LAYERS(2);
+}; // namespace BroadPhaseLayers
 
 // BroadPhaseLayerInterface implementation
 // This defines a mapping between object and broadphase layers.
 class BroadPhaseLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface
 {
-public:
+  public:
     BroadPhaseLayerInterfaceImpl()
     {
         // Create a mapping table from object to broad phase layer
@@ -104,14 +106,14 @@ public:
     }
 #endif // JPH_EXTERNAL_PROFILE || JPH_PROFILE_ENABLED
 
-private:
+  private:
     JPH::BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS];
 };
 
 /// Class that determines if an object layer can collide with a broadphase layer
 class ObjectVsBroadPhaseLayerFilterImpl : public JPH::ObjectVsBroadPhaseLayerFilter
 {
-public:
+  public:
     virtual bool ShouldCollide(JPH::ObjectLayer inLayer1, JPH::BroadPhaseLayer inLayer2) const override
     {
         switch (inLayer1)
@@ -129,48 +131,52 @@ public:
 
 class ContactListenerImpl : public JPH::ContactListener
 {
-public:
-    virtual JPH::ValidateResult OnContactValidate(const JPH::Body &inBody1, const JPH::Body &inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult &inCollisionResult) override
+  public:
+    virtual JPH::ValidateResult OnContactValidate(const JPH::Body &inBody1, const JPH::Body &inBody2,
+                                                  JPH::RVec3Arg inBaseOffset,
+                                                  const JPH::CollideShapeResult &inCollisionResult) override
     {
-        std::cout << "Contact validate callback" << std::endl;
+        // std::cout << "Contact validate callback" << std::endl;
 
         // Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
         return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
     }
 
-    virtual void OnContactAdded(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
+    virtual void OnContactAdded(const JPH::Body &inBody1, const JPH::Body &inBody2,
+                                const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
     {
-        std::cout << "A contact was added" << std::endl;
+        // std::cout << "A contact was added" << std::endl;
     }
 
-    virtual void OnContactPersisted(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
+    virtual void OnContactPersisted(const JPH::Body &inBody1, const JPH::Body &inBody2,
+                                    const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
     {
-        std::cout << "A contact was persisted" << std::endl;
+        // std::cout << "A contact was persisted" << std::endl;
     }
 
     virtual void OnContactRemoved(const JPH::SubShapeIDPair &inSubShapePair) override
     {
-        std::cout << "A contact was removed" << std::endl;
+        // std::cout << "A contact was removed" << std::endl;
     }
 };
 
 class BodyActivationListenerImpl : public JPH::BodyActivationListener
 {
-public:
+  public:
     virtual void OnBodyActivated(const JPH::BodyID &inBodyID, uint64_t inBodyUserData) override
     {
-        std::cout << "A body got activated" << std::endl;
+        // std::cout << "A body got activated" << std::endl;
     }
 
     virtual void OnBodyDeactivated(const JPH::BodyID &inBodyID, uint64_t inBodyUserData) override
     {
-        std::cout << "A body went to sleep" << std::endl;
+        // std::cout << "A body went to sleep" << std::endl;
     }
 };
 
 class PhysicsJolt
 {
-public:
+  public:
     static void JoltTraceImpl(const char *inFMT, ...) {
         // Format the message
         // va_list list;
@@ -183,9 +189,11 @@ public:
         // std::cout << buffer << std::endl;
     };
 
-    static bool JoltAssertFailedImpl(const char *inExpression, const char *inMessage, const char *inFile, unsigned int inLine)
+    static bool JoltAssertFailedImpl(const char *inExpression, const char *inMessage, const char *inFile,
+                                     unsigned int inLine)
     {
-        // std::cout << inFile << ":" << inLine << ": (" << inExpression << ") " << (inMessage != nullptr? inMessage : "") << std::endl;
+        // std::cout << inFile << ":" << inLine << ": (" << inExpression << ") " << (inMessage != nullptr? inMessage :
+        // "") << std::endl;
 
         // Breakpoint
         return true;
@@ -197,16 +205,16 @@ public:
     void AddEntity(ENTITY entity);
     void Update(float delta);
 
-private:
-    JPH::TempAllocatorImpl* m_TempAllocator;
-    JPH::JobSystemThreadPool* m_JobSystem;
+  private:
+    JPH::TempAllocatorImpl *m_TempAllocator;
+    JPH::JobSystemThreadPool *m_JobSystem;
     BroadPhaseLayerInterfaceImpl m_BroadPhaseLayerInterface;
     ObjectVsBroadPhaseLayerFilterImpl m_ObjectVsBroadPhaseLayerFilter;
     ObjectLayerPairFilterImpl m_ObjectLayerPairFilter;
     JPH::PhysicsSystem m_PhysicsSystem;
     ContactListenerImpl m_ContactListener;
     BodyActivationListenerImpl m_BodyActivationListener;
-    JPH::BodyInterface* m_BodyInterface;
+    JPH::BodyInterface *m_BodyInterface;
 
     std::unordered_map<JPH::BodyID, ENTITY> m_BodyToEntityMap;
 };

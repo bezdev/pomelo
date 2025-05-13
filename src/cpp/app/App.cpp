@@ -56,11 +56,8 @@ void App::Run()
         m_GlobalTimer->Update();
     }
 
-    // TODO: add this to event dispatcher
-    for (auto &callback : m_Callbacks)
-    {
-        callback(m_GlobalTimer->GetDelta());
-    }
+    EventDispatcher::GetInstance()->Publish(Event{EventType::ON_UPDATE, OnUpdateEventData{m_GlobalTimer->GetDelta()}});
+
     EventDispatcher::GetInstance()->Dispatch();
 
     PhysicsEngine::GetInstance()->Update(m_GlobalTimer->GetDelta());

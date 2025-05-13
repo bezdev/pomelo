@@ -6,7 +6,7 @@ entt::registry *ENTT::s_Instance = nullptr;
 
 void PublishCreateEntityEvent(ENTITY entity)
 {
-    EntityData data{entity};
+    EntityEventData data{entity};
     Event e{EventType::ENTITY_CREATED, data};
 
     EventDispatcher::GetInstance()->Publish(e);

@@ -16,14 +16,15 @@ void PhysicsEngine::Initialize()
     m_PhysicsJolt.Initialize();
 
     EventDispatcher::GetInstance()->Subscribe(EventType::ENTITY_CREATED, [this](const Event &event) {
-        if (std::holds_alternative<EntityData>(event.Data))
+        if (std::holds_alternative<EntityEventData>(event.Data))
         {
-            const auto &data = std::get<EntityData>(event.Data);
+            const auto &data = std::get<EntityEventData>(event.Data);
             if (HAS_COMPONENT(data.Entity, Components::Motion))
             {
                 AddMotionEntity(data.Entity);
             }
-            if (HAS_COMPONENT(data.Entity, Components::Physics))
+            if (HAS_COMPONENT(data.Entity, Components::CollisionBox) ||
+                HAS_COMPONENT(data.Entity, Components::CollisionSphere))
             {
                 AddPhysicsEntity(data.Entity);
             }

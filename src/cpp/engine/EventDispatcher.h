@@ -13,11 +13,12 @@ enum class EventType : unsigned int
 {
     ENTITY_CREATED = 0,
     ENTITY_DELETED,
-    INPUT_EVENT,
+    INPUT,
+    ON_UPDATE,
     NUM_EVENTS,
 };
 
-struct EntityData
+struct EntityEventData
 {
     ENTITY Entity;
 };
@@ -28,7 +29,12 @@ struct InputEventData
     InputData Data;
 };
 
-using EventData = std::variant<std::monostate, EntityData, InputEventData>;
+struct OnUpdateEventData
+{
+    float DeltaTime;
+};
+
+using EventData = std::variant<std::monostate, EntityEventData, InputEventData, OnUpdateEventData>;
 
 struct Event
 {

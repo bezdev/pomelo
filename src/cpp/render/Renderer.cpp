@@ -8,7 +8,7 @@ Renderer::Renderer()
     : m_IsInitialized(false), m_ScreenWidth(0), m_ScreenHeight(0), m_IsDrawWireFrame(false), m_GUIRenderObjects(10),
       m_FPSTextElement(nullptr)
 {
-    EventDispatcher::GetInstance()->Subscribe(EventType::INPUT_EVENT, [this](const Event &e) {
+    EventDispatcher::GetInstance()->Subscribe(EventType::INPUT, [this](const Event &e) {
         if (std::holds_alternative<InputEventData>(e.Data))
         {
             const auto &data = std::get<InputEventData>(e.Data);
@@ -20,9 +20,9 @@ Renderer::Renderer()
     });
 
     EventDispatcher::GetInstance()->Subscribe(EventType::ENTITY_CREATED, [this](const Event &event) {
-        if (std::holds_alternative<EntityData>(event.Data))
+        if (std::holds_alternative<EntityEventData>(event.Data))
         {
-            const auto &data = std::get<EntityData>(event.Data);
+            const auto &data = std::get<EntityEventData>(event.Data);
             m_EntitiesCreatedQueue.push_back(data.Entity);
         }
     });
