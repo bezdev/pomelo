@@ -39,6 +39,7 @@ void PhysicsEngine::Initialize()
 void PhysicsEngine::Update(float delta)
 {
     m_PhysicsJolt.Update(delta);
+    UpdateMotions(delta);
 }
 
 void PhysicsEngine::UpdateMotions(float delta)
