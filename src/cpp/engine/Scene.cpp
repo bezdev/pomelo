@@ -37,8 +37,7 @@ void SceneManager::CreateSandboxScene()
     //     .AddComponent<Components::Material>(Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
 
     auto e1 = CREATE_ENTITY();
-    ADD_COMPONENT(e1, Components::Transform, V_ORIGIN,
-                  glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f));
+    ADD_COMPONENT(e1, Components::Transform, V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f));
     ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::PLANE_MAP);
     ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
 
@@ -53,8 +52,7 @@ void SceneManager::CreateSandboxScene()
     ADD_COMPONENT(e2, Components::Transform, V_ORIGIN);
     ADD_COMPONENT(e2, Components::Mesh, Components::MeshType::SPHERE);
     ADD_COMPONENT(e2, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.0f, 0.f, 1.f, 1.0f));
-    ADD_COMPONENT(e2, Components::Motion, Components::MotionType::ORBIT, glm::vec3(10.f, 0.f, 0.f),
-                  glm::vec3(0.f, 0.f, 0.f), 5000);
+    ADD_COMPONENT(e2, Components::Motion, Components::MotionType::ORBIT, glm::vec3(10.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), 5000);
 
     auto e3 = CREATE_ENTITY();
     ADD_COMPONENT(e3, Components::Transform, V_ORIGIN + VEC3(0.f, 10.f, 0.f));
@@ -65,15 +63,11 @@ void SceneManager::CreateSandboxScene()
     auto e4 = CREATE_ENTITY();
     ADD_COMPONENT(e4, Components::Transform, V_ORIGIN + VEC3(-5.f, 5.f, 0.f));
     ADD_COMPONENT(e4, Components::Mesh, Components::MeshType::PLANE);
-    ADD_COMPONENT(e4, Components::Material, Components::MaterialType::TEXTURE, V_COLOR_WHITE,
-                  "assets/fonts/default.png");
+    ADD_COMPONENT(e4, Components::Material, Components::MaterialType::TEXTURE, V_COLOR_WHITE, "assets/fonts/default.png");
 
     auto e5 = CREATE_ENTITY();
     ADD_COMPONENT(e5, Components::Transform, VEC3(10.f, 10.f, 0), VEC3(100.f, 100.f, 100.f));
-    ADD_COMPONENT(e5, Components::Text,
-                  TextManager::GetInstance()
-                      ->CreateText(std::string("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"))
-                      ->GetTextID());
+    ADD_COMPONENT(e5, Components::Text, TextManager::GetInstance()->CreateText(std::string("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"))->GetTextID());
 
     // s.CreateEntity()
     //     .AddComponent<Components::Transform>(p)
@@ -104,8 +98,7 @@ void SceneManager::CreateGameScene()
     //  0.f), 5000);
 
     auto e1 = CREATE_ENTITY();
-    ADD_COMPONENT(e1, Components::Transform, V_ORIGIN,
-                  glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f));
+    ADD_COMPONENT(e1, Components::Transform, V_ORIGIN, glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), VEC3(1.f));
     ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::PLANE_MAP);
     ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(1.0f, 1.f, 1.f, 1.0f));
 
@@ -260,8 +253,7 @@ void SceneManager::CreateJoltHelloWorldScene()
     auto floor = CREATE_ENTITY();
     ADD_COMPONENT(floor, Components::Transform, VEC3(0, 0, 0), VEC3(100.f, 1.f, 100.f));
     ADD_COMPONENT(floor, Components::Mesh, Components::MeshType::BOX);
-    ADD_COMPONENT(floor, Components::Material, Components::MaterialType::SOLID_COLOR,
-                  glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+    ADD_COMPONENT(floor, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
     Components::CollisionBox &collisionBox = ADD_COMPONENT(floor, Components::CollisionBox);
     collisionBox.Extents = VEC3(50.f, 1.f, 50.f);
     collisionBox.MotionType = Components::CollisionMotionType::Static;
@@ -278,8 +270,7 @@ void SceneManager::CreateJoltHelloWorldScene()
             ADD_COMPONENT(sphere, Components::Transform, p, VEC3(.5f, .5f, .5f));
             ADD_COMPONENT(sphere, Components::Motion, Components::MotionType::PATH, p, VEC3(p.x, 0.f, p.z), 5000);
             ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
-            ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR,
-                          glm::vec4(1.f, 0.f, 0.f, 1.f));
+            ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(1.f, 0.f, 0.f, 1.f));
         }
         else
         {
@@ -289,8 +280,7 @@ void SceneManager::CreateJoltHelloWorldScene()
             ADD_COMPONENT(sphere, Components::Transform, p, VEC3(.5f, .5f, .5f));
             ADD_COMPONENT(sphere, Components::Physics, VEC3(0.f, -2.f, 0.f));
             ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
-            ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR,
-                          glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
             Components::CollisionSphere &collisionSphere = ADD_COMPONENT(sphere, Components::CollisionSphere);
             collisionSphere.Radius = .5f;
             collisionSphere.MotionType = Components::CollisionMotionType::Dynamic;
