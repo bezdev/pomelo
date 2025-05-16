@@ -47,8 +47,7 @@ void PhysicsJolt::Initialize()
     // of your own job scheduler. JobSystemThreadPool is an example implementation.
     // JPH::JobSystemThreadPool job_system(cMaxPhysicsJobs, cMaxPhysicsBarriers, std::thread::hardware_concurrency() -
     // 1);
-    m_JobSystem =
-        new JPH::JobSystemThreadPool(cMaxPhysicsJobs, cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
+    m_JobSystem = new JPH::JobSystemThreadPool(cMaxPhysicsJobs, cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
 
     // This is the max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get
     // an error. Note: This value is low because this is a simple test. For a real project use something in the order of
@@ -90,8 +89,7 @@ void PhysicsJolt::Initialize()
     // ObjectLayerPairFilterImpl m_ObjectLayerPairFilter;
 
     // Now we can create the actual physics system.
-    m_PhysicsSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, m_BroadPhaseLayerInterface,
-                         m_ObjectVsBroadPhaseLayerFilter, m_ObjectLayerPairFilter);
+    m_PhysicsSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, m_BroadPhaseLayerInterface, m_ObjectVsBroadPhaseLayerFilter, m_ObjectLayerPairFilter);
 
     // A body activation listener gets notified when bodies activate and go to sleep
     // Note that this is called from a job so whatever you do here needs to be thread safe.
@@ -214,8 +212,7 @@ void PhysicsJolt::AddEntity(ENTITY entity)
 
         // LOGD("extends: %f, %f, %f", collisionBox.Extents.x, " ", collisionBox.Extents.y, " ",
         // collisionBox.Extents.z);
-        JPH::BodyCreationSettings boxSettings(boxShape, JPH::RVec3(0.0_r, -1.0_r, 0.0_r), JPH::Quat::sIdentity(),
-                                              static_cast<JPH::EMotionType>(collisionBox.MotionType),
+        JPH::BodyCreationSettings boxSettings(boxShape, JPH::RVec3(0.0_r, -1.0_r, 0.0_r), JPH::Quat::sIdentity(), static_cast<JPH::EMotionType>(collisionBox.MotionType),
                                               static_cast<int>(collisionBox.Layer));
 
         JPH::Body *box = m_BodyInterface->CreateBody(boxSettings);
@@ -229,13 +226,10 @@ void PhysicsJolt::AddEntity(ENTITY entity)
         Components::Physics &physics = GET_COMPONENT(entity, Components::Physics);
         Components::CollisionSphere &collisionSphere = GET_COMPONENT(entity, Components::CollisionSphere);
 
-        JPH::BodyCreationSettings sphereSettings(new JPH::SphereShape(collisionSphere.Radius),
-                                                 VEC3_TO_JPH_RVEC3(transform.GetPosition()), JPH::Quat::sIdentity(),
-                                                 static_cast<JPH::EMotionType>(collisionSphere.MotionType),
-                                                 static_cast<int>(collisionSphere.Layer));
+        JPH::BodyCreationSettings sphereSettings(new JPH::SphereShape(collisionSphere.Radius), VEC3_TO_JPH_RVEC3(transform.GetPosition()), JPH::Quat::sIdentity(),
+                                                 static_cast<JPH::EMotionType>(collisionSphere.MotionType), static_cast<int>(collisionSphere.Layer));
 
-        JPH::BodyID id = m_BodyInterface->CreateAndAddBody(
-            sphereSettings, static_cast<JPH::EActivation>(collisionSphere.ActivationType));
+        JPH::BodyID id = m_BodyInterface->CreateAndAddBody(sphereSettings, static_cast<JPH::EActivation>(collisionSphere.ActivationType));
 
         // // Now you can interact with the dynamic body, in this case we're going to give it a velocity.
         // // (note that if we had used CreateBody then we could have set the velocity straight on the body before
@@ -282,18 +276,14 @@ void PhysicsJolt::Update(float delta)
                 // Retrieve the body's current position
                 JPH::RVec3 position = m_BodyInterface->GetCenterOfMassPosition(bodyID);
                 JPH::Vec3 velocity = m_BodyInterface->GetLinearVelocity(bodyID);
-                // std::cout << "Step: Position = (" << position.GetX() << ", " << position.GetY() << ", "
-                //           << position.GetZ() << "), "
-                //           << "Velocity = (" << velocity.GetX() << ", " << velocity.GetY() << ", " << velocity.GetZ()
-                //           << ")" << std::endl;
+                // std::cout << "Step: Position = (" << position.GetX() << ", " << position.GetY() << ", " << position.GetZ() << "), "
+                //           << "Velocity = (" << velocity.GetX() << ", " << velocity.GetY() << ", " << velocity.GetZ() << ")" << std::endl;
 
                 // Convert the position to glm::vec3 and update the entity's Transform component
                 if (HAS_COMPONENT(entity, Components::Transform))
                 {
                     auto &transform = GET_COMPONENT(entity, Components::Transform);
-                    transform.SetPosition(glm::vec3(static_cast<float>(position.GetX()),
-                                                    static_cast<float>(position.GetY()),
-                                                    static_cast<float>(position.GetZ())));
+                    transform.SetPosition(glm::vec3(static_cast<float>(position.GetX()), static_cast<float>(position.GetY()), static_cast<float>(position.GetZ())));
                 }
             }
         }

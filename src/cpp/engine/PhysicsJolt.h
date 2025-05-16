@@ -132,31 +132,28 @@ class ObjectVsBroadPhaseLayerFilterImpl : public JPH::ObjectVsBroadPhaseLayerFil
 class ContactListenerImpl : public JPH::ContactListener
 {
   public:
-    virtual JPH::ValidateResult OnContactValidate(const JPH::Body &inBody1, const JPH::Body &inBody2,
-                                                  JPH::RVec3Arg inBaseOffset,
+    virtual JPH::ValidateResult OnContactValidate(const JPH::Body &inBody1, const JPH::Body &inBody2, JPH::RVec3Arg inBaseOffset,
                                                   const JPH::CollideShapeResult &inCollisionResult) override
     {
-        // std::cout << "Contact validate callback" << std::endl;
+        // LOGD("OnContactValidate");
 
         // Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
         return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
     }
 
-    virtual void OnContactAdded(const JPH::Body &inBody1, const JPH::Body &inBody2,
-                                const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
+    virtual void OnContactAdded(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
     {
-        // std::cout << "A contact was added" << std::endl;
+        // LOGD("OnContactAdded");
     }
 
-    virtual void OnContactPersisted(const JPH::Body &inBody1, const JPH::Body &inBody2,
-                                    const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
+    virtual void OnContactPersisted(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
     {
-        // std::cout << "A contact was persisted" << std::endl;
+        // LOGD("OnContactPersisted");
     }
 
     virtual void OnContactRemoved(const JPH::SubShapeIDPair &inSubShapePair) override
     {
-        // std::cout << "A contact was removed" << std::endl;
+        // LOGD("OnContactRemoved");
     }
 };
 
@@ -165,12 +162,12 @@ class BodyActivationListenerImpl : public JPH::BodyActivationListener
   public:
     virtual void OnBodyActivated(const JPH::BodyID &inBodyID, uint64_t inBodyUserData) override
     {
-        // std::cout << "A body got activated" << std::endl;
+        // LOGD("OnBodyActivated");
     }
 
     virtual void OnBodyDeactivated(const JPH::BodyID &inBodyID, uint64_t inBodyUserData) override
     {
-        // std::cout << "A body went to sleep" << std::endl;
+        // LOGD("OnBodyDeactivated");
     }
 };
 
@@ -189,11 +186,9 @@ class PhysicsJolt
         // std::cout << buffer << std::endl;
     };
 
-    static bool JoltAssertFailedImpl(const char *inExpression, const char *inMessage, const char *inFile,
-                                     unsigned int inLine)
+    static bool JoltAssertFailedImpl(const char *inExpression, const char *inMessage, const char *inFile, unsigned int inLine)
     {
-        // std::cout << inFile << ":" << inLine << ": (" << inExpression << ") " << (inMessage != nullptr? inMessage :
-        // "") << std::endl;
+        LOGD("JoltAssertFailedImpl inFile: %s, inLine: %d, inExpression: %s, inMessage; %s", inFile, inLine, inExpression, inMessage);
 
         // Breakpoint
         return true;
