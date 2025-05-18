@@ -89,7 +89,13 @@ void PhysicsJolt::Initialize()
     // ObjectLayerPairFilterImpl m_ObjectLayerPairFilter;
 
     // Now we can create the actual physics system.
-    m_PhysicsSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, m_BroadPhaseLayerInterface, m_ObjectVsBroadPhaseLayerFilter, m_ObjectLayerPairFilter);
+    m_PhysicsSystem.Init(cMaxBodies,
+        cNumBodyMutexes,
+        cMaxBodyPairs,
+        cMaxContactConstraints,
+        m_BroadPhaseLayerInterface,
+        m_ObjectVsBroadPhaseLayerFilter,
+        m_ObjectLayerPairFilter);
 
     // A body activation listener gets notified when bodies activate and go to sleep
     // Note that this is called from a job so whatever you do here needs to be thread safe.
@@ -203,17 +209,31 @@ void PhysicsJolt::AddEntity(ENTITY entity)
         Components::CollisionBox &collisionBox = GET_COMPONENT(entity, Components::CollisionBox);
 
         JPH::BoxShapeSettings boxShapeSettings(VEC3_TO_JPH_VEC3(collisionBox.Extents));
-        // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being
-        // freed when its reference count goes to 0.
+        // A ref counted object on the stack (base class RefTarget) should be marked as such to
+        // prevent it from being freed when its reference count goes to 0.
         boxShapeSettings.SetEmbedded();
 
         JPH::ShapeSettings::ShapeResult boxShapeResult = boxShapeSettings.Create();
         JPH::ShapeRefC boxShape = boxShapeResult.Get();
 
-        // LOGD("extends: %f, %f, %f", collisionBox.Extents.x, " ", collisionBox.Extents.y, " ",
-        // collisionBox.Extents.z);
-        JPH::BodyCreationSettings boxSettings(boxShape, JPH::RVec3(0.0_r, -1.0_r, 0.0_r), JPH::Quat::sIdentity(), static_cast<JPH::EMotionType>(collisionBox.MotionType),
-                                              static_cast<int>(collisionBox.Layer));
+        VEC3 position = transform.GetPosition() + collisionBox.Offset;
+
+        const QUAT &entityRotation = transform.GetRotation();
+        const QUAT &collisionBoxRotation = collisionBox.Rotation;
+
+        JPH::Quat joltEntityRotation(
+            (JPH::Real)entityRotation.x, (JPH::Real)entityRotation.y, (JPH::Real)entityRotation.z, (JPH::Real)entityRotation.w);
+        JPH::Quat joltCollisionRotation((JPH::Real)collisionBox.Rotation.x,
+            (JPH::Real)collisionBox.Rotation.y,
+            (JPH::Real)collisionBox.Rotation.z,
+            (JPH::Real)collisionBox.Rotation.w);
+        JPH::Quat joltRotation = joltEntityRotation * joltCollisionRotation;
+
+        JPH::BodyCreationSettings boxSettings(boxShape,
+            JPH::RVec3(position.x, position.y, position.z),
+            joltRotation,
+            static_cast<JPH::EMotionType>(collisionBox.MotionType),
+            static_cast<uint8_t>(collisionBox.Layer));
 
         JPH::Body *box = m_BodyInterface->CreateBody(boxSettings);
         m_BodyInterface->AddBody(box->GetID(), static_cast<JPH::EActivation>(collisionBox.ActivationType));
@@ -226,8 +246,11 @@ void PhysicsJolt::AddEntity(ENTITY entity)
         Components::Physics &physics = GET_COMPONENT(entity, Components::Physics);
         Components::CollisionSphere &collisionSphere = GET_COMPONENT(entity, Components::CollisionSphere);
 
-        JPH::BodyCreationSettings sphereSettings(new JPH::SphereShape(collisionSphere.Radius), VEC3_TO_JPH_RVEC3(transform.GetPosition()), JPH::Quat::sIdentity(),
-                                                 static_cast<JPH::EMotionType>(collisionSphere.MotionType), static_cast<int>(collisionSphere.Layer));
+        JPH::BodyCreationSettings sphereSettings(new JPH::SphereShape(collisionSphere.Radius),
+            VEC3_TO_JPH_RVEC3(transform.GetPosition()),
+            JPH::Quat::sIdentity(),
+            static_cast<JPH::EMotionType>(collisionSphere.MotionType),
+            static_cast<int>(collisionSphere.Layer));
 
         JPH::BodyID id = m_BodyInterface->CreateAndAddBody(sphereSettings, static_cast<JPH::EActivation>(collisionSphere.ActivationType));
 
@@ -238,12 +261,6 @@ void PhysicsJolt::AddEntity(ENTITY entity)
 
         m_BodyToEntityMap[id] = entity;
     }
-
-    // Optional step: Before starting the physics simulation you can optimize the broad phase. This improves collision
-    // detection performance (it's pointless here because we only have 2 bodies). You should definitely not call this
-    // every frame or when e.g. streaming in a new level section as it is an expensive operation. Instead insert all new
-    // objects in batches instead of 1 at a time to keep the broad phase efficient.
-    m_PhysicsSystem.OptimizeBroadPhase();
 }
 
 void PhysicsJolt::Update(float delta)
@@ -283,9 +300,15 @@ void PhysicsJolt::Update(float delta)
                 if (HAS_COMPONENT(entity, Components::Transform))
                 {
                     auto &transform = GET_COMPONENT(entity, Components::Transform);
-                    transform.SetPosition(glm::vec3(static_cast<float>(position.GetX()), static_cast<float>(position.GetY()), static_cast<float>(position.GetZ())));
+                    transform.SetPosition(glm::vec3(
+                        static_cast<float>(position.GetX()), static_cast<float>(position.GetY()), static_cast<float>(position.GetZ())));
                 }
             }
         }
     }
+}
+
+void PhysicsJolt::PostEntitiesAdded()
+{
+    m_PhysicsSystem.OptimizeBroadPhase();
 }

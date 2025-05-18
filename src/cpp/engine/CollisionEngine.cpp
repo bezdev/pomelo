@@ -45,31 +45,32 @@ void CollisionEngine::DetectCollisions()
     }
 }
 
-Collision CollisionEngine::CheckCollision(ENTITY a, ENTITY b) {
+Collision CollisionEngine::CheckCollision(ENTITY a, ENTITY b)
+{
     Collision c = { V_ORIGIN };
 
-    if (!HAS_COMPONENT(a, Components::Physics) || !HAS_COMPONENT(b, Components::Physics)) return c;
-    Components::Collision& collisionA = GET_COMPONENT(a, Components::Collision);
-    Components::Transform& transformA = GET_COMPONENT(a, Components::Transform);
-    Components::Physics& physicsA = GET_COMPONENT(a, Components::Physics);
+    // if (!HAS_COMPONENT(a, Components::Physics) || !HAS_COMPONENT(b, Components::Physics)) return c;
+    // Components::Collision& collisionA = GET_COMPONENT(a, Components::Collision);
+    // Components::Transform& transformA = GET_COMPONENT(a, Components::Transform);
+    // Components::Physics& physicsA = GET_COMPONENT(a, Components::Physics);
 
-    Components::Collision& collisionB = GET_COMPONENT(b, Components::Collision);
-    Components::Transform& transformB = GET_COMPONENT(b, Components::Transform);
-    Components::Physics& physicsB = GET_COMPONENT(b, Components::Physics);
+    // Components::Collision& collisionB = GET_COMPONENT(b, Components::Collision);
+    // Components::Transform& transformB = GET_COMPONENT(b, Components::Transform);
+    // Components::Physics& physicsB = GET_COMPONENT(b, Components::Physics);
 
-    glm::vec3 posA = transformA.GetPosition();
-    glm::vec3 posB = transformB.GetPosition();
-    glm::vec3 delta = posB - posA;
-    float distanceSquared = glm::dot(delta, delta);
-    float radiusSum = collisionA.Size.x + collisionB.Size.x;
+    // glm::vec3 posA = transformA.GetPosition();
+    // glm::vec3 posB = transformB.GetPosition();
+    // glm::vec3 delta = posB - posA;
+    // float distanceSquared = glm::dot(delta, delta);
+    // float radiusSum = collisionA.Size.x + collisionB.Size.x;
 
-    if (distanceSquared < radiusSum * radiusSum) {
-        auto contactPoint = (posA + posB) / 2.0f;
+    // if (distanceSquared < radiusSum * radiusSum) {
+    //     auto contactPoint = (posA + posB) / 2.0f;
 
-        // Simple collision response: Reflect velocities
-        physicsA.Velocity *= -1;
-        physicsB.Velocity *= -1;
-    }
+    //     // Simple collision response: Reflect velocities
+    //     physicsA.Velocity *= -1;
+    //     physicsB.Velocity *= -1;
+    // }
 
     return c;
 }

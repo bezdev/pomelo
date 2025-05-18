@@ -199,6 +199,7 @@ class PhysicsJolt
     void Initialize();
     void AddEntity(ENTITY entity);
     void Update(float delta);
+    void PostEntitiesAdded();
 
   private:
     JPH::TempAllocatorImpl *m_TempAllocator;

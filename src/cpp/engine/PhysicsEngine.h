@@ -36,16 +36,11 @@ class PhysicsEngine
     {
         m_MotionEntities.push_back(entity);
     }
-    void AddCollisionEntity(ENTITY entity)
-    {
-        m_CollisionEngine.AddEntity(entity);
-    }
 
     void Update(float delta);
 
     void UpdateMotions(float delta);
     void UpdatePhysics(float delta);
-    void UpdateCollisions(float delta);
 
   private:
     static PhysicsEngine *s_Instance;
@@ -54,7 +49,8 @@ class PhysicsEngine
     void UpdateOrbit(ENTITY entity, Components::Motion *motion, float delta);
 
     PhysicsJolt m_PhysicsJolt;
-    CollisionEngine m_CollisionEngine;
     std::vector<ENTITY> m_MotionEntities;
     std::vector<ENTITY> m_PhysicsEntities;
+
+    std::vector<ENTITY> m_EntitiesCreatedQueue;
 };

@@ -19,25 +19,31 @@ void PhysicsEngine::Initialize()
         if (std::holds_alternative<EntityEventData>(event.Data))
         {
             const auto &data = std::get<EntityEventData>(event.Data);
-            if (HAS_COMPONENT(data.Entity, Components::Motion))
-            {
-                AddMotionEntity(data.Entity);
-            }
-            if (HAS_COMPONENT(data.Entity, Components::CollisionBox) ||
-                HAS_COMPONENT(data.Entity, Components::CollisionSphere))
-            {
-                AddPhysicsEntity(data.Entity);
-            }
-            if (HAS_COMPONENT(data.Entity, Components::Collision))
-            {
-                AddCollisionEntity(data.Entity);
-            }
+            m_EntitiesCreatedQueue.push_back(data.Entity);
         }
     });
 }
 
 void PhysicsEngine::Update(float delta)
 {
+    if (m_EntitiesCreatedQueue.size() > 0)
+    {
+        for (auto e : m_EntitiesCreatedQueue)
+        {
+            if (HAS_COMPONENT(e, Components::Motion))
+            {
+                AddMotionEntity(e);
+            }
+            if (HAS_COMPONENT(e, Components::CollisionBox) || HAS_COMPONENT(e, Components::CollisionSphere))
+            {
+                AddPhysicsEntity(e);
+            }
+        }
+        m_EntitiesCreatedQueue.clear();
+
+        m_PhysicsJolt.PostEntitiesAdded();
+    }
+
     m_PhysicsJolt.Update(delta);
     UpdateMotions(delta);
 }
@@ -88,11 +94,6 @@ void PhysicsEngine::UpdatePhysics(float delta)
         //     transform.SetPosition(V_ORIGIN);
         // }
     }
-}
-
-void PhysicsEngine::UpdateCollisions(float delta)
-{
-    m_CollisionEngine.Update(delta);
 }
 
 void PhysicsEngine::UpdatePath(ENTITY entity, Components::Motion *motion, float delta)

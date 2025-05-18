@@ -48,6 +48,12 @@ class Transform
     {
         return m_Position;
     }
+
+    QUAT &GetRotation()
+    {
+        return m_Rotation;
+    }
+
     VEC3 &GetScale()
     {
         return m_Scale;
@@ -150,8 +156,7 @@ struct Motion
 {
     Motion() {};
 
-    Motion(MotionType type, VEC3 start, VEC3 target, float time)
-        : Type(type), Start(start), Target(target), Step(0.f), Time(time)
+    Motion(MotionType type, VEC3 start, VEC3 target, float time) : Type(type), Start(start), Target(target), Step(0.f), Time(time)
     {
     }
 
@@ -170,8 +175,7 @@ enum PhysicsType
 
 struct Physics
 {
-    Physics(VEC3 velocity, VEC3 acceleration, VEC3 direction)
-        : Velocity(velocity), Acceleration(acceleration), Direction(direction)
+    Physics(VEC3 velocity, VEC3 acceleration, VEC3 direction) : Velocity(velocity), Acceleration(acceleration), Direction(direction)
     {
     }
 
@@ -192,28 +196,6 @@ struct Physics
     VEC3 Velocity;
     VEC3 Acceleration;
     VEC3 Direction;
-};
-
-enum CollisionType
-{
-    SPHERE,
-    BOX
-};
-
-struct Collision
-{
-    // TODO: call other constructor
-    Collision()
-    {
-    }
-
-    Collision(CollisionType type, VEC3 position, VEC2 size) : Type(type), Position(position), Size(size)
-    {
-    }
-
-    CollisionType Type;
-    VEC3 Position;
-    VEC2 Size;
 };
 
 enum FontType
@@ -263,9 +245,12 @@ struct CollisionSphere
 
 struct CollisionBox
 {
-    VEC3 Extents;
-    CollisionMotionType MotionType;
-    CollisionActivationType ActivationType;
-    CollisionLayer Layer;
+    VEC3 Extents = VEC3(0.f);
+    VEC3 Offset = VEC3(0.f);
+    QUAT Rotation = Q_DEFAULT;
+    CollisionMotionType MotionType = CollisionMotionType::Static;
+    CollisionActivationType ActivationType = CollisionActivationType::Activate;
+    CollisionLayer Layer = CollisionLayer::MOVING;
 };
+
 } // namespace Components
