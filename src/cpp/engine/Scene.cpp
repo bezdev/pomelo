@@ -67,7 +67,9 @@ void SceneManager::CreateSandboxScene()
 
     auto e5 = CREATE_ENTITY();
     ADD_COMPONENT(e5, Components::Transform, VEC3(10.f, 10.f, 0), VEC3(100.f, 100.f, 100.f));
-    ADD_COMPONENT(e5, Components::Text, TextManager::GetInstance()->CreateText(std::string("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"))->GetTextID());
+    ADD_COMPONENT(e5,
+        Components::Text,
+        TextManager::GetInstance()->CreateText(std::string("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"))->GetTextID());
 
     // s.CreateEntity()
     //     .AddComponent<Components::Transform>(p)
@@ -250,43 +252,63 @@ void SceneManager::CreateJoltHelloWorldScene()
 
     EntityFactory::CreateAxis(V_ORIGIN);
 
-    auto floor = CREATE_ENTITY();
-    ADD_COMPONENT(floor, Components::Transform, VEC3(0, 0, 0), VEC3(100.f, 1.f, 100.f));
-    ADD_COMPONENT(floor, Components::Mesh, Components::MeshType::BOX);
-    ADD_COMPONENT(floor, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
-    Components::CollisionBox &collisionBox = ADD_COMPONENT(floor, Components::CollisionBox);
-    collisionBox.Extents = VEC3(50.f, 1.f, 50.f);
-    collisionBox.MotionType = Components::CollisionMotionType::Static;
-    collisionBox.ActivationType = Components::CollisionActivationType::DontActivate;
-    collisionBox.Layer = Components::CollisionLayer::NON_MOVING;
+    float degrees = 45.0f;
+    glm::quat tilt1 = glm::angleAxis(glm::radians(degrees), glm::vec3(1.0f, 0.0f, 0.0f));
+    auto floor1 = CREATE_ENTITY();
+    ADD_COMPONENT(floor1, Components::Transform, VEC3(0, 0, 0), tilt1, VEC3(100.f, 1.f, 100.f));
+    ADD_COMPONENT(floor1, Components::Mesh, Components::MeshType::BOX);
+    ADD_COMPONENT(floor1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+    ADD_COMPONENT(floor1,
+        Components::CollisionBox,
+        VEC3(50.f, 1.f, 50.f),
+        VEC3(0.f),
+        glm::quat(1, 0, 0, 0),
+        Components::CollisionMotionType::Static,
+        Components::CollisionActivationType::DontActivate,
+        Components::CollisionLayer::NON_MOVING);
+    glm::quat tilt2 = glm::angleAxis(glm::radians(-degrees), glm::vec3(1.0f, 0.0f, 0.0f));
+    auto floor2 = CREATE_ENTITY();
+    ADD_COMPONENT(floor2, Components::Transform, VEC3(0, 0, 0), tilt2, VEC3(100.f, 1.f, 100.f));
+    ADD_COMPONENT(floor2, Components::Mesh, Components::MeshType::BOX);
+    ADD_COMPONENT(floor2, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+    ADD_COMPONENT(floor2,
+        Components::CollisionBox,
+        VEC3(50.f, 1.f, 50.f),
+        VEC3(0.f),
+        glm::quat(1, 0, 0, 0),
+        Components::CollisionMotionType::Static,
+        Components::CollisionActivationType::DontActivate,
+        Components::CollisionLayer::NON_MOVING);
 
     size_t SPHERE_COUNT = 50;
     for (size_t i = 0; i < SPHERE_COUNT; i++)
     {
-        if (i < (SPHERE_COUNT / 2))
-        {
-            glm::vec3 p(0, 60, -100 + i * (200.f / SPHERE_COUNT));
-            auto sphere = CREATE_ENTITY();
-            ADD_COMPONENT(sphere, Components::Transform, p, VEC3(.5f, .5f, .5f));
-            ADD_COMPONENT(sphere, Components::Motion, Components::MotionType::PATH, p, VEC3(p.x, 0.f, p.z), 5000);
-            ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
-            ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(1.f, 0.f, 0.f, 1.f));
-        }
-        else
-        {
-            // glm::vec3 p(RANDOM_FLOAT(-50, 50), 20, RANDOM_FLOAT(-50, 50));
-            glm::vec3 p(0, 60, -100 + i * (200.f / SPHERE_COUNT));
-            auto sphere = CREATE_ENTITY();
-            ADD_COMPONENT(sphere, Components::Transform, p, VEC3(.5f, .5f, .5f));
-            ADD_COMPONENT(sphere, Components::Physics, VEC3(0.f, -2.f, 0.f));
-            ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
-            ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
-            Components::CollisionSphere &collisionSphere = ADD_COMPONENT(sphere, Components::CollisionSphere);
-            collisionSphere.Radius = .5f;
-            collisionSphere.MotionType = Components::CollisionMotionType::Dynamic;
-            collisionSphere.ActivationType = Components::CollisionActivationType::Activate;
-            collisionSphere.Layer = Components::CollisionLayer::MOVING;
-        }
+        // if (i < (SPHERE_COUNT / 2))
+        // {
+        //     glm::vec3 p(0, 60, -100 + i * (200.f / SPHERE_COUNT));
+        //     auto sphere = CREATE_ENTITY();
+        //     ADD_COMPONENT(sphere, Components::Transform, p, VEC3(.5f, .5f, .5f));
+        //     ADD_COMPONENT(sphere, Components::Motion, Components::MotionType::PATH, p, VEC3(p.x, 0.f, p.z), 5000);
+        //     ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
+        //     ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(1.f, 0.f, 0.f, 1.f));
+        // }
+        // else
+        // {
+        // glm::vec3 p(RANDOM_FLOAT(-50, 50), 20, RANDOM_FLOAT(-50, 50));
+        glm::vec3 p(0, 60, -100 + i * (200.f / SPHERE_COUNT));
+        auto sphere = CREATE_ENTITY();
+        ADD_COMPONENT(sphere, Components::Transform, p, VEC3(.5f, .5f, .5f));
+        ADD_COMPONENT(sphere, Components::Physics, VEC3(0.f, -2.f, 0.f));
+        ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
+        // ADD_COMPONENT(
+        //     sphere, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+        ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(1.f, 0.f, 0.f, 1.f));
+        Components::CollisionSphere &collisionSphere = ADD_COMPONENT(sphere, Components::CollisionSphere);
+        collisionSphere.Radius = .5f;
+        collisionSphere.MotionType = Components::CollisionMotionType::Dynamic;
+        collisionSphere.ActivationType = Components::CollisionActivationType::Activate;
+        collisionSphere.Layer = Components::CollisionLayer::MOVING;
+        // }
     }
     // auto sphere = CREATE_ENTITY();
     // ADD_COMPONENT(sphere, Components::Transform, VEC3(0, 20, 0), VEC3(.5f, .5f, .5f));

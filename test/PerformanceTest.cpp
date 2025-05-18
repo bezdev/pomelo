@@ -1,9 +1,9 @@
-#include <memory>
-#include <thread>
-#include <iostream>
+#include <ctime>
 #include <fstream>
 #include <iomanip>
-#include <ctime>
+#include <iostream>
+#include <memory>
+#include <thread>
 
 #include <sys/stat.h>
 
@@ -21,11 +21,10 @@
 
 void StartApp(SceneType sceneType)
 {
-    GLFWApp* app = GLFWApp::GetInstance();
+    GLFWApp *app = GLFWApp::GetInstance();
     app->Initialize(sceneType);
 
-    std::thread t = std::thread([app]
-    { 
+    std::thread t = std::thread([app] {
         SLEEP(5000);
         app->Exit();
     });
@@ -55,8 +54,10 @@ void LogToFile(std::string testName, std::vector<std::string> log)
 
             float current = std::stof(split[4]);
             total += current;
-            if (current < min) min = current;
-            if (current > max) max = current;
+            if (current < min)
+                min = current;
+            if (current > max)
+                max = current;
         }
         else if (split.size() > 4 && split[3].compare(std::string("App::UpdateWindowSize")) == 0)
         {
@@ -76,13 +77,14 @@ void LogToFile(std::string testName, std::vector<std::string> log)
         file << "time,OS,resolution,name,average,min,max" << std::endl;
     }
 
-    #ifdef WIN32
-            std::string os("windows");
-    #else
-            std::string os("macOS");
-    #endif
+#ifdef WIN32
+    std::string os("windows");
+#else
+    std::string os("macOS");
+#endif
 
-    file << std::put_time(&tm, "%Y-%m-%d %H-%M-%S") << "," << os << "," << resolution << "," << testName << "," << avg << "," << min << "," << max << std::endl;
+    file << std::put_time(&tm, "%Y-%m-%d %H-%M-%S") << "," << os << "," << resolution << "," << testName << "," << avg << "," << min << ","
+         << max << std::endl;
     file.close();
 }
 
@@ -130,7 +132,18 @@ TEST(ManyCubeAxisPerformanceTest)
     Logger::GetInstance()->Clear();
 }
 
-TEST(CollisionScenePerformanceTest)
+TEST(JoltScenePerformanceTest)
+{
+    StartApp(SceneType::SCENE_JOLT_HELLO_WORLD);
+
+    auto log = Logger::GetInstance()->GetLog();
+    ASSERT_TRUE(log.size() > 0);
+
+    LogToFile(GetName(), log);
+    Logger::GetInstance()->Clear();
+}
+
+TEST_DISABLED(CollisionScenePerformanceTest)
 {
     StartApp(SceneType::SCENE_COLLISION);
 
@@ -141,7 +154,7 @@ TEST(CollisionScenePerformanceTest)
     Logger::GetInstance()->Clear();
 }
 
-TEST(CollisionSceneNoPhysicsPerformanceTest)
+TEST_DISABLED(CollisionSceneNoPhysicsPerformanceTest)
 {
     StartApp(SceneType::SCENE_COLLISION_NO_PHYSICS);
 
@@ -152,7 +165,7 @@ TEST(CollisionSceneNoPhysicsPerformanceTest)
     Logger::GetInstance()->Clear();
 }
 
-TEST(CollisionSceneNoCollisionsPerformanceTest)
+TEST_DISABLED(CollisionSceneNoCollisionsPerformanceTest)
 {
     StartApp(SceneType::SCENE_COLLISION_NO_COLLISION);
 

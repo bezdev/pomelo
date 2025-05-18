@@ -251,6 +251,16 @@ struct CollisionBox
     CollisionMotionType MotionType = CollisionMotionType::Static;
     CollisionActivationType ActivationType = CollisionActivationType::Activate;
     CollisionLayer Layer = CollisionLayer::MOVING;
+
+    CollisionBox(VEC3 extends,
+        VEC3 offset = VEC3(0.f),
+        QUAT rotation = Q_DEFAULT,
+        CollisionMotionType motionType = CollisionMotionType::Static,
+        CollisionActivationType activationType = CollisionActivationType::DontActivate,
+        CollisionLayer layer = CollisionLayer::NON_MOVING)
+        : Extents(extends), Offset(offset), Rotation(rotation), MotionType(motionType), ActivationType(activationType), Layer(layer)
+    {
+    }
 };
 
 } // namespace Components

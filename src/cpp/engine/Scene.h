@@ -84,8 +84,8 @@ class SceneManager
             auto e1 = CREATE_ENTITY();
             ADD_COMPONENT(e1, Components::Transform, glm::vec3(0, 0, 0));
             ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::BOX);
-            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR,
-                          glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            ADD_COMPONENT(
+                e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
@@ -104,8 +104,8 @@ class SceneManager
             auto e1 = CREATE_ENTITY();
             ADD_COMPONENT(e1, Components::Transform, p);
             ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::BOX);
-            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR,
-                          glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            ADD_COMPONENT(
+                e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
@@ -124,8 +124,8 @@ class SceneManager
             auto e1 = CREATE_ENTITY();
             ADD_COMPONENT(e1, Components::Transform, p);
             ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::INSTANCED_BOX);
-            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR,
-                          glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            ADD_COMPONENT(
+                e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         }
 
         Camera::GetInstance()->SetLookAt(glm::vec3(0.f, 0.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
@@ -145,8 +145,8 @@ class SceneManager
             auto e1 = CREATE_ENTITY();
             ADD_COMPONENT(e1, Components::Transform, p);
             ADD_COMPONENT(e1, Components::Mesh, Components::MeshType::BOX);
-            ADD_COMPONENT(e1, Components::Material, Components::MaterialType::SOLID_COLOR,
-                          glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
+            ADD_COMPONENT(
+                e1, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
             auto e2 = CREATE_ENTITY();
             ADD_COMPONENT(e2, Components::Transform, p);
             ADD_COMPONENT(e2, Components::Mesh, Components::MeshType::AXIS);
