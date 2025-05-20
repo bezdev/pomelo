@@ -241,6 +241,14 @@ struct CollisionSphere
     CollisionMotionType MotionType;
     CollisionActivationType ActivationType;
     CollisionLayer Layer;
+
+    CollisionSphere(float radius,
+        CollisionMotionType motionType = CollisionMotionType::Static,
+        CollisionActivationType activationType = CollisionActivationType::DontActivate,
+        CollisionLayer layer = CollisionLayer::NON_MOVING)
+        : Radius(radius), MotionType(motionType), ActivationType(activationType), Layer(layer)
+    {
+    }
 };
 
 struct CollisionBox

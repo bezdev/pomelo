@@ -280,7 +280,8 @@ void SceneManager::CreateJoltHelloWorldScene()
         Components::CollisionActivationType::DontActivate,
         Components::CollisionLayer::NON_MOVING);
 
-    size_t SPHERE_COUNT = 50;
+    size_t SPHERE_COUNT = 200;
+    float step = 200.f / (SPHERE_COUNT - 1);
     for (size_t i = 0; i < SPHERE_COUNT; i++)
     {
         // if (i < (SPHERE_COUNT / 2))
@@ -295,19 +296,34 @@ void SceneManager::CreateJoltHelloWorldScene()
         // else
         // {
         // glm::vec3 p(RANDOM_FLOAT(-50, 50), 20, RANDOM_FLOAT(-50, 50));
-        glm::vec3 p(0, 60, -100 + i * (200.f / SPHERE_COUNT));
+        float t = i * step;
+        // glm::vec3 p(-100 + i * (200.f / SPHERE_COUNT), 60, -100 + i * (200.f / SPHERE_COUNT));
+        // VEC3 p1(-100 + t, 60, -100 + t);
+        VEC3 p1(RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(50, 100), RANDOM_FLOAT(-100, 100));
         auto sphere = CREATE_ENTITY();
-        ADD_COMPONENT(sphere, Components::Transform, p, VEC3(.5f, .5f, .5f));
+        ADD_COMPONENT(sphere, Components::Transform, p1, VEC3(5.f, 5.f, 5.f));
         ADD_COMPONENT(sphere, Components::Physics, VEC3(0.f, -2.f, 0.f));
         ADD_COMPONENT(sphere, Components::Mesh, Components::MeshType::SPHERE);
-        // ADD_COMPONENT(
-        //     sphere, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(0.2f, 0.709803922f, 0.898039216f, 1.0f));
         ADD_COMPONENT(sphere, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(1.f, 0.f, 0.f, 1.f));
-        Components::CollisionSphere &collisionSphere = ADD_COMPONENT(sphere, Components::CollisionSphere);
-        collisionSphere.Radius = .5f;
-        collisionSphere.MotionType = Components::CollisionMotionType::Dynamic;
-        collisionSphere.ActivationType = Components::CollisionActivationType::Activate;
-        collisionSphere.Layer = Components::CollisionLayer::MOVING;
+        ADD_COMPONENT(sphere,
+            Components::CollisionSphere,
+            .5f,
+            Components::CollisionMotionType::Dynamic,
+            Components::CollisionActivationType::Activate,
+            Components::CollisionLayer::MOVING);
+        // glm::vec3 p2(i * (200.f / SPHERE_COUNT), 60, 100 - i * (200.f / SPHERE_COUNT));
+        // VEC3 p2(-100 + t, 60, 100 - t);
+        // auto sphere2 = CREATE_ENTITY();
+        // ADD_COMPONENT(sphere2, Components::Transform, p2, VEC3(.5f, .5f, .5f));
+        // ADD_COMPONENT(sphere2, Components::Physics, VEC3(0.f, -2.f, 0.f));
+        // ADD_COMPONENT(sphere2, Components::Mesh, Components::MeshType::SPHERE);
+        // ADD_COMPONENT(sphere2, Components::Material, Components::MaterialType::SOLID_COLOR, glm::vec4(1.f, 0.f, 0.f, 1.f));
+        // ADD_COMPONENT(sphere2,
+        //     Components::CollisionSphere,
+        //     .5f,
+        //     Components::CollisionMotionType::Dynamic,
+        //     Components::CollisionActivationType::Activate,
+        //     Components::CollisionLayer::MOVING);
         // }
     }
     // auto sphere = CREATE_ENTITY();
@@ -326,7 +342,7 @@ void SceneManager::CreateJoltHelloWorldScene()
     // PhysicsEngine::GetInstance()->AddPhysicsEntity(sphere);
 
     // Camera::GetInstance()->SetLookAt(glm::vec3(100.f, 100.f, 100.f), glm::vec3(0.f, 0.f, 0.f));
-    Camera::GetInstance()->SetLookAt(glm::vec3(20.f, 50.f, 0.f), glm::vec3(0.f, 50.f, 0.f));
+    Camera::GetInstance()->SetLookAt(glm::vec3(200.f, 100.f, 0.f), glm::vec3(0.f, 0.f, 0.f));
     Camera::GetInstance()->SetCameraType(CameraType::FREE_LOOK);
     s.Load();
 }

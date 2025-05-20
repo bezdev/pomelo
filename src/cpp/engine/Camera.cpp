@@ -30,8 +30,8 @@ Camera::Camera()
                 camPhi = CAP_ANGLE(camPhi, MIN_PHI, MAX_PHI);
 
                 m_Position = m_Target - glm::vec3(m_LookAtDistance * std::cos(camPhi) * std::sin(camTheta),
-                                                  m_LookAtDistance * std::sin(camPhi),
-                                                  m_LookAtDistance * std::cos(camPhi) * std::cos(camTheta));
+                                            m_LookAtDistance * std::sin(camPhi),
+                                            m_LookAtDistance * std::cos(camPhi) * std::cos(camTheta));
 
                 SetLookAt(m_Position, m_Target);
             }
